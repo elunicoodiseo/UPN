@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Machine Learning No Supervisado</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+
+        .interactive-ui {
+            pointer-events: auto;
+            touch-action: auto !important;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            pointer-events: none;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ocultar botones predeterminados de VR/AR */
+        .a-enter-vr,
+        .rs-base {
+            display: none !important;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        .control-btn {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(51, 65, 85, 1);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="start-screen"
+        class="absolute inset-0 z-[100] flex items-center justify-center bg-slate-900 bg-opacity-95 p-4 fade-in interactive-ui">
+        <div class="max-w-2xl bg-white rounded-3xl shadow-2xl p-8 md:p-10 text-slate-800 border border-slate-100">
+            <div
+                class="inline-block bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase mb-4">
+                Experiencia Educativa</div>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-4">Machine Learning No Supervisado
+            </h1>
+            <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                Descubre cómo la Inteligencia Artificial analiza datos sin etiquetas. En esta clase guiada, la IA no
+                sabe quién aprueba o desaprueba; únicamente observa características de comportamiento académico para
+                segmentar a 80 estudiantes ficticios en grupos por similitud.
+            </p>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-8 text-sm text-slate-700">
+                <strong>Importante:</strong> La experiencia comenzará en <strong>Modo Simulación</strong> (navegación en
+                pantalla). Si deseas proyectar el plano en tu entorno real, podrás activar el <strong>Modo AR</strong>
+                más adelante.
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button id="btn-init-sim"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/30 flex items-center justify-center gap-2 text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                    </svg>
+                    Iniciar Simulación
+                </button>
+                <button id="btn-init-ar"
+                    class="flex-1 bg-white hover:bg-slate-50 border-2 border-indigo-600 text-indigo-700 font-semibold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    </svg>
+                    Modo AR
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CONTENEDOR 3D -->
+    <div id="scene-container" class="absolute inset-0 z-0 bg-slate-900"></div>
+
+    <!-- UI PRINCIPAL -->
+    <div id="ui-layer" class="hidden">
+
+        <!-- HEADER -->
+        <header
+            class="interactive-ui w-full glass-panel border-t-0 border-l-0 border-r-0 border-b border-white/10 p-3 px-6 flex justify-between items-center shadow-md relative z-50">
+            <div class="flex items-center gap-3">
+                <div
+                    class="bg-gradient-to-r from-indigo-500 to-purple-500 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                        class="w-5 h-5 text-white">
+                        <path
+                            d="M10 1a6 6 0 00-3.815 10.631C7.237 12.5 8 13.443 8 14.456v.644a.75.75 0 00.572.729 6.016 6.016 0 002.856 0A.75.75 0 0012 15.1v-.644c0-1.013.762-1.957 1.815-2.825A6 6 0 0010 1zM8.863 17.414a.75.75 0 00-.226 1.483 9.066 9.066 0 002.726 0 .75.75 0 00-.226-1.483 7.553 7.553 0 01-2.274 0z" />
+                    </svg>
+                </div>
+                <h2 class="font-bold text-white tracking-wide hidden sm:block">Laboratorio de IA - ©2026 - Luis Torrejón
+                    Arias</h2>
+
+            </div>
+
+            <!-- Navegación de Módulos -->
+            <div class="flex items-center gap-3 bg-slate-800/80 rounded-xl p-1 border border-slate-700 shadow-inner">
+                <button id="btn-prev"
+                    class="px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                    Anterior
+                </button>
+                <div class="px-3 py-1 font-bold text-indigo-300 text-sm">
+                    Módulo <span id="mod-indicator">1</span>/6
+                </div>
+                <button id="btn-next"
+                    class="px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1">
+                    Siguiente
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
+
+            <button id="btn-toggle-ar"
+                class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold py-1.5 px-4 rounded-lg transition-colors shadow">
+                Activar AR
+            </button>
+        </header>
+
+        <!-- BARRA DE TÍTULO Y LEYENDA DE EJES -->
+        <div class="interactive-ui w-full px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b border-white/5"
+            style="background: rgba(15,23,42,0.7); backdrop-filter: blur(8px);">
+            <h1 class="text-lg md:text-xl font-bold text-white tracking-tight">
+                Segmentación No Supervisada de Estudiantes
+            </h1>
+            <div class="flex items-center gap-6 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-0.5 bg-blue-400 inline-block rounded"></span>
+                    <span class="text-blue-400 font-semibold">Eje X — Interacción Académica</span>
+                    <span class="text-slate-400">(participación, tiempo, consultas, recursos)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-0.5 bg-emerald-400 inline-block rounded"></span>
+                    <span class="text-emerald-400 font-semibold">Eje Y — Cumplimiento Académico</span>
+                    <span class="text-slate-400">(asistencia, tareas, puntualidad)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ÁREA CENTRAL (Paneles e interacciones) -->
+        <div class="flex-1 flex flex-col md:flex-row p-4 gap-4 overflow-hidden relative pointer-events-none">
+
+            <!-- PANEL PEDAGÓGICO (IZQUIERDA) -->
+            <div id="pedagogy-panel"
+                class="interactive-ui w-full md:w-96 glass-panel rounded-2xl flex flex-col pointer-events-auto shadow-2xl transition-all duration-500 transform translate-x-0 h-auto max-h-full overflow-y-auto custom-scrollbar">
+                <div class="p-6">
+                    <h3 id="mod-title" class="text-xl font-bold text-indigo-300 mb-4 leading-tight">Título</h3>
+                    <div id="mod-content" class="text-slate-300 text-sm leading-relaxed space-y-4">
+                        <!-- Contenido dinámico -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZONA DE CONTROLES FLOTANTES Y DETALLES -->
+            <div class="flex-1 flex flex-col items-end justify-between pointer-events-none">
+
+                <!-- Detalles del estudiante seleccionado -->
+                <div id="student-panel"
+                    class="hidden interactive-ui w-full md:w-80 glass-panel-light rounded-2xl p-5 pointer-events-auto shadow-2xl mb-4 fade-in">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 id="st-id" class="text-lg font-bold text-slate-800">Estudiante</h4>
+                        <button id="btn-close-student" class="text-slate-400 hover:text-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4 space-y-2 text-xs">
+                        <p class="flex justify-between"><span class="text-slate-500">Interacción (X):</span> <span
+                                id="st-x-desc" class="font-semibold text-slate-800"></span></p>
+                        <p class="flex justify-between"><span class="text-slate-500">Cumplimiento (Y):</span> <span
+                                id="st-y-desc" class="font-semibold text-slate-800"></span></p>
+                    </div>
+
+                    <h5 class="text-xs font-bold text-indigo-600 uppercase mb-2">Variables de Entrada:</h5>
+                    <ul id="st-vars"
+                        class="text-xs text-slate-600 space-y-1.5 bg-white border border-slate-100 rounded-lg p-3 custom-scrollbar max-h-40 overflow-y-auto">
+                        <!-- Variables -->
+                    </ul>
+
+                    <div id="st-interpretation"
+                        class="mt-4 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-xs text-indigo-800 italic leading-relaxed">
+                    </div>
+                </div>
+
+                <!-- Paneles comparativos (Módulo 6) -->
+                <div id="comparison-panels"
+                    class="hidden interactive-ui w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4 pointer-events-auto fade-in mt-auto mb-10">
+                    <div class="flex-1 bg-white rounded-2xl shadow-xl p-6 border-t-4 border-emerald-500">
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="w-5 h-5 text-emerald-500">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Aprendizaje Supervisado
+                        </h4>
+                        <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
+                            <li><strong>Tiene etiquetas</strong> conocidas históricamente.</li>
+                            <li>Aprende a predecir un resultado concreto.</li>
+                            <li>Ejemplo: Variables → <span class="font-bold text-emerald-600">Aprueba /
+                                    Desaprueba</span>.</li>
+                        </ul>
+                    </div>
+                    <div class="flex-1 bg-white rounded-2xl shadow-xl p-6 border-t-4 border-indigo-500">
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="w-5 h-5 text-indigo-500">
+                                <path fill-rule="evenodd"
+                                    d="M4.25 2A2.25 2.25 0 002 4.25v2.5A2.25 2.25 0 004.25 9h2.5A2.25 2.25 0 009 6.75v-2.5A2.25 2.25 0 006.75 2h-2.5zm0 9A2.25 2.25 0 002 13.25v2.5A2.25 2.25 0 004.25 18h2.5A2.25 2.25 0 009 15.75v-2.5A2.25 2.25 0 006.75 11h-2.5zm9-9A2.25 2.25 0 0011 4.25v2.5A2.25 2.25 0 0013.25 9h2.5A2.25 2.25 0 0018 6.75v-2.5A2.25 2.25 0 0015.75 2h-2.5zm0 9A2.25 2.25 0 0011 13.25v2.5A2.25 2.25 0 0013.25 18h2.5A2.25 2.25 0 0018 15.75v-2.5A2.25 2.25 0 0015.75 11h-2.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Aprendizaje No Supervisado
+                        </h4>
+                        <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
+                            <li><strong>NO tiene etiquetas</strong> ni respuestas previas.</li>
+                            <li>Agrupa datos similares descubriendo patrones.</li>
+                            <li>Ejemplo: Variables → <span class="font-bold text-indigo-600">Cluster o grupo por
+                                    similitud</span>.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Controles de navegación y clusters -->
+                <div class="interactive-ui pointer-events-auto flex flex-col items-end gap-3 mb-2">
+
+                    <!-- Botones de Clusters (se muestran en Módulos >= 4) -->
+                    <div id="cluster-controls" class="hidden flex gap-2 glass-panel p-2 rounded-xl mb-2">
+                        <button id="btn-show-clusters"
+                            class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded shadow transition-colors">Mostrar
+                            Clusters</button>
+                        <button id="btn-hide-clusters"
+                            class="bg-slate-700 hover:bg-slate-600 text-white text-xs px-3 py-2 rounded shadow transition-colors">Ocultar</button>
+                    </div>
+
+                    <!-- Joystick removido en favor de controles con ratón -->
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script>
+
+        AFRAME.registerComponent('mouse-pan-zoom', {
+            schema: {
+                panSpeed: { type: 'number', default: 0.005 },
+                zoomSpeed: { type: 'number', default: 0.005 },
+                minZoom: { type: 'number', default: 1 },
+                maxZoom: { type: 'number', default: 10 }
+            },
+            init: function () {
+                this.isDragging = false;
+                this.previousMousePosition = { x: 0, y: 0 };
+                this.onMouseDown = this.onMouseDown.bind(this);
+                this.onMouseUp = this.onMouseUp.bind(this);
+                this.onMouseMove = this.onMouseMove.bind(this);
+                this.onWheel = this.onWheel.bind(this);
+
+                window.addEventListener('mousedown', this.onMouseDown);
+                window.addEventListener('mouseup', this.onMouseUp);
+                window.addEventListener('mousemove', this.onMouseMove);
+                window.addEventListener('wheel', this.onWheel, { passive: false });
+            },
+            remove: function () {
+                window.removeEventListener('mousedown', this.onMouseDown);
+                window.removeEventListener('mouseup', this.onMouseUp);
+                window.removeEventListener('mousemove', this.onMouseMove);
+                window.removeEventListener('wheel', this.onWheel);
+            },
+            onMouseDown: function (evt) {
+                if (evt.button !== 0 || isARMode) return;
+                if (evt.target.closest('.interactive-ui')) return; // No hacer pan si hacemos click en la UI
+                this.isDragging = true;
+                this.previousMousePosition = { x: evt.clientX, y: evt.clientY };
+            },
+            onMouseUp: function () {
+                this.isDragging = false;
+            },
+            onMouseMove: function (evt) {
+                if (!this.isDragging || isARMode) return;
+
+                const deltaX = evt.clientX - this.previousMousePosition.x;
+                const deltaY = evt.clientY - this.previousMousePosition.y;
+
+                this.previousMousePosition = { x: evt.clientX, y: evt.clientY };
+
+                const position = this.el.getAttribute('position');
+                position.x -= deltaX * this.data.panSpeed;
+                position.y += deltaY * this.data.panSpeed;
+                this.el.setAttribute('position', position);
+            },
+            onWheel: function (evt) {
+                if (isARMode) return;
+                const position = this.el.getAttribute('position');
+                position.z += evt.deltaY * this.data.zoomSpeed;
+                position.z = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, position.z));
+                this.el.setAttribute('position', position);
+            }
+        });
+
+        // --- 1. GENERACIÓN DE DATOS (NO SUPERVISADO) ---
+        // Generamos 80 estudiantes con variables continuas y categóricas.
+        // No existe etiqueta de éxito/fracaso.
+        const students = [];
+        // Mapeo lógico:
+        // X = Interacción (Participación, Tiempo, Consultas, Recursos)
+        // Y = Cumplimiento (Asistencia, Tareas, Puntualidad)
+
+        for (let i = 1; i <= 80; i++) {
+            // Distribuimos equitativamente en 4 "tendencias" o clusters naturales (sin decírselo al modelo)
+            const cluster = (i % 4) + 1;
+            let x, y;
+
+            // Generación de coordenadas en el plano cartesiano (-2.5 a 2.5)
+            // Cluster 1: Alta Int (+X), Alto Cump (+Y)
+            if (cluster === 1) { x = 0.5 + Math.random() * 1.8; y = 0.5 + Math.random() * 1.8; }
+            // Cluster 2: Baja Int (-X), Alto Cump (+Y)
+            else if (cluster === 2) { x = -2.3 + Math.random() * 1.8; y = 0.5 + Math.random() * 1.8; }
+            // Cluster 3: Alta Int (+X), Bajo Cump (-Y)
+            else if (cluster === 3) { x = 0.5 + Math.random() * 1.8; y = -2.3 + Math.random() * 1.8; }
+            // Cluster 4: Baja Int (-X), Bajo Cump (-Y)
+            else { x = -2.3 + Math.random() * 1.8; y = -2.3 + Math.random() * 1.8; }
+
+            // Generación de variables basadas puramente en las coordenadas
+            // Eje X (Interacción)
+            const participacion = x > 0 ? (x > 1.2 ? "Alta" : "Media") : "Baja";
+            const tiempo = (Math.max(1, (x + 2.5) * 1.5 + Math.random())).toFixed(1) + " horas";
+            const consultas = Math.floor(Math.max(0, (x + 2.5) * 1.2 + Math.random() * 2));
+            const recursos = x > 0 ? "Frecuente" : "Escaso";
+
+            // Eje Y (Cumplimiento)
+            const asistenciaNum = Math.min(100, Math.max(30, Math.floor((y + 2.5) * 20 + Math.random() * 10)));
+            const asistencia = (y > 0 ? "Alta" : "Baja") + ` (${asistenciaNum}%)`;
+            const tareas = y > 0.5 ? "Completas" : (y > -1 ? "Parciales" : "Incompletas");
+            const puntualidad = y > 0 ? "Alta" : "Baja";
+
+            students.push({
+                id: "E" + String(i).padStart(3, '0'),
+                x: x, y: y,
+                cluster: cluster,
+                vars: { asistencia, tareas, participacion, tiempo, puntualidad, consultas, recursos }
+            });
+        }
+
+        // --- 2. MÓDULOS EDUCATIVOS ---
+        const modules = [
+            {
+                id: 1,
+                title: "Módulo 1: Datos Sin Etiquetas",
+                html: `
+                    <p>En el <strong>Machine Learning No Supervisado</strong> no existen respuestas conocidas ni datos etiquetados históricamente.</p>
+                    <p>En el plano frente a ti, cada punto representa a un estudiante. La IA no sabe quién aprueba o desaprueba, porque nadie le ha dado esa información.</p>
+                    <p>El algoritmo solo observa características puras: asistencia, participación, tareas, consultas y uso de recursos digitales.</p>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre:</strong> El modelo no predice resultados. Primero, simplemente observa y distribuye los datos.
+                    </div>
+                `,
+                onEnter: () => { showAllPoints(); hideAxesHighlight(); hideNeighbors(); hideClusters(); closeStudentPanel(); document.getElementById('comparison-panels').classList.add('hidden'); }
+            },
+            {
+                id: 2,
+                title: "Módulo 2: Comprender los Ejes",
+                html: `
+                    <p>Para visualizar a los estudiantes, hemos reducido sus múltiples variables en dos dimensiones principales:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-2">
+                        <li><strong class="text-blue-400">Eje X (Horizontal): Nivel de interacción académica.</strong><br>Calculado analizando participación, tiempo en plataforma, consultas al docente y uso de recursos digitales.</li>
+                        <li><strong class="text-emerald-400">Eje Y (Vertical): Nivel de cumplimiento académico.</strong><br>Calculado analizando asistencia, tareas entregadas y puntualidad.</li>
+                    </ul>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre:</strong> Los ejes convierten datos abstractos de comportamiento en una representación visual y espacial comprensible.
+                    </div>
+                `,
+                onEnter: () => { highlightAxes(); hideNeighbors(); hideClusters(); closeStudentPanel(); document.getElementById('comparison-panels').classList.add('hidden'); }
+            },
+            {
+                id: 3,
+                title: "Módulo 3: Cercanía entre Datos",
+                html: `
+                    <p>En el plano, la distancia entre dos puntos indica matemáticamente qué tan similares son sus comportamientos.</p>
+                    <p>Selecciona cualquier punto en el plano para ver líneas que lo conectan con sus 4 "vecinos" más cercanos.</p>
+                    <p>Esta cercanía espacial permite que el algoritmo encuentre patrones y afinidades, sin necesidad de saber el resultado final de los estudiantes.</p>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre:</strong> La IA no necesita etiquetas previas para detectar similitudes entre los individuos.
+                    </div>
+                `,
+                onEnter: () => { showAllPoints(); unhighlightAxes(); enableNeighborMode(); hideClusters(); closeStudentPanel(); document.getElementById('comparison-panels').classList.add('hidden'); }
+            },
+            {
+                id: 4,
+                title: "Módulo 4: Segmentación (Clustering)",
+                html: `
+                    <p>La técnica más común no supervisada es el <strong>Clustering</strong>.</p>
+                    <p>Presiona el botón <strong class="text-white">"Mostrar Clusters"</strong> (abajo a la derecha) para ver cómo la IA agrupa automáticamente los 80 puntos en 4 zonas o perfiles, basándose únicamente en su cercanía.</p>
+                    <ul class="text-xs space-y-1 mt-3">
+                        <li><span class="text-emerald-400 font-bold">Z1 (Sup. Der):</span> Alta interacción, alto cumplimiento.</li>
+                        <li><span class="text-blue-400 font-bold">Z2 (Sup. Izq):</span> Baja interacción, alto cumplimiento.</li>
+                        <li><span class="text-amber-400 font-bold">Z3 (Inf. Der):</span> Alta interacción, bajo cumplimiento.</li>
+                        <li><span class="text-rose-400 font-bold">Z4 (Inf. Izq):</span> Baja interacción, bajo cumplimiento.</li>
+                    </ul>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre:</strong> El clustering agrupa por similitud, no emite una sentencia definitiva sobre el estudiante. El nombre e interpretación del grupo los da el docente humano.
+                    </div>
+                `,
+                onEnter: () => { disableNeighborMode(); showClusterControls(); hidePanelsExceptControls(); }
+            },
+            {
+                id: 5,
+                title: "Módulo 5: Interpretación Humana",
+                html: `
+                    <p>El algoritmo es útil, pero ciego ante la realidad externa.</p>
+                    <p>Hemos seleccionado automáticamente al estudiante <strong>E027</strong> (ubicado en la zona inferior izquierda de baja interacción y bajo cumplimiento).</p>
+                    <div class="grid grid-cols-2 gap-2 mt-4 text-xs">
+                        <div class="bg-indigo-900/40 p-2 border border-indigo-500 rounded">
+                            <strong class="text-indigo-300">Lo que la IA observa:</strong><br>
+                            Asistencia baja, tareas incompletas, 0 consultas, poca participación.
+                        </div>
+                        <div class="bg-rose-900/40 p-2 border border-rose-500 rounded">
+                            <strong class="text-rose-300">Lo que la IA NO sabe:</strong><br>
+                            Problemas familiares, falta de conectividad, carga laboral extrema o salud emocional.
+                        </div>
+                    </div>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre:</strong> La IA agrupa y visualiza patrones, pero el docente debe interpretar el contexto éticamente antes de tomar decisiones.
+                    </div>
+                `,
+                onEnter: () => { toggleClusters(true); hideClusterControls(); selectStudentE027(); }
+            },
+            {
+                id: 6,
+                title: "Módulo 6: Supervisado vs No Supervisado",
+                html: `
+                    <p>Para concluir, visualicemos la diferencia fundamental entre ambos enfoques en la pantalla principal.</p>
+                    <p>Mientras que el aprendizaje <strong>Supervisado</strong> requiere conocer los resultados históricos para predecir el futuro, el <strong>No Supervisado</strong> trabaja a ciegas descubriendo la estructura y los patrones ocultos de los datos actuales.</p>
+                    <div class="p-3 bg-indigo-900/50 border border-indigo-400 rounded-lg mt-4 text-indigo-200">
+                        <strong>Cierre final:</strong> El aprendizaje no supervisado sirve para descubrir grupos similares y apoyar la reflexión docente, no para automatizar juicios o calificaciones.
+                    </div>
+                `,
+                onEnter: () => { toggleClusters(false); closeStudentPanel(); document.getElementById('comparison-panels').classList.remove('hidden'); }
+            }
+        ];
+
+        let currentModuleIndex = 0;
+        let isARMode = false;
+        let neighborMode = false;
+        let sceneBuilt = false;
+
+        let camPosition = { x: 0, y: 0, z: 4 };
+
+        // --- 3. INICIALIZACIÓN ---
+        function requestAR() {
+            // Solicitar cámara explicitamente solo al pedir AR
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    // Detenemos el stream temporalmente, AR.js lo volverá a pedir internamente
+                    stream.getTracks().forEach(track => track.stop());
+                    document.getElementById('btn-toggle-ar').style.display = 'none';
+                    initExperience('ar');
+                })
+                .catch(function (err) {
+                    alert("No se pudo activar la cámara o el permiso fue denegado. Puedes continuar usando el modo simulación.");
+                    initExperience('sim');
+                });
+        }
+
+        function initExperience(mode) {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('flex');
+            document.getElementById('ui-layer').classList.remove('hidden');
+            document.getElementById('ui-layer').style.display = 'flex';
+
+            if (sceneBuilt) {
+                // Ya estaba construido, no reconstruimos
+                return;
+            }
+
+            isARMode = (mode === 'ar');
+
+            if (isARMode) {
+                const script = document.createElement('script');
+                script.src = "https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js";
+                script.onload = () => buildScene();
+                document.head.appendChild(script);
+            } else {
+                buildScene();
+            }
+        }
+
+        function buildScene() {
+            sceneBuilt = true;
+            const container = document.getElementById('scene-container');
+            let html = '';
+
+            if (isARMode) {
+                html = `
+                    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false" raycaster="objects: .clickable" cursor="rayOrigin: mouse">
+                        <a-marker preset="hiro">
+                            <a-entity id="content-anchor" rotation="-90 0 0" scale="0.6 0.6 0.6">
+                                <!-- Contenido dinámico -->
+                            </a-entity>
+                        </a-marker>
+                        <a-entity id="camera-rig"><a-entity camera></a-entity></a-entity>
+                    </a-scene>
+                `;
+            } else {
+                html = `
+                    <a-scene embedded vr-mode-ui="enabled: false" raycaster="objects: .clickable" cursor="rayOrigin: mouse" background="color: #0f172a">
+                        <!-- Luces -->
+                        <a-light type="ambient" color="#fff" intensity="0.6"></a-light>
+                        <a-light type="directional" position="-1 2 1" intensity="0.4"></a-light>
+                        
+                        <a-entity id="camera-rig" position="0 0 4.5" mouse-pan-zoom>
+                            <a-entity camera look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
+                        </a-entity>
+                        
+                        <a-entity id="content-anchor" position="0 0 0">
+                            <!-- Contenido dinámico -->
+                        </a-entity>
+                    </a-scene>
+                `;
+            }
+            container.innerHTML = html;
+
+            setTimeout(() => {
+                setupCartesianPlane();
+                loadModule(0);
+
+                // Listener global para clics en puntos
+                document.querySelector('a-scene').addEventListener('click', function (e) {
+                    if (e.detail.intersection && e.detail.intersection.object.el.classList.contains('point')) {
+                        handlePointClick(e.detail.intersection.object.el);
+                    }
+                });
+            }, 500);
+        }
+
+        // --- 4. CONSTRUCCIÓN DEL PLANO CARTESIANO Y PUNTOS ---
+        function setupCartesianPlane() {
+            const anchor = document.getElementById('content-anchor');
+            if (!anchor) return;
+
+            const group = document.createElement('a-entity');
+            group.setAttribute('id', 'plane-group');
+
+            // Grid
+            const grid = document.createElement('a-plane');
+            grid.setAttribute('width', '5.5');
+            grid.setAttribute('height', '5.5');
+            grid.setAttribute('color', '#1e293b');
+            grid.setAttribute('position', '0 0 -0.05');
+            group.appendChild(grid);
+
+            // Ejes (sin tildes - A-Frame MSDF no las soporta)
+            const axisX = document.createElement('a-entity');
+            axisX.setAttribute('id', 'axis-x');
+            axisX.setAttribute('line', 'start: -2.8 0 0; end: 2.8 0 0; color: #94a3b8; opacity: 0.5');
+
+            const labelX = document.createElement('a-text');
+            labelX.setAttribute('id', 'label-x');
+            labelX.setAttribute('value', 'Interaccion Academica ->');
+            labelX.setAttribute('align', 'center');
+            labelX.setAttribute('position', '0 -3.1 0');
+            labelX.setAttribute('color', '#60a5fa');
+            labelX.setAttribute('width', '4');
+            axisX.appendChild(labelX);
+
+            group.appendChild(axisX);
+
+            const axisY = document.createElement('a-entity');
+            axisY.setAttribute('id', 'axis-y');
+            axisY.setAttribute('line', 'start: 0 -2.8 0; end: 0 2.8 0; color: #94a3b8; opacity: 0.5');
+
+            const labelY = document.createElement('a-text');
+            labelY.setAttribute('id', 'label-y');
+            labelY.setAttribute('value', 'Cumplimiento Academico ->');
+            labelY.setAttribute('align', 'center');
+            labelY.setAttribute('position', '-3.5 0 0');
+            labelY.setAttribute('rotation', '0 0 90');
+            labelY.setAttribute('color', '#34d399');
+            labelY.setAttribute('width', '4');
+            axisY.appendChild(labelY);
+
+            group.appendChild(axisY);
+
+            // Capa para líneas de vecinos
+            const linksLayer = document.createElement('a-entity');
+            linksLayer.setAttribute('id', 'links-layer');
+            group.appendChild(linksLayer);
+
+            // Capa de zonas (Clusters)
+            const clustersLayer = document.createElement('a-entity');
+            clustersLayer.setAttribute('id', 'clusters-layer');
+            clustersLayer.setAttribute('visible', 'false');
+
+            const zones = [
+                { id: 'c1', pos: '1.25 1.25 -0.05', color: '#10b981' }, // Emerald
+                { id: 'c2', pos: '-1.25 1.25 -0.05', color: '#3b82f6' }, // Blue
+                { id: 'c3', pos: '1.25 -1.25 -0.05', color: '#f59e0b' }, // Amber
+                { id: 'c4', pos: '-1.25 -1.25 -0.05', color: '#f43f5e' }  // Rose
+            ];
+
+            zones.forEach(z => {
+                const p = document.createElement('a-plane');
+                p.setAttribute('position', z.pos);
+                p.setAttribute('width', '2.5');
+                p.setAttribute('height', '2.5');
+                p.setAttribute('color', z.color);
+                p.setAttribute('opacity', '0.15');
+                p.setAttribute('material', 'transparent: true; side: double');
+                clustersLayer.appendChild(p);
+            });
+            group.appendChild(clustersLayer);
+
+            // Puntos (Estudiantes)
+            const pointsLayer = document.createElement('a-entity');
+            pointsLayer.setAttribute('id', 'points-layer');
+
+            students.forEach(st => {
+                const pt = document.createElement('a-circle');
+                pt.setAttribute('id', st.id);
+                pt.setAttribute('class', 'clickable point');
+                pt.setAttribute('radius', '0.06');
+                pt.setAttribute('color', '#cbd5e1');
+                pt.setAttribute('position', `${st.x} ${st.y} 0.01`);
+
+                // Texto código estudiante
+                const txt = document.createElement('a-text');
+                txt.setAttribute('value', st.id);
+                txt.setAttribute('align', 'center');
+                txt.setAttribute('position', '0 -0.12 0');
+                txt.setAttribute('scale', '0.4 0.4 0.4');
+                txt.setAttribute('color', '#94a3b8');
+                pt.appendChild(txt);
+
+                pointsLayer.appendChild(pt);
+            });
+            group.appendChild(pointsLayer);
+
+            anchor.appendChild(group);
+        }
+
+        // --- 5. LOGICA DE MÓDULOS Y UI ---
+        function loadModule(index) {
+            currentModuleIndex = index;
+            const mod = modules[index];
+
+            document.getElementById('mod-indicator').innerText = mod.id;
+            document.getElementById('mod-title').innerText = mod.title;
+            document.getElementById('mod-content').innerHTML = mod.html;
+
+            document.getElementById('btn-prev').disabled = (index === 0);
+            document.getElementById('btn-next').disabled = (index === modules.length - 1);
+
+            if (mod.onEnter) mod.onEnter();
+        }
+
+        function nextModule() {
+            if (currentModuleIndex < modules.length - 1) loadModule(currentModuleIndex + 1);
+        }
+
+        function prevModule() {
+            if (currentModuleIndex > 0) loadModule(currentModuleIndex - 1);
+        }
+
+        // --- 6. FUNCIONES DE VIZUALIZACIÓN (ACCIONES MÓDULOS) ---
+        function hideAxesHighlight() { unhighlightAxes(); }
+        function hideClusters() { toggleClusters(false); }
+
+        function showAllPoints() {
+            const points = document.querySelectorAll('.point');
+            points.forEach(p => {
+                p.setAttribute('color', '#cbd5e1'); // Reset color
+                p.setAttribute('scale', '1 1 1');
+            });
+        }
+
+        function highlightAxes() {
+            document.getElementById('axis-x').setAttribute('line', 'color: #60a5fa; opacity: 1'); // Resaltar X
+            document.getElementById('axis-y').setAttribute('line', 'color: #34d399; opacity: 1'); // Resaltar Y
+            document.getElementById('label-x').setAttribute('color', '#93c5fd');
+            document.getElementById('label-y').setAttribute('color', '#6ee7b7');
+            document.getElementById('label-x').setAttribute('scale', '1.2 1.2 1.2');
+            document.getElementById('label-y').setAttribute('scale', '1.2 1.2 1.2');
+        }
+
+        function unhighlightAxes() {
+            document.getElementById('axis-x').setAttribute('line', 'color: #94a3b8; opacity: 0.5');
+            document.getElementById('axis-y').setAttribute('line', 'color: #94a3b8; opacity: 0.5');
+            document.getElementById('label-x').setAttribute('color', '#60a5fa');
+            document.getElementById('label-y').setAttribute('color', '#34d399');
+            document.getElementById('label-x').setAttribute('scale', '1 1 1');
+            document.getElementById('label-y').setAttribute('scale', '1 1 1');
+        }
+
+        function enableNeighborMode() {
+            neighborMode = true;
+        }
+
+        function disableNeighborMode() {
+            neighborMode = false;
+            hideNeighbors();
+        }
+
+        function hideNeighbors() {
+            const layer = document.getElementById('links-layer');
+            if (layer) layer.innerHTML = '';
+        }
+
+        function showClusterControls() {
+            document.getElementById('cluster-controls').classList.remove('hidden');
+        }
+
+        function hideClusterControls() {
+            document.getElementById('cluster-controls').classList.add('hidden');
+        }
+
+        function hidePanelsExceptControls() {
+            closeStudentPanel();
+            document.getElementById('comparison-panels').classList.add('hidden');
+        }
+
+        function toggleClusters(show) {
+            const layer = document.getElementById('clusters-layer');
+            if (layer) layer.setAttribute('visible', show ? 'true' : 'false');
+
+            const points = document.querySelectorAll('.point');
+            points.forEach(p => {
+                if (show) {
+                    const st = students.find(s => s.id === p.getAttribute('id'));
+                    if (st) {
+                        let col = '#cbd5e1';
+                        if (st.cluster === 1) col = '#10b981'; // Emerald
+                        if (st.cluster === 2) col = '#3b82f6'; // Blue
+                        if (st.cluster === 3) col = '#f59e0b'; // Amber
+                        if (st.cluster === 4) col = '#f43f5e'; // Rose
+                        p.setAttribute('color', col);
+                    }
+                } else {
+                    p.setAttribute('color', '#cbd5e1');
+                }
+            });
+        }
+
+        // Simula la selección de E027 en el módulo 5
+        function selectStudentE027() {
+            // Buscamos un estudiante del cluster 4 forzadamente para el ejemplo didáctico
+            let st = students.find(s => s.cluster === 4);
+            if (st) {
+                st.id = 'E027'; // Forzamos id para alinear con la historia
+                const pt = document.getElementById(st.id);
+                if (pt) {
+                    pt.setAttribute('scale', '1.5 1.5 1.5');
+                    pt.setAttribute('color', '#fff');
+                    openStudentPanel(st);
+                }
+            }
+        }
+
+        // --- 7. INTERACCIÓN Y PANEL DE ESTUDIANTE ---
+        function handlePointClick(el) {
+            const stId = el.getAttribute('id');
+            const st = students.find(s => s.id === stId);
+            if (!st) return;
+
+            // Reset scale of all
+            document.querySelectorAll('.point').forEach(p => p.setAttribute('scale', '1 1 1'));
+            // Highlight clicked
+            el.setAttribute('scale', '1.5 1.5 1.5');
+
+            if (neighborMode) {
+                drawNeighbors(st);
+            }
+
+            openStudentPanel(st);
+        }
+
+        function drawNeighbors(centerSt) {
+            const layer = document.getElementById('links-layer');
+            layer.innerHTML = ''; // Clear old links
+
+            // Calcular distancias euclidianas a todos
+            let dists = students.map(s => {
+                return {
+                    id: s.id,
+                    d: Math.sqrt(Math.pow(s.x - centerSt.x, 2) + Math.pow(s.y - centerSt.y, 2))
+                };
+            });
+
+            // Ordenar y tomar los 5 más cercanos (excluyendo a sí mismo que es d=0)
+            dists.sort((a, b) => a.d - b.d);
+            const neighbors = dists.slice(1, 6);
+
+            neighbors.forEach(n => {
+                const targetSt = students.find(s => s.id === n.id);
+                const line = document.createElement('a-entity');
+                line.setAttribute('line', `start: ${centerSt.x} ${centerSt.y} 0.01; end: ${targetSt.x} ${targetSt.y} 0.01; color: #fbbf24; opacity: 0.8`);
+                layer.appendChild(line);
+
+                // Resaltar vecino ligeramente
+                const np = document.getElementById(n.id);
+                if (np) np.setAttribute('scale', '1.2 1.2 1.2');
+            });
+        }
+
+        function openStudentPanel(st) {
+            document.getElementById('st-id').innerText = `Estudiante ${st.id}`;
+            document.getElementById('st-x-desc').innerText = st.x > 0 ? "Alto" : "Bajo";
+            document.getElementById('st-x-desc').className = `font-semibold ${st.x > 0 ? 'text-blue-600' : 'text-slate-500'}`;
+            document.getElementById('st-y-desc').innerText = st.y > 0 ? "Alto" : "Bajo";
+            document.getElementById('st-y-desc').className = `font-semibold ${st.y > 0 ? 'text-emerald-600' : 'text-slate-500'}`;
+
+            const ul = document.getElementById('st-vars');
+            ul.innerHTML = `
+                <li class="flex justify-between"><span>Asistencia:</span> <strong>${st.vars.asistencia}</strong></li>
+                <li class="flex justify-between"><span>Tareas entregadas:</span> <strong>${st.vars.tareas}</strong></li>
+                <li class="flex justify-between"><span>Participación:</span> <strong>${st.vars.participacion}</strong></li>
+                <li class="flex justify-between"><span>Tiempo en plataforma:</span> <strong>${st.vars.tiempo}</strong></li>
+                <li class="flex justify-between"><span>Puntualidad:</span> <strong>${st.vars.puntualidad}</strong></li>
+                <li class="flex justify-between"><span>Consultas al docente:</span> <strong>${st.vars.consultas}</strong></li>
+                <li class="flex justify-between"><span>Uso de recursos:</span> <strong>${st.vars.recursos}</strong></li>
+            `;
+
+            let interp = "";
+            if (st.x > 0 && st.y > 0) interp = "Este punto aparece en la zona superior derecha porque tiene alto nivel de interacción y alto cumplimiento. La IA lo agrupa con perfiles similares.";
+            else if (st.x < 0 && st.y > 0) interp = "Este punto aparece en la zona superior izquierda porque cumple con tareas/asistencia, pero su interacción es baja.";
+            else if (st.x > 0 && st.y < 0) interp = "Este punto aparece en la zona inferior derecha porque interactúa mucho, pero su cumplimiento normativo (tareas/asistencia) es bajo.";
+            else interp = "Este punto aparece en la zona inferior izquierda porque tiene bajo nivel de interacción y bajo nivel de cumplimiento. La IA no está prediciendo que el estudiante desaprobará, solo lo ubica cerca de estudiantes similares.";
+
+            document.getElementById('st-interpretation').innerText = `Interpretación: "${interp}"`;
+
+            document.getElementById('student-panel').classList.remove('hidden');
+        }
+
+        function closeStudentPanel() {
+            document.getElementById('student-panel').classList.add('hidden');
+        }
+
+
+
+
+        // Asignación segura de eventos
+        document.addEventListener('DOMContentLoaded', () => {
+            const bindEvent = (id, fn) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', fn);
+            };
+
+            bindEvent('btn-init-sim', () => initExperience('sim'));
+            bindEvent('btn-init-ar', () => requestAR());
+            bindEvent('btn-toggle-ar', () => requestAR());
+            bindEvent('btn-prev', () => prevModule());
+            bindEvent('btn-next', () => nextModule());
+            bindEvent('btn-close-student', () => closeStudentPanel());
+            bindEvent('btn-show-clusters', () => toggleClusters(true));
+            bindEvent('btn-hide-clusters', () => toggleClusters(false));
+        });
+    </script>
+</body>
+
+</html>
