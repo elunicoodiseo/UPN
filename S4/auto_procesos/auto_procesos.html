@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA EduFlow AR: Simulador de Automatización Administrativa Educativa</title>
+
+    <!-- Tailwind CSS para diseño moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',    /* Azul oscuro académico */
+                            card: '#1e293b',    /* Azul grisáceo para tarjetas */
+                            light: '#f1f5f9',   /* Gris claro */
+                            accent: '#fbbf24',  /* Dorado/Amarillo */
+                            blue: '#3b82f6',
+                            green: '#10b981',
+                            red: '#ef4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js para Dashboards -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- A-Frame para Realidad Aumentada (Cargado pero NO inicializa cámara sin <a-scene arjs>) -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fbbf24;
+        }
+
+        /* Componentes personalizados */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Ocultar elementos AR inicialmente */
+        #ar-container {
+            height: 60vh;
+            min-height: 400px;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+
+        /* Transiciones de pestañas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Rango sliders personalizados */
+        input[type=range] {
+            accent-color: #fbbf24;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-brand-accent selection:text-brand-dark">
+
+    <!-- Navegación -->
+    <nav class="fixed w-full z-50 glass-card border-b-0 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-robot text-brand-accent text-2xl"></i>
+                    <span class="font-bold text-xl tracking-tight text-white">RPA EduFlow <span
+                            class="text-brand-accent">AR</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4 text-sm font-medium">
+                        <a href="#inicio" class="hover:text-brand-accent px-3 py-2 transition-colors">Inicio</a>
+                        <a href="#conceptos" class="hover:text-brand-accent px-3 py-2 transition-colors">RPA+IA</a>
+                        <a href="#simuladores"
+                            class="hover:text-brand-accent px-3 py-2 transition-colors">Simuladores</a>
+                        <a href="#dashboard" class="hover:text-brand-accent px-3 py-2 transition-colors">Dashboard</a>
+                        <a href="#herramientas"
+                            class="hover:text-brand-accent px-3 py-2 transition-colors">Herramientas</a>
+                        <a href="#ar-experience"
+                            class="text-brand-dark bg-brand-accent hover:bg-yellow-300 px-4 py-2 rounded-full transition-all shadow-[0_0_15px_rgba(251,191,36,0.3)]">Experiencia
+                            AR</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Pantalla Inicial -->
+    <section id="inicio"
+        class="pt-32 pb-20 px-4 max-w-7xl mx-auto text-center min-h-[80vh] flex flex-col justify-center">
+        <div
+            class="inline-block mb-4 px-4 py-1 rounded-full border border-brand-accent text-brand-accent text-sm font-semibold tracking-wide">
+            Simulador de Automatización Administrativa Educativa
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+            Automatización de Procesos Administrativos <br class="hidden md:block"> con <span
+                class="accent-gradient">RPA e IA</span>
+        </h1>
+        <h2 class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-light">
+            Simula admisiones, recursos humanos y asignación de aulas con Inteligencia Artificial.
+        </h2>
+        <p class="text-gray-400 mb-10 max-w-4xl mx-auto leading-relaxed text-lg">
+            La automatización de procesos mediante RPA e Inteligencia Artificial <strong class="text-white">no busca
+                reemplazar al ser humano</strong>, sino liberarlo de la fricción operativa para devolverle su rol
+            estratégico, humano y pedagógico en la educación. Explora cómo automatizar tareas basadas en reglas mientras
+            mantienes la supervisión humana en casos excepcionales.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#simuladores"
+                class="bg-brand-blue hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-sliders"></i> Explorar Simulador
+            </a>
+            <a href="#ar-experience"
+                class="bg-brand-card border border-brand-accent hover:bg-slate-800 text-brand-accent font-bold py-3 px-8 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-vr-cardboard"></i> Iniciar experiencia AR
+            </a>
+            <a href="#caso-practico"
+                class="bg-transparent hover:bg-white/5 border border-gray-500 text-white font-bold py-3 px-8 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-microscope"></i> Ver Caso Práctico
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. Introducción Dinámica -->
+    <section class="py-16 bg-slate-900 px-4 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">¿Qué puede automatizar una institución educativa?</h2>
+                <p class="text-gray-400">Selecciona un área para descubrir su potencial.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Tarjeta 1 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] transition-all cursor-pointer group"
+                    onclick="toggleCardDetails('details-adm')">
+                    <div
+                        class="w-14 h-14 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-user-graduate text-brand-blue text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Admisiones</h3>
+                    <p class="text-gray-400 text-sm mb-4">Registro de postulantes, validación documental, revisión de
+                        formularios y notificaciones.</p>
+                    <div id="details-adm" class="hidden mt-4 pt-4 border-t border-slate-700 text-sm">
+                        <ul class="text-gray-300 space-y-2 mb-4">
+                            <li><i class="fa-solid fa-check text-brand-green mr-2"></i><strong>Automatizable:</strong>
+                                Extracción OCR, validación de DNI.</li>
+                            <li><i
+                                    class="fa-solid fa-triangle-exclamation text-brand-accent mr-2"></i><strong>Riesgo:</strong>
+                                Rechazo de expedientes por errores menores de tipeo.</li>
+                            <li><i class="fa-solid fa-star text-brand-accent mr-2"></i><strong>Beneficio:</strong>
+                                Respuesta inmediata al postulante.</li>
+                        </ul>
+                        <a href="#sim-admisiones"
+                            class="text-brand-blue hover:text-blue-400 font-semibold text-sm">Probar Simulador <i
+                                class="fa-solid fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all cursor-pointer group"
+                    onclick="toggleCardDetails('details-hr')">
+                    <div
+                        class="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-users-gear text-brand-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Recursos Humanos</h3>
+                    <p class="text-gray-400 text-sm mb-4">Contratos, asistencia, nómina, legajos, capacitaciones y
+                        vacaciones.</p>
+                    <div id="details-hr" class="hidden mt-4 pt-4 border-t border-slate-700 text-sm">
+                        <ul class="text-gray-300 space-y-2 mb-4">
+                            <li><i class="fa-solid fa-check text-brand-green mr-2"></i><strong>Automatizable:</strong>
+                                Cruce de horas vs. marcaciones biométricas.</li>
+                            <li><i
+                                    class="fa-solid fa-triangle-exclamation text-brand-accent mr-2"></i><strong>Riesgo:</strong>
+                                Descuentos automáticos injustificados por fallos del reloj.</li>
+                            <li><i class="fa-solid fa-star text-brand-accent mr-2"></i><strong>Beneficio:</strong>
+                                Nómina sin errores y a tiempo.</li>
+                        </ul>
+                        <a href="#sim-rrhh" class="text-brand-green hover:text-green-400 font-semibold text-sm">Probar
+                            Simulador <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] transition-all cursor-pointer group"
+                    onclick="toggleCardDetails('details-aulas')">
+                    <div
+                        class="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chalkboard-user text-brand-red text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Asignación de Aulas</h3>
+                    <p class="text-gray-400 text-sm mb-4">Horarios, aforo, equipamiento, cruces, laboratorios y
+                        reasignaciones en tiempo real.</p>
+                    <div id="details-aulas" class="hidden mt-4 pt-4 border-t border-slate-700 text-sm">
+                        <ul class="text-gray-300 space-y-2 mb-4">
+                            <li><i class="fa-solid fa-check text-brand-green mr-2"></i><strong>Automatizable:</strong>
+                                Algoritmo de emparejamiento de requerimientos.</li>
+                            <li><i
+                                    class="fa-solid fa-triangle-exclamation text-brand-accent mr-2"></i><strong>Riesgo:</strong>
+                                Asignar aulas accesibles solo a grupos sin necesidades, dejando fuera a quien lo
+                                requiere.</li>
+                            <li><i class="fa-solid fa-star text-brand-accent mr-2"></i><strong>Beneficio:</strong> 0% de
+                                cruce de horarios.</li>
+                        </ul>
+                        <a href="#sim-aulas" class="text-brand-red hover:text-red-400 font-semibold text-sm">Probar
+                            Simulador <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Conceptos Clave -->
+    <section id="conceptos" class="py-16 max-w-7xl mx-auto px-4">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold mb-4">RPA + IA: reglas, datos y decisiones</h2>
+            <p class="text-gray-400 max-w-3xl mx-auto">La RPA ejecuta tareas repetitivas basadas en reglas. La IA
+                interpreta datos, clasifica información y detecta patrones. La hiperautomatización integra ambas para
+                procesos de extremo a extremo.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="glass-card p-6 rounded-xl border-l-4 border-brand-blue">
+                <h3 class="text-xl font-bold mb-4 text-brand-blue"><i class="fa-solid fa-robot mr-2"></i> Columna RPA
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                    <li><i class="fa-solid fa-angle-right text-brand-accent mr-2"></i> Ejecuta Reglas fijas y lógicas
+                        condicionales.</li>
+                    <li><i class="fa-solid fa-angle-right text-brand-accent mr-2"></i> Realiza Validaciones exactas.
+                    </li>
+                    <li><i class="fa-solid fa-angle-right text-brand-accent mr-2"></i> Copia de datos entre sistemas sin
+                        API (Scraping).</li>
+                    <li><i class="fa-solid fa-angle-right text-brand-accent mr-2"></i> Envío masivo de notificaciones.
+                    </li>
+                    <li><i class="fa-solid fa-angle-right text-brand-accent mr-2"></i> Procesamiento 24/7 sin fatiga.
+                    </li>
+                </ul>
+            </div>
+            <div class="glass-card p-6 rounded-xl border-l-4 border-brand-accent">
+                <h3 class="text-xl font-bold mb-4 text-brand-accent"><i class="fa-solid fa-brain mr-2"></i> Columna IA
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                    <li><i class="fa-solid fa-angle-right text-brand-blue mr-2"></i> Lectura óptica inteligente (OCR y
+                        NLP).</li>
+                    <li><i class="fa-solid fa-angle-right text-brand-blue mr-2"></i> Clasificación documental semántica.
+                    </li>
+                    <li><i class="fa-solid fa-angle-right text-brand-blue mr-2"></i> Detección de anomalías o fraudes.
+                    </li>
+                    <li><i class="fa-solid fa-angle-right text-brand-blue mr-2"></i> Priorización de casos urgentes.
+                    </li>
+                    <li><i class="fa-solid fa-angle-right text-brand-blue mr-2"></i> Recomendaciones para el supervisor
+                        humano.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mini Simulación Conceptos -->
+        <div class="glass-card p-6 rounded-xl text-center max-w-2xl mx-auto">
+            <h4 class="font-bold mb-4">Mini Simulación: Identifica la Tecnología</h4>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <select id="mini-sim-select"
+                    class="bg-brand-dark border border-slate-600 rounded p-2 text-white w-full sm:w-auto focus:outline-none focus:border-brand-accent">
+                    <option value="" disabled selected>Elige una tarea administrativa...</option>
+                    <option value="rpa">Copiar datos del Excel al Sistema de Matrícula</option>
+                    <option value="ia">Leer una foto borrosa del DNI y extraer el nombre</option>
+                    <option value="rpa-ia">Leer certificado, validar promedio y enviar correo</option>
+                    <option value="humano">Resolver queja de estudiante por cobro indebido</option>
+                    <option value="rpa">Calcular nómina estándar según horas registradas</option>
+                    <option value="ia">Detectar inconsistencia en firma digitalizada</option>
+                </select>
+                <button onclick="resolverMiniSim()"
+                    class="bg-brand-accent text-brand-dark px-4 py-2 rounded font-bold hover:bg-yellow-300 transition-colors">Analizar</button>
+            </div>
+            <div id="mini-sim-result" class="mt-4 p-3 rounded font-bold hidden text-lg"></div>
+        </div>
+    </section>
+
+    <!-- 4. Simulador General de Automatización -->
+    <section id="simuladores" class="py-16 bg-slate-900 border-y border-slate-800 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-2">Simulador de Impacto de la Automatización</h2>
+            <p class="text-gray-400 mb-8">Modifica las variables y observa cómo impacta en la carga operativa y los
+                riesgos institucionales.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controles -->
+                <div class="lg:col-span-4 glass-card p-6 rounded-xl">
+                    <h3 class="text-lg font-bold border-b border-slate-700 pb-2 mb-4"><i
+                            class="fa-solid fa-sliders text-brand-accent mr-2"></i> Variables</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="flex justify-between text-sm text-gray-300 mb-1">
+                                Trámites por semana: <span id="val-tramites" class="font-bold text-white">500</span>
+                            </label>
+                            <input type="range" id="sim-tramites" min="10" max="2000" value="500" class="w-full">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm text-gray-300 mb-1">
+                                Tiempo manual (min/trámite): <span id="val-tiempo"
+                                    class="font-bold text-white">30</span>
+                            </label>
+                            <input type="range" id="sim-tiempo" min="5" max="120" value="30" class="w-full">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm text-gray-300 mb-1">
+                                Tasa de error manual (%): <span id="val-error" class="font-bold text-white">15%</span>
+                            </label>
+                            <input type="range" id="sim-error" min="0" max="30" value="15" class="w-full">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm text-gray-300 mb-1">
+                                Porcentaje a automatizar (%): <span id="val-rpa"
+                                    class="font-bold text-brand-accent">70%</span>
+                            </label>
+                            <input type="range" id="sim-rpa" min="0" max="100" value="70" class="w-full">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm text-gray-300 mb-1">
+                                Casos Excepcionales (%): <span id="val-exc" class="font-bold text-brand-red">10%</span>
+                            </label>
+                            <input type="range" id="sim-exc" min="0" max="40" value="10" class="w-full">
+                        </div>
+                        <div class="pt-2">
+                            <label class="block text-sm text-gray-300 mb-1">Área a simular:</label>
+                            <select id="sim-area"
+                                class="bg-brand-dark border border-slate-600 rounded p-2 text-white w-full focus:outline-none focus:border-brand-accent">
+                                <option>Admisiones</option>
+                                <option>Recursos Humanos</option>
+                                <option>Asignación de aulas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados y Alertas -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                            <div class="text-gray-400 text-xs uppercase mb-1">Horas Manuales</div>
+                            <div id="res-hrs-man" class="text-2xl font-bold text-white">250h</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                            <div class="text-gray-400 text-xs uppercase mb-1">Horas Ahorradas</div>
+                            <div id="res-hrs-aho" class="text-2xl font-bold text-brand-green">131h</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                            <div class="text-gray-400 text-xs uppercase mb-1">Errores Evitados</div>
+                            <div id="res-err-evi" class="text-2xl font-bold text-brand-blue">42</div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                            <div class="text-gray-400 text-xs uppercase mb-1">A Revisión Humana</div>
+                            <div id="res-rev-hum" class="text-2xl font-bold text-brand-accent">50</div>
+                        </div>
+                    </div>
+
+                    <!-- Alerta Dinámica -->
+                    <div id="alerta-riesgo"
+                        class="hidden p-4 rounded-lg flex items-start gap-3 bg-red-900/50 border border-red-500 text-red-200 transition-all">
+                        <i class="fa-solid fa-triangle-exclamation mt-1"></i>
+                        <div>
+                            <strong class="block mb-1 text-red-400">Riesgo Alto de Automatización Rígida</strong>
+                            <span>La automatización es muy alta para la gran cantidad de casos excepcionales. Se
+                                recomienda fortalecer la revisión humana estratégica para evitar que el sistema bloquee
+                                injustamente solicitudes válidas.</span>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Chart.js -->
+                    <div class="glass-card p-4 rounded-xl h-64 relative w-full">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Simulador de Admisiones -->
+    <section id="sim-admisiones" class="py-16 max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-2">Simulador de Admisiones Automatizadas</h2>
+        <p class="text-gray-400 mb-8 max-w-3xl">La RPA transforma el embudo de admisiones en una experiencia fluida e
+            inmediata. Configura el escenario de matrícula ajustando el volumen de postulantes y la calidad de los
+            documentos. Observa cómo la Inteligencia Artificial (OCR) y los bots asumen el trabajo repetitivo de
+            validación, dejando al personal humano únicamente los casos complejos.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-card p-6 rounded-xl">
+                <div class="space-y-4">
+                    <div>
+                        <label class="flex justify-between text-sm mb-1">Postulantes: <span id="adm-val-post"
+                                class="font-bold">500</span></label>
+                        <input type="range" id="adm-post" min="50" max="5000" value="500" class="w-full">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-sm mb-1">Docs por postulante: <span id="adm-val-doc"
+                                class="font-bold">4</span></label>
+                        <input type="range" id="adm-doc" min="1" max="10" value="4" class="w-full">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-sm mb-1">Docs Incompletos (%): <span id="adm-val-inc"
+                                class="font-bold text-brand-accent">15%</span></label>
+                        <input type="range" id="adm-inc" min="0" max="50" value="15" class="w-full">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-sm mb-1">Inconsistencias (Tipeo) (%): <span
+                                id="adm-val-incons" class="font-bold text-brand-red">5%</span></label>
+                        <input type="range" id="adm-incons" min="0" max="30" value="5" class="w-full">
+                    </div>
+                    <div class="pt-2">
+                        <label class="block text-sm mb-1">Nivel de validación:</label>
+                        <select id="adm-nivel"
+                            class="bg-brand-dark border border-slate-600 rounded p-2 text-white w-full">
+                            <option value="1">Manual</option>
+                            <option value="2">RPA Básico</option>
+                            <option value="3">RPA + OCR</option>
+                            <option value="4" selected>RPA + OCR + IA</option>
+                        </select>
+                    </div>
+                    <div class="pt-2 flex items-center gap-2">
+                        <input type="checkbox" id="adm-humano" checked class="w-5 h-5 accent-brand-accent">
+                        <label for="adm-humano" class="text-sm">Activar revisión humana para excepciones</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flujo Visual y Resultados -->
+            <div class="glass-card p-6 rounded-xl flex flex-col justify-center">
+
+                <div id="adm-alert-rechazo"
+                    class="hidden mb-4 p-3 bg-red-900/40 border border-red-500 text-red-300 text-sm rounded">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> <strong>Advertencia:</strong> Rechazar
+                    automáticamente expedientes con inconsistencias puede excluir casos válidos. Active revisión humana.
+                </div>
+
+                <div class="flex justify-between items-center text-center text-sm mb-6 relative">
+                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-700 -z-10 -translate-y-1/2"></div>
+
+                    <div class="bg-brand-card p-2 rounded-lg border border-slate-600"><i
+                            class="fa-solid fa-globe text-brand-blue block text-xl mb-1"></i>Web</div>
+                    <i class="fa-solid fa-chevron-right text-slate-500 bg-brand-dark p-1"></i>
+                    <div class="bg-brand-card p-2 rounded-lg border border-slate-600"><i
+                            class="fa-solid fa-file-image text-brand-accent block text-xl mb-1"></i>OCR</div>
+                    <i class="fa-solid fa-chevron-right text-slate-500 bg-brand-dark p-1"></i>
+                    <div class="bg-brand-card p-2 rounded-lg border border-slate-600"><i
+                            class="fa-solid fa-robot text-brand-green block text-xl mb-1"></i>Validar</div>
+                    <i class="fa-solid fa-chevron-right text-slate-500 bg-brand-dark p-1"></i>
+                    <div class="bg-brand-card p-2 rounded-lg border border-brand-accent"><i
+                            class="fa-solid fa-user-check text-brand-accent block text-xl mb-1"></i>Filtro</div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800 p-3 rounded text-center">
+                        <div class="text-xs text-gray-400">Aprobados Directos</div>
+                        <div id="adm-res-apr" class="text-xl font-bold text-brand-green">400</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded text-center">
+                        <div class="text-xs text-gray-400">A Revisión Humana</div>
+                        <div id="adm-res-rev" class="text-xl font-bold text-brand-accent">100</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded text-center col-span-2">
+                        <div class="text-xs text-gray-400">Tiempo de Respuesta Postulante</div>
+                        <div id="adm-res-tiempo" class="text-xl font-bold text-white">Inmediato (Minutos)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Simulador Validación Documental -->
+    <section class="py-16 bg-slate-900 border-t border-slate-800 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-2 text-center">Validación Documental con OCR + RPA + IA</h2>
+            <p class="text-center text-gray-400 mb-8 px-4">
+                Simula cómo un "robot trabajador" extrae datos de una imagen (OCR), los compara con bases de datos
+                nacionales (RPA) e interpreta firmas o certificados digitales para aprobar o rechazar documentos al
+                instante, reduciendo el fraude y el tiempo de espera.
+            </p>
+            <div class="glass-card p-6 rounded-xl flex flex-col md:flex-row gap-8">
+                <form id="form-validacion" class="flex-1 space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Datos Extraídos por OCR</label>
+                        <input type="text" value="Juan Pérez" disabled
+                            class="w-full bg-slate-800 border border-slate-700 p-2 rounded text-slate-300 text-sm mb-2">
+                        <input type="text" value="DNI: 78945612" disabled
+                            class="w-full bg-slate-800 border border-slate-700 p-2 rounded text-slate-300 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm mb-1">Doc. Cargado</label>
+                            <select id="val-completo"
+                                class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                <option value="si">Completo</option>
+                                <option value="no">Incompleto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Cruce BD (Coincidencia)</label>
+                            <select id="val-coincide"
+                                class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                <option value="si">Sí (100%)</option>
+                                <option value="no">No (Difiere una letra)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm mb-1">Firma/Certificado Inteligente Válido</label>
+                            <select id="val-valido"
+                                class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                <option value="si">Sí, auténtico</option>
+                                <option value="no">No, formato inválido/adulterado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-brand-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors mt-4">
+                        Validar Expediente
+                    </button>
+                </form>
+
+                <div class="flex-1 flex flex-col justify-center">
+                    <div id="val-resultado"
+                        class="p-6 rounded-xl border border-slate-600 bg-slate-800 text-center transition-colors duration-300">
+                        <i class="fa-solid fa-file-shield text-4xl text-gray-500 mb-4 block"></i>
+                        <h4 class="text-lg font-bold text-gray-300">Esperando expediente...</h4>
+                        <p class="text-sm text-gray-400 mt-2">Haz clic en validar para que el motor RPA analice el caso.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Simulador RRHH -->
+    <section id="sim-rrhh" class="py-16 max-w-7xl mx-auto px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold mb-2">Simulador RPA para Recursos Humanos</h2>
+            <p class="text-gray-400">Automatiza el back-office para dejar de procesar papeles y comenzar a desarrollar
+                talento.</p>
+        </div>
+
+        <div class="glass-card rounded-xl overflow-hidden">
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-700 overflow-x-auto">
+                <button
+                    class="tab-btn flex-1 py-3 px-4 font-semibold text-brand-accent bg-slate-800/50 border-b-2 border-brand-accent transition-colors"
+                    data-target="tab-contratos">Contratos</button>
+                <button
+                    class="tab-btn flex-1 py-3 px-4 font-semibold text-gray-400 hover:text-white transition-colors border-b-2 border-transparent"
+                    data-target="tab-asistencia">Asistencia</button>
+                <button
+                    class="tab-btn flex-1 py-3 px-4 font-semibold text-gray-400 hover:text-white transition-colors border-b-2 border-transparent"
+                    data-target="tab-nomina">Nómina</button>
+                <button
+                    class="tab-btn flex-1 py-3 px-4 font-semibold text-gray-400 hover:text-white transition-colors border-b-2 border-transparent"
+                    data-target="tab-legajos">Legajos</button>
+            </div>
+
+            <!-- Contenidos -->
+            <div class="p-6">
+                <!-- Contratos -->
+                <div id="tab-contratos" class="tab-content active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-1">Docentes Nuevos a Procesar:</label>
+                                <input type="number" id="rrhh-num-docentes" value="15"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="rrhh-firma" checked class="w-4 h-4"> <label
+                                    class="text-sm">Requiere Firma Digital Automática</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="rrhh-docs-ok" checked class="w-4 h-4"> <label
+                                    class="text-sm">Todos subieron DNI y CV completo</label>
+                            </div>
+                            <button onclick="simularContratos()"
+                                class="bg-brand-green hover:bg-green-600 text-white px-4 py-2 rounded text-sm font-bold w-full mt-2">Generar
+                                Contratos Lote</button>
+                        </div>
+                        <div id="res-contratos"
+                            class="bg-slate-800 p-4 rounded border border-slate-700 flex flex-col justify-center">
+                            <p class="text-gray-400 text-center">Presiona generar para simular.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asistencia -->
+                <div id="tab-asistencia" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-1">Días a Conciliar (Mes):</label>
+                                <input type="number" id="rrhh-dias-asist" value="30"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Tipo de Marcación Principal:</label>
+                                <select id="rrhh-tipo-marcacion"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                                    <option value="biometrico">Reloj Biométrico (Huella/Facial)</option>
+                                    <option value="app">App Móvil (Geolocalización)</option>
+                                    <option value="web">Plataforma Web (Remoto)</option>
+                                </select>
+                            </div>
+                            <button onclick="simularAsistencia()"
+                                class="bg-brand-blue hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold w-full mt-2">Conciliar
+                                Asistencia Automáticamente</button>
+                        </div>
+                        <div id="res-asistencia"
+                            class="bg-slate-800 p-4 rounded border border-slate-700 flex flex-col justify-center">
+                            <p class="text-gray-400 text-center">Presiona conciliar para simular el cruce de datos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nómina -->
+                <div id="tab-nomina" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-1">Colaboradores a procesar:</label>
+                                <input type="number" id="rrhh-num-nomina" value="1500"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="rrhh-nomina-deducciones" checked class="w-4 h-4"> <label
+                                    class="text-sm">Calcular deducciones de ley automáticamente</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="rrhh-nomina-extras" checked class="w-4 h-4"> <label
+                                    class="text-sm">Incluir cálculo de horas extra aprobadas</label>
+                            </div>
+                            <button onclick="simularNomina()"
+                                class="bg-brand-green hover:bg-green-600 text-white px-4 py-2 rounded text-sm font-bold w-full mt-2">Procesar
+                                Nómina Mensual</button>
+                        </div>
+                        <div id="res-nomina"
+                            class="bg-slate-800 p-4 rounded border border-slate-700 flex flex-col justify-center">
+                            <p class="text-gray-400 text-center">Presiona procesar para iniciar el cálculo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legajos -->
+                <div id="tab-legajos" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-1">Nuevos grados académicos (PDFs subidos):</label>
+                                <input type="number" id="rrhh-num-legajos" value="5"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Motor de Extracción:</label>
+                                <select id="rrhh-motor-ocr"
+                                    class="w-full bg-brand-dark border border-slate-600 p-2 rounded text-white">
+                                    <option value="ia">RPA + IA Documental Avanzada</option>
+                                    <option value="basico">OCR Básico (Zonal)</option>
+                                </select>
+                            </div>
+                            <button onclick="simularLegajos()"
+                                class="bg-brand-accent hover:bg-yellow-600 text-brand-dark px-4 py-2 rounded text-sm font-bold w-full mt-2">Validar
+                                y Actualizar Legajos</button>
+                        </div>
+                        <div id="res-legajos"
+                            class="bg-slate-800 p-4 rounded border border-slate-700 flex flex-col justify-center">
+                            <p class="text-gray-400 text-center">Presiona validar para activar la lectura automática.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Simulador de Aulas & 9. Reasignación -->
+    <section id="sim-aulas" class="py-16 bg-slate-900 border-t border-slate-800 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold mb-2">Simulador Inteligente de Aulas y Espacios</h2>
+                <p class="text-gray-400">La RPA resuelve el rompecabezas de espacio, capacidad, equipamiento e
+                    imprevistos.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 8. Asignación Regular -->
+                <div class="glass-card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 text-brand-accent border-b border-slate-700 pb-2">Nueva Asignación
+                    </h3>
+                    <div class="space-y-4 mb-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm mb-1">Curso:</label>
+                                <select class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                    <option>Matemática Discreta</option>
+                                    <option>Laboratorio de Física</option>
+                                    <option>Clase Híbrida Dirección</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Estudiantes: <span id="aula-val-est">40</span></label>
+                                <input type="range" id="aula-est" min="5" max="120" value="40" class="w-full mt-2">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Requerimientos Tecnológicos:</label>
+                            <div class="flex flex-wrap gap-3">
+                                <label
+                                    class="text-sm bg-slate-800 px-2 py-1 rounded border border-slate-600 flex items-center gap-2 cursor-pointer hover:border-brand-blue"><input
+                                        type="checkbox" id="req-proy" checked> Proyector</label>
+                                <label
+                                    class="text-sm bg-slate-800 px-2 py-1 rounded border border-slate-600 flex items-center gap-2 cursor-pointer hover:border-brand-blue"><input
+                                        type="checkbox" id="req-lab"> Equip. Lab</label>
+                                <label
+                                    class="text-sm bg-slate-800 px-2 py-1 rounded border border-slate-600 flex items-center gap-2 cursor-pointer hover:border-brand-blue"><input
+                                        type="checkbox" id="req-cam"> Cámara Híbrida</label>
+                            </div>
+                        </div>
+                        <button onclick="asignarAula()"
+                            class="w-full bg-brand-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors">Buscar
+                            y Asignar Aula</button>
+                    </div>
+                    <div id="res-aula" class="p-4 bg-slate-800 border border-slate-700 rounded-lg hidden">
+                        <!-- Result injected here -->
+                    </div>
+                </div>
+
+                <!-- 9. Reasignación por Imprevisto -->
+                <div class="glass-card p-6 rounded-xl border-l-4 border-brand-red">
+                    <h3 class="text-xl font-bold mb-4 text-brand-red border-b border-slate-700 pb-2">Gestión de
+                        Imprevistos (Tiempo Real)</h3>
+                    <p class="text-sm text-gray-400 mb-4">Simula un corte de energía o falla de equipo. El RPA busca la
+                        mejor alternativa y notifica a todos instantáneamente.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-1">Tipo de Imprevisto:</label>
+                            <select id="imp-tipo"
+                                class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                <option>Mantenimiento no programado (Fuga de agua)</option>
+                                <option>Falla crítica de Proyector principal</option>
+                                <option>Sobrecupo inesperado (unión de grupos)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Aula Afectada:</label>
+                            <select id="imp-aula"
+                                class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white">
+                                <option>Aula A101 (En curso)</option>
+                                <option>Auditorio Principal D100</option>
+                            </select>
+                        </div>
+                        <button onclick="resolverImprevisto()"
+                            class="w-full bg-brand-red hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors mt-2"><i
+                                class="fa-solid fa-bolt mr-2"></i> Resolver y Notificar</button>
+
+                        <!-- Terminal / Log de notificaciones -->
+                        <div class="bg-black p-3 rounded font-mono text-xs text-green-400 h-24 overflow-y-auto mt-4 border border-slate-700"
+                            id="imp-log">
+                            > Sistema en espera...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Dashboard Dinámico -->
+    <section id="dashboard" class="py-16 max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-2 text-center">Dashboard Ejecutivo</h2>
+        <p class="text-gray-400 mb-8 text-center">Visualiza el estado de la institución en tiempo real según las
+            simulaciones ejecutadas.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-card p-4 rounded-xl">
+                <h3 class="text-center font-bold mb-2 text-sm text-gray-300">Flujo de Trámites Semanales</h3>
+                <canvas id="dashBarChart"></canvas>
+            </div>
+            <div class="glass-card p-4 rounded-xl flex justify-center items-center">
+                <div class="w-2/3">
+                    <h3 class="text-center font-bold mb-2 text-sm text-gray-300">Estado Resolutivo (Automático vs
+                        Humano)</h3>
+                    <canvas id="dashDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10.5 Herramientas del Mercado -->
+    <section id="herramientas" class="py-16 border-t border-slate-800 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Herramientas del Mercado (RPA + IA)</h2>
+                <p class="text-gray-400 max-w-3xl mx-auto">Conoce las plataformas líderes de hiperautomatización que las
+                    instituciones educativas utilizan para transformar sus procesos administrativos en el mundo real.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- UiPath -->
+                <div
+                    class="glass-card rounded-xl flex flex-col hover:-translate-y-2 transition-transform duration-300 border-t-4 border-blue-500">
+                    <div class="p-6 flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">UiPath</h3>
+                            <i class="fa-solid fa-bolt text-blue-500 text-2xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4">Líder global en RPA. Destaca por su plataforma "Document
+                            Understanding" (IA + OCR) ideal para procesar expedientes de admisión masivos.</p>
+                        <ul class="text-xs text-gray-300 space-y-2">
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Studio intuitivo (Low-code)</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Fuerte integración con IA</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> UiPath Academy (Educativo)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-b-xl border-t border-slate-700">
+                        <p class="text-xs text-brand-accent font-bold mb-2">Ejemplo: Admisión Masiva</p>
+                        <div class="flex items-center justify-between text-xs text-gray-300">
+                            <div class="text-center"><i
+                                    class="fa-solid fa-file-pdf block mb-1 text-red-400 text-lg"></i>PDFs Web</div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-robot block mb-1 text-blue-400 text-lg"></i>Doc. Und.</div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-server block mb-1 text-green-400 text-lg"></i>ERP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Power Automate -->
+                <div
+                    class="glass-card rounded-xl flex flex-col hover:-translate-y-2 transition-transform duration-300 border-t-4 border-blue-400">
+                    <div class="p-6 flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Power Automate</h3>
+                            <i class="fa-brands fa-microsoft text-blue-400 text-2xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4">Solución de Microsoft. Altamente recomendable para
+                            instituciones que ya utilizan Office 365 y Teams. Integra AI Builder nativamente.</p>
+                        <ul class="text-xs text-gray-300 space-y-2">
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Ecosistema Microsoft 365</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> AI Builder integrado</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Costo accesible en educación
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-b-xl border-t border-slate-700">
+                        <p class="text-xs text-brand-accent font-bold mb-2">Ejemplo: Aprobación Becas</p>
+                        <div class="flex items-center justify-between text-xs text-gray-300">
+                            <div class="text-center"><i
+                                    class="fa-brands fa-wpforms block mb-1 text-purple-400 text-lg"></i>Forms</div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-envelope-open-text block mb-1 text-blue-400 text-lg"></i>Approvals
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-brands fa-teamspeak block mb-1 text-indigo-400 text-lg"></i>Teams</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automation Anywhere -->
+                <div
+                    class="glass-card rounded-xl flex flex-col hover:-translate-y-2 transition-transform duration-300 border-t-4 border-yellow-500">
+                    <div class="p-6 flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Automation 360</h3>
+                            <i class="fa-solid fa-infinity text-yellow-500 text-2xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4">Plataforma nativa en la nube de Automation Anywhere.
+                            Excelente para escalar procesos de RRHH distribuidos en múltiples campus.</p>
+                        <ul class="text-xs text-gray-300 space-y-2">
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Arquitectura Web/Cloud</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> IQ Bot (Extracción cognitiva)
+                            </li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Rápida implementación</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-b-xl border-t border-slate-700">
+                        <p class="text-xs text-brand-accent font-bold mb-2">Ejemplo: RRHH Multicampus</p>
+                        <div class="flex items-center justify-between text-xs text-gray-300">
+                            <div class="text-center"><i
+                                    class="fa-solid fa-building-user block mb-1 text-slate-400 text-lg"></i>Sedes</div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-cloud block mb-1 text-yellow-400 text-lg"></i>IQ Bot</div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-file-invoice block mb-1 text-green-400 text-lg"></i>Nómina</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blue Prism -->
+                <div
+                    class="glass-card rounded-xl flex flex-col hover:-translate-y-2 transition-transform duration-300 border-t-4 border-cyan-500">
+                    <div class="p-6 flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Blue Prism</h3>
+                            <i class="fa-solid fa-gem text-cyan-500 text-2xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-4">Enfoque empresarial, de máxima seguridad (SS&C). Ideal
+                            para
+                            procesos centrales, finanzas de la universidad y auditoría estricta.</p>
+                        <ul class="text-xs text-gray-300 space-y-2">
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Máxima seguridad</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Escalabilidad centralizada</li>
+                            <li><i class="fa-solid fa-check text-brand-green mr-1"></i> Objetos reutilizables</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800/80 p-4 rounded-b-xl border-t border-slate-700">
+                        <p class="text-xs text-brand-accent font-bold mb-2">Ejemplo: Auditoría Financiera</p>
+                        <div class="flex items-center justify-between text-xs text-gray-300">
+                            <div class="text-center"><i
+                                    class="fa-solid fa-building-columns block mb-1 text-cyan-400 text-lg"></i>Bancos
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-shield-halved block mb-1 text-brand-accent text-lg"></i>Audit Bot
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-600"></i>
+                            <div class="text-center"><i
+                                    class="fa-solid fa-chart-pie block mb-1 text-green-400 text-lg"></i>Reporte</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. Experiencia AR -->
+    <section id="ar-experience" class="py-20 bg-slate-900 border-t-2 border-brand-accent px-4 relative overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-accent opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-brand-blue opacity-5 rounded-full blur-3xl"></div>
+
+        <div class="max-w-5xl mx-auto relative z-10 text-center">
+            <h2 class="text-4xl font-extrabold mb-4 text-white">Explora la Automatización en <span
+                    class="text-brand-accent">Realidad Aumentada</span></h2>
+            <p class="text-lg text-gray-400 mb-8 max-w-3xl mx-auto">
+                Al iniciar la experiencia AR, podrás observar un campus administrativo virtual flotando frente a ti.
+                Verás el flujo de datos entre el motor RPA, admisiones y aulas. <br><br>
+                <strong class="text-white">Importante:</strong> La cámara solo se activará cuando presiones el botón
+                inferior. Necesitarás conceder permisos.
+            </p>
+
+            <button id="btn-start-ar"
+                class="bg-brand-accent text-brand-dark hover:bg-yellow-300 text-xl font-bold py-4 px-10 rounded-full transition-transform transform hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.4)] mb-8">
+                <i class="fa-solid fa-camera mr-2"></i> Iniciar experiencia AR
+            </button>
+
+            <!-- AR Contenedor (Oculto hasta hacer clic) -->
+            <div id="ar-wrapper" class="hidden relative">
+                <!-- Panel de Control Flotante para la AR -->
+                <div
+                    class="absolute z-50 bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/80 backdrop-blur border border-slate-700 p-4 rounded-xl flex gap-3 flex-wrap justify-center w-[90%] md:w-auto">
+                    <button onclick="arSimular('admisiones')"
+                        class="bg-brand-blue text-white px-3 py-2 rounded text-sm hover:bg-blue-600"><i
+                            class="fa-solid fa-file-export mr-1"></i> Flujo Admisiones</button>
+                    <button onclick="arSimular('excepcion')"
+                        class="bg-brand-accent text-brand-dark font-bold px-3 py-2 rounded text-sm hover:bg-yellow-400"><i
+                            class="fa-solid fa-triangle-exclamation mr-1"></i> Provocar Excepción</button>
+                    <button onclick="arSimular('humano')"
+                        class="bg-brand-green text-white px-3 py-2 rounded text-sm hover:bg-green-600"><i
+                            class="fa-solid fa-user-shield mr-1"></i> Intervención Humana</button>
+                </div>
+
+                <!-- Info Flotante -->
+                <div
+                    class="absolute z-50 top-4 right-4 bg-black/60 text-white p-3 rounded border border-gray-600 text-xs text-left pointer-events-none">
+                    <div><span class="inline-block w-3 h-3 bg-[#fbbf24] mr-1 rounded-full"></span> Motor RPA (Centro)
+                    </div>
+                    <div><span class="inline-block w-3 h-3 bg-[#3b82f6] mr-1 rounded-full"></span> Admisiones
+                        (Izquierda)</div>
+                    <div><span class="inline-block w-3 h-3 bg-[#ef4444] mr-1 rounded-full"></span> Aulas (Derecha)</div>
+                    <div class="mt-2 text-[#fbbf24] font-bold" id="ar-status-text">Estado: Flujo Normal</div>
+                </div>
+
+                <!-- El canvas de A-Frame se inyectará aquí via JS -->
+                <div id="ar-render-target"
+                    class="w-full h-[60vh] min-h-[500px] rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
+                    <!-- Loading placeholder -->
+                    <div class="text-brand-accent animate-pulse"><i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+                        Iniciando cámara...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12 & 13. Actividad y Caso Práctico -->
+    <section id="caso-practico" class="py-16 max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Actividad: Diseña tu flujo -->
+        <div class="glass-card p-6 rounded-xl border border-slate-700">
+            <h3 class="text-xl font-bold mb-4 text-brand-green"><i class="fa-solid fa-pen-ruler mr-2"></i> Diseña tu
+                flujo RPA</h3>
+            <p class="text-sm text-gray-400 mb-4">Genera una recomendación de arquitectura para tu proceso.</p>
+            <div class="space-y-3">
+                <select id="act-proceso"
+                    class="w-full bg-brand-dark border border-slate-600 rounded p-2 text-white text-sm">
+                    <option value="adm">Matrícula y Admisiones</option>
+                    <option value="rrh">Altas de Personal (Contratos)</option>
+                </select>
+                <div class="flex justify-between items-center bg-slate-800 p-2 rounded text-sm">
+                    <span>Nivel IA (Clasificación/OCR)</span>
+                    <input type="checkbox" id="act-ia" class="w-4 h-4 accent-brand-accent">
+                </div>
+                <div class="flex justify-between items-center bg-slate-800 p-2 rounded text-sm">
+                    <span>Revisión Humana Obligatoria</span>
+                    <input type="checkbox" id="act-hum" checked class="w-4 h-4 accent-brand-accent">
+                </div>
+                <button onclick="generarRecomendacion()"
+                    class="w-full bg-brand-dark border border-brand-green text-brand-green hover:bg-brand-green hover:text-white font-bold py-2 rounded transition-colors text-sm">Generar
+                    Arquitectura</button>
+            </div>
+            <div id="act-resultado"
+                class="mt-4 p-3 bg-slate-800 rounded text-sm text-gray-300 hidden border-l-2 border-brand-green"></div>
+        </div>
+
+        <!-- Caso Interactivo -->
+        <div class="glass-card p-6 rounded-xl border border-brand-accent/50 relative overflow-hidden">
+            <div
+                class="absolute top-0 right-0 bg-brand-accent text-brand-dark text-xs font-bold px-3 py-1 rounded-bl-lg">
+                Evaluación</div>
+            <h3 class="text-xl font-bold mb-4 mt-2">Caso Interactivo Obligatorio</h3>
+            <p class="mb-4 text-gray-300">Un postulante sube todos sus documentos, pero su certificado tiene un dato
+                ligeramente diferente al formulario de inscripción (ej. omitió su segundo nombre). El sistema RPA
+                detecta la inconsistencia al cruzar la BD.</p>
+            <p class="font-bold mb-4 text-white text-sm">¿Cuál es la acción arquitectónica correcta que debe ejecutar el
+                sistema?</p>
+
+            <div class="space-y-2 flex flex-col" id="quiz-container">
+                <button onclick="responderCaso(this, false)"
+                    class="text-left bg-slate-800 hover:bg-slate-700 p-3 rounded text-sm transition-colors border border-transparent">A.
+                    Rechazar automáticamente al postulante por incumplimiento de reglas.</button>
+                <button onclick="responderCaso(this, false)"
+                    class="text-left bg-slate-800 hover:bg-slate-700 p-3 rounded text-sm transition-colors border border-transparent">B.
+                    Ignorar la inconsistencia usando IA y aprobarlo para no perder la venta.</button>
+                <button onclick="responderCaso(this, true)"
+                    class="text-left bg-slate-800 hover:bg-slate-700 p-3 rounded text-sm transition-colors border border-transparent">C.
+                    Etiquetar como "Observado" y enviar el caso a la cola de revisión humana.</button>
+                <button onclick="responderCaso(this, false)"
+                    class="text-left bg-slate-800 hover:bg-slate-700 p-3 rounded text-sm transition-colors border border-transparent">D.
+                    Eliminar el expediente del servidor para evitar datos corruptos.</button>
+            </div>
+
+            <div id="quiz-feedback" class="mt-4 p-3 rounded text-sm hidden font-semibold"></div>
+        </div>
+    </section>
+
+    <!-- 14. Cierre -->
+    <footer class="bg-black py-12 border-t border-slate-800 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-white mb-6">Ideas Clave de Hiperautomatización Educativa</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-gray-400 text-sm mb-8">
+                <ul class="space-y-2">
+                    <li><i class="fa-solid fa-check text-brand-accent mr-2"></i> RPA automatiza lo operativo y
+                        repetitivo.</li>
+                    <li><i class="fa-solid fa-check text-brand-accent mr-2"></i> IA aporta interpretación y análisis
+                        (OCR).</li>
+                    <li><i class="fa-solid fa-check text-brand-accent mr-2"></i> Elimina cuellos de botella en
+                        matrículas.</li>
+                    <li><i class="fa-solid fa-check text-brand-accent mr-2"></i> Optimiza asignación de espacios
+                        complejos.</li>
+                </ul>
+                <ul class="space-y-2">
+                    <li><i class="fa-solid fa-shield-halved text-brand-blue mr-2"></i> Los casos excepcionales van a
+                        humanos.</li>
+                    <li><i class="fa-solid fa-shield-halved text-brand-blue mr-2"></i> Automatizar procesos rotos
+                        amplifica el error.</li>
+                    <li><i class="fa-solid fa-shield-halved text-brand-blue mr-2"></i> Mantiene trazabilidad y auditoría
+                        constante.</li>
+                    <li><i class="fa-solid fa-heart text-brand-red mr-2"></i> Devuelve al administrador su rol empático.
+                    </li>
+                </ul>
+            </div>
+            <button onclick="window.scrollTo(0,0)"
+                class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-6 rounded-full transition-colors border border-slate-600">
+                <i class="fa-solid fa-arrow-up mr-2"></i> Volver al inicio
+            </button>
+            <p class="text-slate-600 text-xs mt-8">
+            <p><span style="color: #ffffff;">
+                    Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias
+                </span></p>
+            </p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        // --- 1. Utilidades y UI General ---
+        function toggleCardDetails(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                el.classList.add('animate-[fadeIn_0.3s_ease-in]');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // Pestañas RRHH
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('text-brand-accent', 'border-brand-accent');
+                    b.classList.add('text-gray-400', 'border-transparent');
+                });
+                button.classList.add('text-brand-accent', 'border-brand-accent');
+                button.classList.remove('text-gray-400', 'border-transparent');
+
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(button.dataset.target).classList.add('active');
+            });
+        });
+
+        // --- 2. Mini Simulación Conceptos ---
+        function resolverMiniSim() {
+            const val = document.getElementById('mini-sim-select').value;
+            const res = document.getElementById('mini-sim-result');
+            res.classList.remove('hidden', 'bg-blue-900', 'bg-green-900', 'bg-yellow-900', 'bg-slate-700', 'text-blue-200', 'text-green-200', 'text-yellow-200');
+
+            if (!val) return;
+
+            if (val === 'rpa') {
+                res.classList.add('bg-blue-900', 'text-blue-200');
+                res.innerHTML = "Corresponde principalmente a <strong>RPA</strong> (Automatización basada en reglas y estructurada).";
+            } else if (val === 'ia') {
+                res.classList.add('bg-yellow-900', 'text-yellow-200');
+                res.innerHTML = "Corresponde principalmente a <strong>IA</strong> (Requiere interpretación cognitiva de datos no estructurados).";
+            } else if (val === 'rpa-ia') {
+                res.classList.add('bg-green-900', 'text-green-200');
+                res.innerHTML = "Corresponde a <strong>Hiperautomatización (RPA + IA)</strong> (El bot gestiona el flujo, la IA lee el documento).";
+            } else {
+                res.classList.add('bg-slate-700', 'text-white');
+                res.innerHTML = "Corresponde a <strong>Revisión Humana</strong> (Requiere empatía, negociación y criterio excepcional).";
+            }
+        }
+
+        // --- 3. Instancias Globales de Chart.js ---
+        let impactChart, dashBarChart, dashDoughChart;
+
+        function initCharts() {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'Inter';
+
+            // Gráfico Impacto (Simulador 4)
+            const ctx1 = document.getElementById('impactChart').getContext('2d');
+            impactChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Tiempo Manual', 'Tiempo RPA'],
+                    datasets: [{
+                        label: 'Horas Estimadas',
+                        data: [100, 30],
+                        backgroundColor: ['#ef4444', '#10b981'],
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            // Dashboards Globales
+            const ctx2 = document.getElementById('dashBarChart').getContext('2d');
+            dashBarChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
+                    datasets: [{ label: 'Trámites RPA', data: [120, 150, 180, 90, 200], borderColor: '#3b82f6', tension: 0.4 }]
+                },
+                options: { responsive: true }
+            });
+
+            const ctx3 = document.getElementById('dashDoughnutChart').getContext('2d');
+            dashDoughChart = new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Automático', 'Revisión Humana', 'Error/Rechazo'],
+                    datasets: [{ data: [75, 20, 5], backgroundColor: ['#10b981', '#fbbf24', '#ef4444'], borderWidth: 0 }]
+                },
+                options: { responsive: true, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        // --- 4. Simulador General de Impacto ---
+        const inputsSim4 = ['sim-tramites', 'sim-tiempo', 'sim-error', 'sim-rpa', 'sim-exc'];
+        inputsSim4.forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                document.getElementById('val-' + id.split('-')[1]).innerText = id.includes('sim-tramites') || id.includes('sim-tiempo') ? e.target.value : e.target.value + '%';
+                calcularImpactoRPA();
+            });
+        });
+
+        document.getElementById('sim-area').addEventListener('change', (e) => {
+            const area = e.target.value;
+            let vals = { tramites: 500, tiempo: 30, error: 15, rpa: 70, exc: 10 }; // Default: Admisiones
+
+            if (area === 'Recursos Humanos') {
+                vals = { tramites: 1500, tiempo: 45, error: 5, rpa: 85, exc: 5 };
+            } else if (area === 'Asignación de aulas') {
+                vals = { tramites: 297, tiempo: 60, error: 0, rpa: 26, exc: 18 };
+            }
+
+            // Actualizar sliders y etiquetas
+            document.getElementById('sim-tramites').value = vals.tramites;
+            document.getElementById('val-tramites').innerText = vals.tramites;
+
+            document.getElementById('sim-tiempo').value = vals.tiempo;
+            document.getElementById('val-tiempo').innerText = vals.tiempo;
+
+            document.getElementById('sim-error').value = vals.error;
+            document.getElementById('val-error').innerText = vals.error + '%';
+
+            document.getElementById('sim-rpa').value = vals.rpa;
+            document.getElementById('val-rpa').innerText = vals.rpa + '%';
+
+            document.getElementById('sim-exc').value = vals.exc;
+            document.getElementById('val-exc').innerText = vals.exc + '%';
+
+            calcularImpactoRPA();
+        });
+
+        function calcularImpactoRPA() {
+            const tramites = parseInt(document.getElementById('sim-tramites').value);
+            const tManual = parseInt(document.getElementById('sim-tiempo').value);
+            const errorMan = parseInt(document.getElementById('sim-error').value) / 100;
+            const pctRpa = parseInt(document.getElementById('sim-rpa').value) / 100;
+            const pctExc = parseInt(document.getElementById('sim-exc').value) / 100;
+
+            // Fórmulas
+            const tiempoManualTotal = tramites * tManual; // Minutos
+            const tiempoRPA = tiempoManualTotal * (1 - (pctRpa * 0.95)); // RPA ahorra casi todo el tiempo de su porción
+            const horasAhorradas = Math.round((tiempoManualTotal - tiempoRPA) / 60);
+            const hrsMan = Math.round(tiempoManualTotal / 60);
+
+            const erroresManual = Math.round(tramites * errorMan);
+            const erroresRPA = Math.round(erroresManual * (1 - (pctRpa * 0.9))); // RPA elimina casi todos los errores humanos
+            const erroresEvitados = erroresManual - erroresRPA;
+
+            const revHumana = Math.round(tramites * pctExc) + erroresRPA; // Casos excep + errores remanentes
+
+            // Update DOM
+            document.getElementById('res-hrs-man').innerText = hrsMan + 'h';
+            document.getElementById('res-hrs-aho').innerText = horasAhorradas + 'h';
+            document.getElementById('res-err-evi').innerText = erroresEvitados;
+            document.getElementById('res-rev-hum').innerText = revHumana;
+
+            // Alerta
+            const alerta = document.getElementById('alerta-riesgo');
+            if (pctRpa > 0.85 && pctExc > 0.20) {
+                alerta.classList.remove('hidden');
+            } else {
+                alerta.classList.add('hidden');
+            }
+
+            // Update Chart
+            impactChart.data.datasets[0].data = [hrsMan, Math.round(tiempoRPA / 60)];
+            impactChart.update();
+
+            // Sincronizar Dashboard
+            dashDoughChart.data.datasets[0].data = [(tramites - revHumana), revHumana, (erroresRPA > 0 ? erroresRPA : 1)];
+            dashDoughChart.update();
+        }
+
+        // --- 5. Simulador Admisiones ---
+        const inputsAdm = ['adm-post', 'adm-doc', 'adm-inc', 'adm-incons'];
+        inputsAdm.forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                document.getElementById('adm-val-' + id.split('-')[1]).innerText = id.includes('adm-post') || id.includes('adm-doc') ? e.target.value : e.target.value + '%';
+                simularAdmisiones();
+            });
+        });
+        document.getElementById('adm-nivel').addEventListener('change', simularAdmisiones);
+        document.getElementById('adm-humano').addEventListener('change', simularAdmisiones);
+
+        function simularAdmisiones() {
+            const post = parseInt(document.getElementById('adm-post').value);
+            const docs = parseInt(document.getElementById('adm-doc').value);
+            const inc = parseInt(document.getElementById('adm-inc').value) / 100;
+            const incons = parseInt(document.getElementById('adm-incons').value) / 100;
+            const humano = document.getElementById('adm-humano').checked;
+            const nivel = parseInt(document.getElementById('adm-nivel').value);
+
+            const multiplicadorDocs = docs / 3;
+            let probFallo = 0;
+            let tiempoTexto = "Inmediato (Minutos)";
+
+            // Lógica según el Nivel de Validación
+            if (nivel === 1) {
+                // Manual: Todo lo hace un humano. 100% va a revisión humana, no hay automáticos.
+                probFallo = 1;
+                tiempoTexto = "Lento (3 a 5 días hábiles)";
+            } else if (nivel === 2) {
+                // RPA Básico: No lee documentos no estructurados. Falla en el 80% de los casos.
+                probFallo = 0.8;
+                tiempoTexto = "Rápido (Horas)";
+            } else if (nivel === 3) {
+                // RPA + OCR: Lee documentos, pero es muy rígido con los errores de tipeo.
+                probFallo = Math.min(1, (inc + (incons * 2)) * multiplicadorDocs);
+                tiempoTexto = "Muy Rápido (Minutos)";
+            } else {
+                // RPA + OCR + IA (nivel 4): La IA entiende contexto y perdona errores de tipeo menores.
+                probFallo = Math.min(1, (inc + (incons * 0.5)) * multiplicadorDocs);
+                tiempoTexto = "Inmediato (Segundos)";
+            }
+
+            const docsProblema = Math.round(post * probFallo);
+            let aprobados = post - docsProblema;
+            let aRevision = humano ? docsProblema : 0;
+
+            document.getElementById('adm-res-apr').innerText = aprobados;
+            document.getElementById('adm-res-rev').innerText = humano ? aRevision : '0 (Automáticos)';
+            document.getElementById('adm-res-tiempo').innerText = tiempoTexto;
+
+            const alerta = document.getElementById('adm-alert-rechazo');
+            if (!humano && docsProblema > 0) {
+                alerta.classList.remove('hidden');
+            } else {
+                alerta.classList.add('hidden');
+            }
+        }
+
+        // --- 6. Validación Documental Formularios ---
+        document.getElementById('form-validacion').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const completo = document.getElementById('val-completo').value;
+            const coincide = document.getElementById('val-coincide').value;
+            const valido = document.getElementById('val-valido').value;
+            const res = document.getElementById('val-resultado');
+
+            res.classList.remove('bg-slate-800', 'bg-green-900', 'bg-yellow-900', 'bg-red-900', 'border-slate-600', 'border-green-500', 'border-yellow-500', 'border-red-500');
+
+            if (valido === 'no') {
+                res.classList.add('bg-red-900', 'border-red-500');
+                res.innerHTML = `<i class="fa-solid fa-ban text-4xl text-red-400 mb-4 block"></i><h4 class="text-lg font-bold text-red-200">Expediente Bloqueado</h4><p class="text-sm text-red-300 mt-2">Error Crítico: El certificado subido carece de firma digital válida o fue adulterado. Se requiere validación manual externa.</p>`;
+            } else if (completo === 'no' || coincide === 'no') {
+                res.classList.add('bg-yellow-900', 'border-yellow-500');
+                res.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-4xl text-yellow-400 mb-4 block"></i><h4 class="text-lg font-bold text-yellow-200">Expediente Observado</h4><p class="text-sm text-yellow-300 mt-2">Derivado a humano: Existen inconsistencias tipográficas menores o faltan anexos no críticos. El bot no puede decidir.</p>`;
+            } else {
+                res.classList.add('bg-green-900', 'border-green-500');
+                res.innerHTML = `<i class="fa-solid fa-circle-check text-4xl text-green-400 mb-4 block"></i><h4 class="text-lg font-bold text-green-200">Aprobado Automáticamente</h4><p class="text-sm text-green-300 mt-2">Los datos extraídos por OCR coinciden 100% con la base de datos nacional y los documentos están completos.</p>`;
+            }
+        });
+
+        // --- 7. Simular RRHH Contratos ---
+        function simularContratos() {
+            const num = document.getElementById('rrhh-num-docentes').value;
+            const ok = document.getElementById('rrhh-docs-ok').checked;
+            const div = document.getElementById('res-contratos');
+
+            if (ok) {
+                div.innerHTML = `<div class="text-brand-green mb-2"><i class="fa-solid fa-check-circle text-xl"></i> Éxito</div><p class="text-sm text-white">Se generaron y enviaron <strong>${num} contratos</strong> vía DocuSign en 4 segundos. Tiempo ahorrado: <strong>${Math.round(num * 15)} min</strong>.</p>`;
+            } else {
+                div.innerHTML = `<div class="text-brand-accent mb-2"><i class="fa-solid fa-exclamation-circle text-xl"></i> Observado</div><p class="text-sm text-white">Solo se generaron <strong>${Math.max(0, num - 3)} contratos</strong>. Hay 3 docentes con legajo incompleto derivados a bandeja manual.</p>`;
+            }
+        }
+
+        // --- Simular RRHH Asistencia ---
+        function simularAsistencia() {
+            const dias = document.getElementById('rrhh-dias-asist').value;
+            const tipo = document.getElementById('rrhh-tipo-marcacion').value;
+            const div = document.getElementById('res-asistencia');
+
+            let fallos = tipo === 'web' ? 12 : (tipo === 'app' ? 5 : 2);
+            div.innerHTML = `<div class="text-brand-blue mb-2"><i class="fa-solid fa-clock text-xl"></i> Conciliación Completa</div><p class="text-sm text-white">Se cruzaron <strong>${dias * 500} registros</strong> de marcación con los horarios del ERP en 1.5 segundos. Se detectaron <strong>${fallos} inasistencias</strong> no justificadas. Alertas enviadas automáticamente.</p>`;
+        }
+
+        // --- Simular RRHH Nómina ---
+        function simularNomina() {
+            const num = document.getElementById('rrhh-num-nomina').value;
+            const deduc = document.getElementById('rrhh-nomina-deducciones').checked;
+            const extras = document.getElementById('rrhh-nomina-extras').checked;
+            const div = document.getElementById('res-nomina');
+
+            let tiempo = Math.max(1, Math.round(num * 0.05));
+            let excep = extras ? Math.round(num * 0.02) : 0;
+
+            let text = `<div class="text-brand-green mb-2"><i class="fa-solid fa-file-invoice-dollar text-xl"></i> Planilla Procesada</div><p class="text-sm text-white">Se procesó la nómina de <strong>${num} colaboradores</strong> en ${tiempo} segundos.`;
+            if (excep > 0) {
+                text += ` Se separaron <strong>${excep} casos</strong> con horas extra atípicas para validación.</p>`;
+            } else {
+                text += ` Liquidación sin excepciones.</p>`;
+            }
+            div.innerHTML = text;
+        }
+
+        // --- Simular RRHH Legajos ---
+        function simularLegajos() {
+            const num = document.getElementById('rrhh-num-legajos').value;
+            const motor = document.getElementById('rrhh-motor-ocr').value;
+            const div = document.getElementById('res-legajos');
+
+            if (motor === 'ia') {
+                div.innerHTML = `<div class="text-brand-accent mb-2"><i class="fa-solid fa-brain text-xl"></i> Extracción IA Exitosa</div><p class="text-sm text-white">La IA leyó <strong>${num} PDFs</strong> no estructurados. Se validaron las firmas y se actualizó el ERP al 100%.</p>`;
+            } else {
+                div.innerHTML = `<div class="text-yellow-500 mb-2"><i class="fa-solid fa-triangle-exclamation text-xl"></i> Observado (OCR Básico)</div><p class="text-sm text-white">De los <strong>${num} PDFs</strong>, el OCR zonal leyó <strong>${Math.max(0, num - 2)} documentos</strong>. 2 archivos pasaron a digitación manual.</p>`;
+            }
+        }
+
+
+        // --- 8. Asignación de Aulas ---
+        document.getElementById('aula-est').addEventListener('input', (e) => { document.getElementById('aula-val-est').innerText = e.target.value; });
+        function asignarAula() {
+            const est = parseInt(document.getElementById('aula-est').value);
+            const reqProy = document.getElementById('req-proy').checked;
+            const reqLab = document.getElementById('req-lab').checked;
+            const reqCam = document.getElementById('req-cam').checked;
+            const res = document.getElementById('res-aula');
+
+            res.classList.remove('hidden');
+
+            if (reqLab && est > 30) {
+                res.innerHTML = `<div class="text-brand-red font-bold"><i class="fa-solid fa-ban mr-1"></i> Sin Asignación Automática</div><p class="text-sm mt-1 text-gray-300">No hay laboratorios para más de 30 estudiantes. <br><strong class="text-brand-accent">Sugerencia RPA:</strong> Dividir en dos grupos o reasignar curso a teoría.</p>`;
+            } else if (reqCam) {
+                res.innerHTML = `<div class="text-brand-green font-bold"><i class="fa-solid fa-check mr-1"></i> Asignado: Aula Híbrida E210</div><p class="text-sm mt-1 text-gray-300">Cumple requisitos de cámara para transmisión. Aforo 45, ocupación ${(est / 45 * 100).toFixed(0)}%.</p>`;
+            } else {
+                res.innerHTML = `<div class="text-brand-blue font-bold"><i class="fa-solid fa-check mr-1"></i> Asignado: Auditorio B204</div><p class="text-sm mt-1 text-gray-300">Cumple requisitos estándar. Capacidad idónea sin sobrecupo.</p>`;
+            }
+        }
+
+        // --- 9. Reasignación Imprevistos ---
+        function resolverImprevisto() {
+            const log = document.getElementById('imp-log');
+            const imp = document.getElementById('imp-tipo').value;
+            const aula = document.getElementById('imp-aula').value;
+
+            log.innerHTML += `<br><span class="text-yellow-400">> Detectada anomalía en ${aula}... calculando cruces.</span>`;
+            setTimeout(() => {
+                log.innerHTML += `<br><span class="text-green-400">> ¡Resuelto! Cambio a Pabellón F. Notificaciones PUSH enviadas a 42 estudiantes y 1 docente.</span>`;
+                log.scrollTop = log.scrollHeight;
+            }, 800);
+        }
+
+        // --- 11. Realidad Aumentada (Inyección Segura en 1 archivo) ---
+        // A-Frame fue cargado en Head, AR.js requiere inyección o crear <a-scene> dinámico
+        document.getElementById('btn-start-ar').addEventListener('click', function () {
+            // Ocultar botón, mostrar wrapper
+            this.classList.add('hidden');
+            const wrapper = document.getElementById('ar-wrapper');
+            wrapper.classList.remove('hidden');
+            const renderTarget = document.getElementById('ar-render-target');
+
+            // Inyectar Script AR.js dinámicamente para asegurar que la cámara no se haya solicitado antes
+            const arScript = document.createElement('script');
+            arScript.src = "https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js";
+            arScript.onload = () => {
+                // Una vez cargado AR.js, insertamos la escena.
+                // IMPORTANTE: usamos 'vr-mode-ui="enabled: false"' para entorno web embebido.
+                renderTarget.innerHTML = `
+                    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+                        
+                        <!-- Sin marcador: HUD 3D flotando frente a la cámara (position z=-5) -->
+                        <a-entity id="ar-group" position="0 0 -5">
+                            
+                            <!-- MOTOR CENTRAL RPA+IA -->
+                            <a-entity id="ar-motor-group" position="0 0 0">
+                                <!-- Núcleo central -->
+                                <a-icosahedron id="ar-motor" radius="0.7" color="#fbbf24" 
+                                       animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear"></a-icosahedron>
+                                <!-- Anillo 1 (IA) -->
+                                <a-torus id="ar-motor-ring1" radius="1.2" radius-tubular="0.03" color="#3b82f6" 
+                                         animation="property: rotation; to: 360 0 360; loop: true; dur: 4000; easing: linear"></a-torus>
+                                <!-- Anillo 2 (RPA) -->
+                                <a-torus id="ar-motor-ring2" radius="1.2" radius-tubular="0.03" color="#10b981" rotation="90 0 0"
+                                         animation="property: rotation; to: 0 360 360; loop: true; dur: 5000; easing: linear"></a-torus>
+                            </a-entity>
+                            <a-text value="Motor RPA+IA" position="-0.8 1.6 0" color="#ffffff" scale="1.5 1.5 1.5"></a-text>
+
+                            <!-- ADMISIONES (Izquierda) -->
+                            <a-sphere id="ar-node-adm" position="-2.5 0 1" radius="0.4" color="#3b82f6"></a-sphere>
+                            <a-text value="Admisiones" position="-3.2 -0.7 1" color="#ffffff"></a-text>
+                            <a-cylinder position="-1.25 0 0.5" radius="0.02" height="2.8" rotation="0 -65 90" color="#ffffff" opacity="0.3"></a-cylinder>
+
+                            <!-- AULAS (Derecha) -->
+                            <a-sphere id="ar-node-aulas" position="2.5 0 1" radius="0.4" color="#ef4444"></a-sphere>
+                            <a-text value="Aulas" position="2.2 -0.7 1" color="#ffffff"></a-text>
+                            <a-cylinder position="1.25 0 0.5" radius="0.02" height="2.8" rotation="0 65 90" color="#ffffff" opacity="0.3"></a-cylinder>
+
+                            <!-- SUPERVISOR HUMANO -->
+                            <a-entity id="ar-humano" visible="false">
+                                <a-cone position="0 2 0" radius-bottom="0.4" radius-top="0" height="0.8" color="#10b981"></a-cone>
+                                <a-sphere position="0 2.6 0" radius="0.25" color="#10b981"></a-sphere>
+                                <a-text id="ar-humano-txt" value="Auditoria Humana" position="-0.9 3.1 0" color="#10b981"></a-text>
+                            </a-entity>
+
+                            <!-- PARTICULAS DE DATOS -->
+                            <a-sphere id="ar-data-in" radius="0.1" color="#3b82f6" visible="false"></a-sphere>
+                            <a-sphere id="ar-data-out" radius="0.1" color="#10b981" visible="false"></a-sphere>
+
+                        </a-entity>
+                        
+                        <a-entity camera></a-entity>
+                    </a-scene>
+                `;
+            };
+            document.head.appendChild(arScript);
+        });
+
+        // Controles de Interacción con AR desde UI 2D
+        function arSimular(tipo) {
+            const motor = document.getElementById('ar-motor');
+            const ring1 = document.getElementById('ar-motor-ring1');
+            const ring2 = document.getElementById('ar-motor-ring2');
+            const motorGroup = document.getElementById('ar-motor-group');
+            const admNode = document.getElementById('ar-node-adm');
+            const humano = document.getElementById('ar-humano');
+            const dataIn = document.getElementById('ar-data-in');
+            const dataOut = document.getElementById('ar-data-out');
+            const statusTxt = document.getElementById('ar-status-text');
+
+            if (!motor) { alert("Inicia la cámara primero."); return; }
+
+            // Reset general
+            humano.setAttribute('visible', 'false');
+            humano.removeAttribute('animation');
+            admNode.setAttribute('color', '#3b82f6');
+            motor.setAttribute('color', '#fbbf24');
+            ring1.setAttribute('color', '#3b82f6');
+            ring2.setAttribute('color', '#10b981');
+            motorGroup.removeAttribute('animation');
+            motorGroup.setAttribute('position', '0 0 0');
+
+            ring1.setAttribute('animation', 'property: rotation; to: 360 0 360; loop: true; dur: 4000; easing: linear');
+            ring2.setAttribute('animation', 'property: rotation; to: 0 360 360; loop: true; dur: 5000; easing: linear');
+
+            if (tipo === 'admisiones') {
+                statusTxt.innerText = "Estado: Procesando Lote Admisiones";
+                statusTxt.className = "mt-2 text-blue-400 font-bold";
+
+                // Acelerar anillos para simular procesamiento IA
+                ring1.setAttribute('animation', 'property: rotation; to: 360 0 360; loop: true; dur: 1000; easing: linear');
+                ring2.setAttribute('animation', 'property: rotation; to: 0 360 360; loop: true; dur: 1200; easing: linear');
+
+                // Animar partículas
+                dataIn.setAttribute('visible', 'true');
+                dataIn.setAttribute('animation', 'property: position; from: -2.5 0 1; to: 0 0 0; dur: 800; loop: true; easing: linear');
+
+                dataOut.setAttribute('visible', 'true');
+                dataOut.setAttribute('animation', 'property: position; from: 0 0 0; to: 2.5 0 1; dur: 800; loop: true; easing: linear; delay: 400');
+            }
+            else if (tipo === 'excepcion') {
+                statusTxt.innerText = "Estado: ¡Alerta! Documento Inválido Detectado";
+                statusTxt.className = "mt-2 text-red-400 font-bold";
+
+                // Detener flujo y poner en alerta (rojo)
+                dataIn.setAttribute('visible', 'false');
+                dataOut.setAttribute('visible', 'false');
+
+                admNode.setAttribute('color', '#ef4444');
+                motor.setAttribute('color', '#ef4444');
+                ring1.setAttribute('color', '#ef4444');
+                ring2.setAttribute('color', '#ef4444');
+
+                // Vibración de error
+                motorGroup.setAttribute('animation', 'property: position; from: -0.1 0 0; to: 0.1 0 0; dur: 50; loop: true; dir: alternate');
+            }
+            else if (tipo === 'humano') {
+                statusTxt.innerText = "Estado: Intervención Humana Resolviendo...";
+                statusTxt.className = "mt-2 text-green-400 font-bold";
+
+                // Reparar estado visual
+                motor.setAttribute('color', '#fbbf24');
+                ring1.setAttribute('color', '#10b981');
+                ring2.setAttribute('color', '#10b981');
+
+                // Aparición del avatar humano
+                humano.setAttribute('visible', 'true');
+                humano.setAttribute('animation', 'property: position; from: 0 3 0; to: 0 0 0; dur: 1000; easing: easeOutBounce');
+
+                // Emitir datos limpios
+                dataOut.setAttribute('visible', 'true');
+                dataOut.setAttribute('color', '#10b981');
+                dataOut.setAttribute('animation', 'property: position; from: 0 0 0; to: 2.5 0 1; dur: 800; loop: true; easing: linear');
+            }
+        }
+
+        // --- 12. Actividad: Diseña tu flujo ---
+        function generarRecomendacion() {
+            const proceso = document.getElementById('act-proceso').value;
+            const ia = document.getElementById('act-ia').checked;
+            const hum = document.getElementById('act-hum').checked;
+            const res = document.getElementById('act-resultado');
+
+            res.classList.remove('hidden');
+
+            let html = `<strong class="text-white block mb-2">Arquitectura Recomendada:</strong>`;
+
+            if (proceso === 'adm' && ia && hum) {
+                html += `Excelente enfoque. Utilizar OCR (IA) para leer certificados, RPA para validar reglas duras (edad, DNI), y dejar la Revisión Humana como red de seguridad garantiza inclusión y velocidad.`;
+            } else if (!hum) {
+                html += `<span class="text-brand-accent">Riesgo Detectado:</span> Has desactivado la revisión humana. Un proceso hiperautomatizado sin escape de auditoría humana puede excluir postulantes válidos por fallos técnicos menores.`;
+            } else {
+                html += `El flujo es funcional. RPA ejecutará la tarea estructurada y las excepciones irán al supervisor humano. <br><br><em>💡 Consejo: Una buena automatización no elimina el criterio humano. Automatiza lo repetitivo y reserva a la persona para casos complejos.</em>`;
+            }
+            res.innerHTML = html;
+        }
+
+        // --- 13. Caso Interactivo ---
+        function responderCaso(btn, isCorrect) {
+            const container = document.getElementById('quiz-container');
+            const feedback = document.getElementById('quiz-feedback');
+
+            // Reset buttons
+            container.querySelectorAll('button').forEach(b => {
+                b.classList.remove('border-green-500', 'border-red-500', 'bg-green-900', 'bg-red-900');
+                b.classList.add('border-transparent');
+            });
+
+            feedback.classList.remove('hidden', 'bg-green-900/50', 'text-green-300', 'border-green-500', 'bg-red-900/50', 'text-red-300', 'border-red-500');
+
+            if (isCorrect) {
+                btn.classList.add('border-green-500', 'bg-green-900');
+                feedback.classList.add('bg-green-900/50', 'text-green-300', 'border', 'border-green-500');
+                feedback.innerHTML = `<i class="fa-solid fa-check mr-2"></i><strong>¡Correcto!</strong> La RPA debe resolver lo simple y exacto. Los casos excepcionales con discrepancias mínimas requieren intervención humana para evitar exclusión y rigidez.`;
+            } else {
+                btn.classList.add('border-red-500', 'bg-red-900');
+                feedback.classList.add('bg-red-900/50', 'text-red-300', 'border', 'border-red-500');
+                feedback.innerHTML = `<i class="fa-solid fa-xmark mr-2"></i><strong>Incorrecto.</strong> Tomar decisiones rígidas automáticas puede causar injusticias o riesgos. Intenta de nuevo.`;
+            }
+        }
+
+        // Init general
+        window.onload = () => {
+            initCharts();
+            calcularImpactoRPA();
+            simularAdmisiones();
+        };
+
+    </script>
+</body>
+
+</html>
