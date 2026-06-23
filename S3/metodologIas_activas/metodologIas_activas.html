@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metodologías Activas: IA en el ABP y Clase Invertida</title>
+    <!-- Tailwind CSS para diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- A-Frame para experiencia 3D/AR fallback -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1e3a8a', // blue-900
+                            light: '#eff6ff', // blue-50
+                            orange: '#f97316', // orange-500
+                            gray: '#f3f4f6', // gray-100
+                            text: '#374151' // gray-700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados y para impresión (PDF) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #374151;
+        }
+
+        .prompt-box {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            border-left: 4px solid #f97316;
+        }
+
+        /* Ocultar elementos en la impresión para exportar solo la matriz o vista limpia */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            #matrix-section {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .print-only-title {
+                display: block !important;
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+        }
+
+        .print-only-title {
+            display: none;
+        }
+
+        /* Contenedor AR */
+        #ar-container {
+            display: none;
+            height: 80vh;
+            width: 100%;
+            position: relative;
+        }
+
+        #ar-info-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            z-index: 10;
+            border-top: 4px solid #f97316;
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-gray">
+
+    <!-- Navegación -->
+    <nav class="no-print sticky top-0 bg-white shadow-md z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-microchip text-brand-orange text-2xl mr-2"></i>
+                    <span class="font-bold text-brand-blue text-xl hidden md:block">IA & Metodologías Activas</span>
+                </div>
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="#inicio" class="text-gray-600 hover:text-brand-blue font-medium">Inicio</a>
+                    <a href="#abp" class="text-gray-600 hover:text-brand-blue font-medium">ABP</a>
+                    <a href="#clase-invertida" class="text-gray-600 hover:text-brand-blue font-medium">Clase
+                        Invertida</a>
+                    <a href="#comparador" class="text-gray-600 hover:text-brand-blue font-medium">Herramientas</a>
+                    <a href="#ar-section" class="text-brand-orange font-bold hover:text-orange-600">Experiencia 3D</a>
+                    <a href="#actividad" class="text-gray-600 hover:text-brand-blue font-medium">Actividad</a>
+                    <a href="#etica" class="text-gray-600 hover:text-brand-blue font-medium">Ética</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Inicio -->
+    <header id="inicio" class="no-print bg-white pt-20 pb-16">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-brand-blue tracking-tight mb-4">
+                Metodologías Activas:<br> <span class="text-brand-orange">IA en el ABP y la Clase Invertida</span>
+            </h1>
+            <p class="text-xl text-gray-500 mb-8 max-w-3xl mx-auto">
+                Aprende qué herramienta usar según la fase del proyecto o el momento de la clase invertida: antes,
+                durante y después.
+            </p>
+
+            <div class="bg-brand-light border-l-4 border-brand-blue p-6 mb-8 text-left rounded-r-lg shadow-sm">
+                <p class="text-lg font-medium text-brand-blue italic">
+                    "La IA puede acelerar la investigación, el diseño y la retroalimentación, pero el estudiante
+                    conserva la autoría y el juicio crítico final. La herramienta propone; la persona —docente o
+                    estudiante— valida, argumenta y decide."
+                </p>
+            </div>
+
+            <!-- Caso Práctico Central -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-10 text-left shadow-md">
+                <h3 class="text-lg font-bold text-gray-800 mb-2"><i
+                        class="fa-solid fa-briefcase text-brand-orange mr-2"></i> Caso Práctico Central</h3>
+                <p class="text-gray-600">Un docente de un curso de Gestión Educativa en maestría rediseña una unidad
+                    sobre <strong>liderazgo institucional</strong>. <br>
+                    • <strong>Mitad 1 (ABP):</strong> Diagnosticar un problema real de liderazgo y proponer una
+                    intervención.<br>
+                    • <strong>Mitad 2 (Clase Invertida):</strong> Revisión previa de contenidos y uso del tiempo
+                    presencial para debatir y aplicar.</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#abp"
+                    class="bg-brand-blue text-white px-6 py-3 rounded-md font-medium hover:bg-blue-800 transition">Herramientas
+                    ABP</a>
+                <a href="#clase-invertida"
+                    class="bg-brand-orange text-white px-6 py-3 rounded-md font-medium hover:bg-orange-600 transition">Herramientas
+                    Clase Invertida</a>
+                <button onclick="startAR()"
+                    class="border-2 border-brand-blue text-brand-blue px-6 py-3 rounded-md font-medium hover:bg-blue-50 transition">
+                    <i class="fa-solid fa-cube mr-2"></i> Iniciar experiencia 3D
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- BLOQUE A: ABP -->
+        <section id="abp" class="no-print mb-20">
+            <h2 class="text-3xl font-bold text-brand-blue border-b-2 border-gray-200 pb-2 mb-8 flex items-center">
+                <i class="fa-solid fa-project-diagram mr-3 text-brand-orange"></i> BLOQUE A: Aprendizaje Basado en
+                Proyectos (ABP)
+            </h2>
+
+            <div class="bg-blue-50 border-l-4 border-brand-blue p-6 mb-10 rounded-r-lg shadow-sm">
+                <h3 class="font-bold text-brand-blue text-lg mb-2"><i
+                        class="fa-solid fa-lightbulb text-brand-orange mr-2"></i>¿Qué es el Aprendizaje Basado en
+                    Proyectos?</h3>
+                <p class="text-gray-700 text-base leading-relaxed">
+                    El ABP es una metodología donde el estudiante aprende resolviendo un proyecto o problema real, en
+                    lugar de recibir solo teoría. La IA entra como apoyo para el docente en la fase de diseño:
+                    <strong>ayuda a
+                        generar ideas de proyectos, crear variantes según el nivel de cada grupo, y armar rúbricas de
+                        evaluación en minutos en lugar de horas</strong>. También puede actuar como <strong>asistente
+                        durante el
+                        desarrollo
+                        del proyecto</strong>, respondiendo dudas técnicas de los alumnos o dando una primera
+                    retroalimentación sobre
+                    sus avances, mientras el docente se enfoca en guiar y validar el trabajo final.
+                </p>
+            </div>
+
+            <!-- FASE 1 -->
+            <div class="mb-12 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800">1. Para identificar el problema y generar ideas (Fase de
+                        Ideación)</h3>
+                    <p class="text-sm text-gray-500 mt-1">Herramientas sugeridas: <strong>ChatGPT, Claude,
+                            Gemini</strong> (Asistentes de propósito general)</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-brand-blue mb-2">¿Para qué sirve?</h4>
+                        <p class="text-gray-600 mb-4">Explorar el tema, generar preguntas guía, mapear posibles
+                            problemas y proponer distintos ángulos antes de definir el problema central.</p>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="font-bold text-sm text-blue-800 mb-1"><i
+                                    class="fa-solid fa-user-graduate mr-1"></i> Necesidad del equipo:</h4>
+                            <p class="text-sm italic">"Necesitamos delimitar un problema real de liderazgo institucional
+                                para nuestro proyecto."</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-2">Simulación Práctica (Prompt):</h4>
+                        <div class="prompt-box p-4 rounded-md text-sm mb-2 relative">
+                            <button onclick="copyText('prompt1')"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-white"><i
+                                    class="fa-regular fa-copy"></i></button>
+                            <code id="prompt1">Actúa como facilitador de Aprendizaje Basado en Problemas. A partir del tema "liderazgo institucional en instituciones educativas", genera:<br>
+- 5 posibles problemas reales que un equipo de maestría podría investigar.<br>
+- Una pregunta guía por cada problema.<br>
+- Qué tipo de evidencia se necesitaría para sustentar cada uno.<br>
+- Qué actores estarían involucrados.</code>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-3 mt-4">
+                            <p class="text-sm"><strong>Mensaje pedagógico:</strong> La IA ayuda a explorar el espacio
+                                del problema, pero el equipo debe elegir el problema final según su pertinencia y
+                                viabilidad real, no por ser la primera idea generada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="mb-12 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800">2. Para buscar evidencia y filtrar información (Fase de
+                        Búsqueda)</h3>
+                    <p class="text-sm text-gray-500 mt-1">Herramientas sugeridas: <strong>Consensus</strong> (IA
+                        académica), <strong>Elicit</strong> (Asistente de papers), <strong>Google Scholar</strong>
+                        (Buscador tradicional)</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-brand-blue mb-2">¿Para qué sirve?</h4>
+                        <p class="text-gray-600 mb-4">Consensus resume hallazgos científicos. Elicit organiza papers y
+                            extrae datos clave. Scholar localiza las fuentes primarias.</p>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="font-bold text-sm text-blue-800 mb-1"><i
+                                    class="fa-solid fa-user-graduate mr-1"></i> Necesidad del equipo:</h4>
+                            <p class="text-sm italic">"Necesitamos evidencia académica sobre liderazgo distribuido para
+                                sustentar nuestro diagnóstico."</p>
+                        </div>
+
+                        <div class="mt-4 flex items-center text-sm font-medium text-gray-600 bg-gray-100 p-2 rounded">
+                            <span>Problema</span> <i class="fa-solid fa-arrow-right mx-2 text-brand-orange"></i>
+                            <span>Búsqueda (Consensus/Elicit)</span> <i
+                                class="fa-solid fa-arrow-right mx-2 text-brand-orange"></i>
+                            <span>Lectura Crítica</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                            <h4 class="font-bold text-red-800 mb-1"><i
+                                    class="fa-solid fa-triangle-exclamation mr-1"></i> Cuidado Ético y Riesgo</h4>
+                            <ul class="list-disc pl-5 text-sm text-red-700 space-y-1">
+                                <li><strong>Nunca citar un estudio que no se haya leído.</strong></li>
+                                <li>Verificar que el artículo, autor y revista existan (evitar alucinaciones
+                                    algorítmicas).</li>
+                                <li>Distinguir evidencia científica revisada por pares de opiniones en blogs.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-3 mt-4">
+                            <p class="text-sm"><strong>Mensaje pedagógico:</strong> Confiar en resúmenes sin verificar
+                                la fuente original es un riesgo alto. El equipo debe leer las fuentes clave, no solo
+                                delegar la síntesis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 3 y 4 -->
+            <div class="mb-12 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800">3. Para diseñar y desarrollar la propuesta (Diseño y
+                        Desarrollo)</h3>
+                    <p class="text-sm text-gray-500 mt-1">Herramientas sugeridas: <strong>ChatGPT / Claude</strong>
+                        (Generación divergente), <strong>NotebookLM</strong> (IA basada en tus propias fuentes)</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-brand-blue mb-2">¿Para qué sirve?</h4>
+                        <p class="text-gray-600 mb-4">Explorar alternativas de solución y redactar borradores.
+                            <strong>NotebookLM</strong> destaca porque trabaja <em>exclusivamente</em> con los
+                            documentos PDF que el usuario sube, reduciendo a cero el riesgo de información inventada.
+                        </p>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h4 class="font-bold text-sm text-blue-800 mb-1"><i
+                                    class="fa-solid fa-user-graduate mr-1"></i> Necesidad del equipo:</h4>
+                            <p class="text-sm italic">"Tenemos el diagnóstico y las fuentes. Ahora necesitamos
+                                estructurar la propuesta de intervención."</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-2">Simulación Práctica (Prompt):</h4>
+                        <div class="prompt-box p-4 rounded-md text-sm mb-2 relative">
+                            <button onclick="copyText('prompt2')"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-white"><i
+                                    class="fa-regular fa-copy"></i></button>
+                            <code id="prompt2">Actúa como asesor de proyectos de gestión educativa. A partir de este diagnóstico y estas fuentes [adjuntar PDF en NotebookLM/Claude], ayúdame a estructurar una propuesta de intervención que incluya:<br>
+- Objetivo de la intervención.<br>
+- Acciones concretas y responsables.<br>
+- Indicadores de éxito y Riesgos de implementación.</code>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-3 mt-4">
+                            <p class="text-sm"><strong>Mensaje pedagógico:</strong> La IA acelera la redacción, pero el
+                                equipo decide cuál propuesta es viable, ética y contextualizada a su institución, no la
+                                que "suene mejor escrita".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 5 y 6 -->
+            <div class="mb-4 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800">4. Para recibir feedback y simular la defensa</h3>
+                    <p class="text-sm text-gray-500 mt-1">Herramientas sugeridas: <strong>ChatGPT, Claude,
+                            Gemini</strong> (Modo conversacional iterativo)</p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-brand-blue mb-2">Funciones:</h4>
+                        <ol class="list-decimal pl-5 text-gray-600 mb-4 space-y-2 text-sm">
+                            <li><strong>Feedback preliminar:</strong> Revisión crítica del borrador antes de la entrega.
+                            </li>
+                            <li><strong>Simulación de jurado:</strong> Práctica de argumentación oral ante preguntas
+                                difíciles generadas por la IA.</li>
+                        </ol>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-sm text-blue-800 mb-1"><i
+                                    class="fa-solid fa-comment-dots mr-1"></i> Prompt Jurado Simulado:</h4>
+                            <p class="text-sm font-mono bg-white p-2 border rounded">"Actúa como un jurado académico
+                                exigente. Hazme 3 preguntas difíciles sobre la viabilidad de esta propuesta, una a la
+                                vez, y espera mi respuesta."</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bg-orange-50 border-l-4 border-brand-orange p-4 rounded-md mb-4">
+                            <h4 class="font-bold text-orange-800 mb-1">Riesgo si se usa mal:</h4>
+                            <p class="text-sm text-orange-700">Memorizar respuestas generadas por la IA sin
+                                comprenderlas. El estudiante debe poder sostener sus argumentos sin leer respuestas
+                                prefijadas.</p>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-3">
+                            <p class="text-sm"><strong>Mensaje pedagógico:</strong> Practicar con un jurado simulado
+                                ayuda a anticipar objeciones, pero no reemplaza el razonamiento propio en tiempo real.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- BLOQUE B: CLASE INVERTIDA -->
+        <section id="clase-invertida" class="no-print mb-20">
+            <h2 class="text-3xl font-bold text-brand-blue border-b-2 border-gray-200 pb-2 mb-8 flex items-center">
+                <i class="fa-solid fa-arrows-rotate mr-3 text-brand-orange"></i> BLOQUE B: Clase Invertida (Flipped
+                Classroom)
+            </h2>
+
+            <div class="bg-orange-50 border-l-4 border-brand-orange p-6 mb-10 rounded-r-lg shadow-sm">
+                <h3 class="font-bold text-orange-800 text-lg mb-2"><i
+                        class="fa-solid fa-rotate-left text-brand-blue mr-2"></i>¿Qué es la Clase Invertida?</h3>
+                <p class="text-gray-700 text-base leading-relaxed">
+                    La Clase Invertida invierte el orden tradicional: el alumno revisa la teoría en casa (video, lectura
+                    o audio) y el tiempo en el aula se usa para practicar y resolver dudas con el profesor presente.
+                    <strong>La
+                        IA ayuda al docente a crear ese material previo de forma rápida</strong> — resúmenes, guiones de
+                    video o
+                    incluso audios tipo podcast a partir de sus apuntes — y también permite generar <strong>quizzes
+                        automáticos</strong>
+                    que muestran qué tan bien entendieron los alumnos antes de llegar a clase, para que el profesor sepa
+                    exactamente en qué enfocarse durante la sesión presencial.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- ANTES DE CLASE 1 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-brand-blue">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">1. Crear material previo (Antes de clase)</h3>
+                    <p class="text-sm text-gray-500 mb-4"><strong>NotebookLM, Canva, Gamma</strong></p>
+                    <p class="text-sm text-gray-600 mb-4">Transformar lecturas complejas en resúmenes guiados, podcasts
+                        generados (NotebookLM) o presentaciones visuales (Gamma) para revisión autónoma.</p>
+
+                    <div class="bg-blue-50 p-3 rounded text-sm mb-3">
+                        <strong>Necesidad docente:</strong> "Preparar material sobre liderazgo distribuido para lectura
+                        previa."
+                    </div>
+                    <p class="text-sm text-gray-700 italic border-l-2 border-gray-300 pl-2">"El material previo debe
+                        preparar al estudiante para participar activamente, no solo transmitir información."</p>
+                </div>
+
+                <!-- ANTES DE CLASE 2 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-brand-blue">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">2. Evaluar diagnóstico (Antes de clase)</h3>
+                    <p class="text-sm text-gray-500 mb-4"><strong>Brisk Teaching, Edpuzzle, Google Forms</strong></p>
+                    <p class="text-sm text-gray-600 mb-4">Generar cuestionarios rápidos (Brisk en Docs, Edpuzzle en
+                        videos) para detectar vacíos conceptuales <em>antes</em> de que el grupo llegue al aula.</p>
+
+                    <div class="bg-blue-50 p-3 rounded text-sm mb-3">
+                        <strong>Simulación de resultado:</strong> "30% confunde liderazgo con delegación.
+                        <em>Recomendación:</em> Dedicar los primeros 10 min de clase a aclarar este punto."
+                    </div>
+                    <p class="text-sm text-gray-700 italic border-l-2 border-gray-300 pl-2">"El cuestionario no es para
+                        calificar, es para enfocar el valioso tiempo presencial."</p>
+                </div>
+
+                <!-- DURANTE LA CLASE -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-brand-orange">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">3. Resolver dudas y debatir (Durante la clase)</h3>
+                    <p class="text-sm text-gray-500 mb-4"><strong>ChatGPT, Claude, Brisk Teaching</strong></p>
+                    <p class="text-sm text-gray-600 mb-4">Uso en vivo por el docente para generar ejemplos rápidos,
+                        casos o contraargumentos cuando la discusión se estanca.</p>
+
+                    <div class="bg-orange-50 p-3 rounded text-sm mb-3">
+                        <strong>Prompt en vivo:</strong> "Dame un ejemplo breve en un párrafo que contraste liderazgo
+                        directivo con distribuido en un colegio."
+                    </div>
+                    <p class="text-sm text-gray-700 italic border-l-2 border-gray-300 pl-2">"La IA en vivo es apoyo
+                        inmediato, no sustituto del docente como mediador. El profesor decide cómo introducir el
+                        ejemplo."</p>
+                </div>
+
+                <!-- DESPUÉS DE LA CLASE -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-green-500">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">4. Reforzar y sintetizar (Después de clase)</h3>
+                    <p class="text-sm text-gray-500 mb-4"><strong>NotebookLM, Brisk Teaching, Canva</strong></p>
+                    <p class="text-sm text-gray-600 mb-4">Generar síntesis de las notas de la clase o enviar material de
+                        refuerzo personalizado según el desempeño del estudiante en el cuestionario previo.</p>
+
+                    <div class="bg-green-50 p-3 rounded text-sm mb-3">
+                        <strong>Refuerzo sugerido:</strong> Estudiantes con dudas reciben mapa conceptual + lectura
+                        corta. Estudiantes avanzados reciben un caso de profundización.
+                    </div>
+                    <p class="text-sm text-gray-700 italic border-l-2 border-gray-300 pl-2">"El refuerzo no debe ser
+                        igual para todos; la IA ayuda a diferenciar la instrucción."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPARADOR DE HERRAMIENTAS -->
+        <section id="comparador" class="no-print mb-20">
+            <h2 class="text-3xl font-bold text-brand-blue mb-6">Comparador de Herramientas por Necesidad</h2>
+            <div class="overflow-x-auto bg-white rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-brand-blue text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Necesidad</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Herramienta
+                                Sugerida</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Producto que
+                                genera</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Revisión
+                                necesaria (Humana)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Delimitar problema (ABP)</td>
+                            <td class="px-6 py-4 text-brand-orange">ChatGPT / Claude / Gemini</td>
+                            <td class="px-6 py-4">Lista de problemas y preguntas guía</td>
+                            <td class="px-6 py-4 text-gray-600">Elegir por pertinencia y viabilidad real</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Buscar evidencia académica</td>
+                            <td class="px-6 py-4 text-brand-orange">Consensus / Elicit / Scholar</td>
+                            <td class="px-6 py-4">Papers y síntesis con referencias</td>
+                            <td class="px-6 py-4 text-gray-600">Verificar que las fuentes existan y se lean</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Diseñar la propuesta</td>
+                            <td class="px-6 py-4 text-brand-orange">ChatGPT / Claude / NotebookLM</td>
+                            <td class="px-6 py-4">Borrador de intervención</td>
+                            <td class="px-6 py-4 text-gray-600">Validar viabilidad y contexto institucional</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Simular defensa oral</td>
+                            <td class="px-6 py-4 text-brand-orange">ChatGPT / Claude / Gemini</td>
+                            <td class="px-6 py-4">Preguntas de jurado simulado</td>
+                            <td class="px-6 py-4 text-gray-600">Practicar razonamiento, no memorizar</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Material previo (Invertida)</td>
+                            <td class="px-6 py-4 text-brand-orange">NotebookLM / Canva / Gamma</td>
+                            <td class="px-6 py-4">Resumen, infografía o presentación</td>
+                            <td class="px-6 py-4 text-gray-600">Verificar que prepare para participación</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 bg-gray-50">
+                            <td class="px-6 py-4 font-medium">Diagnosticar antes de clase</td>
+                            <td class="px-6 py-4 text-brand-orange">Brisk / Edpuzzle / Forms</td>
+                            <td class="px-6 py-4">Cuestionario y reporte de comprensión</td>
+                            <td class="px-6 py-4 text-gray-600">Usar para enfocar tiempo, no calificar</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN AR / 3D FALLBACK -->
+        <section id="ar-section" class="no-print mb-20 bg-gray-900 rounded-xl overflow-hidden shadow-2xl p-2 relative">
+            <div class="text-center p-8 text-white" id="ar-prompt">
+                <i class="fa-solid fa-vr-cardboard text-5xl text-brand-orange mb-4"></i>
+                <h2 class="text-3xl font-bold mb-2">Mesa de Metodologías Activas con IA</h2>
+                <p class="mb-6 text-gray-300">Explora en 3D el ecosistema de herramientas. (No requiere cámara).</p>
+                <button onclick="startAR()"
+                    class="bg-brand-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-orange-600 transition shadow-lg">
+                    Iniciar experiencia AR / 3D
+                </button>
+            </div>
+
+            <!-- Contenedor A-Frame (Oculto por defecto) -->
+            <div id="ar-container">
+                <button onclick="closeAR()"
+                    class="absolute top-4 right-4 z-50 bg-white text-gray-900 w-10 h-10 rounded-full font-bold shadow-lg flex items-center justify-center hover:bg-gray-200">X</button>
+
+                <a-scene embedded vr-mode-ui="enabled: false" cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+
+                    <!-- Entorno básico -->
+                    <a-sky color="#111827"></a-sky>
+                    <a-plane position="0 -1 -4" rotation="-90 0 0" width="15" height="15" color="#1f2937"></a-plane>
+                    <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+                    <a-light type="directional" position="-1 2 1" intensity="0.8"></a-light>
+
+                    <!-- Textos Flotantes (Frases centrales) -->
+                    <a-text
+                        value="La IA es un andamiaje cognitivo:\nAyuda a sostener el pensamiento,\npero no piensa por el estudiante."
+                        position="-3 3 -4" color="#f97316" align="center" scale="1.2 1.2 1.2"></a-text>
+                    <a-text value="Avanzar rapido no basta:\nhay que poder defender\ncada paso del proyecto."
+                        position="3 3 -4" color="#60a5fa" align="center" scale="1.2 1.2 1.2"></a-text>
+
+                    <!-- Mesa ABP (Izquierda) -->
+                    <a-box position="-2.5 -0.5 -4" width="3" height="1" depth="2" color="#1e3a8a"></a-box>
+                    <a-text value="BLOQUE ABP" position="-2.5 0.1 -3" rotation="-90 0 0" color="#ffffff"
+                        align="center"></a-text>
+
+                    <!-- Elementos Interactivos ABP -->
+                    <!-- Ideación -->
+                    <a-cylinder class="clickable" position="-3.2 0.2 -4" radius="0.3" height="0.2" color="#3b82f6"
+                        data-title="Ideación y problema (ABP)" data-tools="ChatGPT, Claude, Gemini"
+                        data-use="Para delimitar problemas y hacer lluvia de ideas."
+                        data-risk="Aceptar el primer problema generado sin analizar su contexto real."></a-cylinder>
+                    <a-text value="1. Ideacion" position="-3.2 0.4 -4" color="#ffffff" align="center"
+                        scale="0.6 0.6 0.6"></a-text>
+
+                    <!-- Búsqueda -->
+                    <a-cylinder class="clickable" position="-1.8 0.2 -4" radius="0.3" height="0.2" color="#3b82f6"
+                        data-title="Búsqueda de evidencia (ABP)" data-tools="Consensus, Elicit, Google Scholar"
+                        data-use="Para mapear literatura científica y extraer datos."
+                        data-risk="Citar papers no leídos o sufrir alucinaciones de referencias falsas."></a-cylinder>
+                    <a-text value="2. Busqueda" position="-1.8 0.4 -4" color="#ffffff" align="center"
+                        scale="0.6 0.6 0.6"></a-text>
+
+                    <!-- Mesa Clase Invertida (Derecha) -->
+                    <a-box position="2.5 -0.5 -4" width="3" height="1" depth="2" color="#f97316"></a-box>
+                    <a-text value="CLASE INVERTIDA" position="2.5 0.1 -3" rotation="-90 0 0" color="#ffffff"
+                        align="center"></a-text>
+
+                    <!-- Elementos Interactivos Clase Invertida -->
+                    <!-- Material Previo -->
+                    <a-box class="clickable" position="1.8 0.2 -4" width="0.5" height="0.5" depth="0.5" color="#fb923c"
+                        data-title="Material previo (Invertida)" data-tools="NotebookLM, Canva, Gamma"
+                        data-use="Generar resúmenes, podcasts o infografías para revisar antes de clase."
+                        data-risk="Crear material pasivo que no fomente la participación posterior."></a-box>
+                    <a-text value="Antes de clase" position="1.8 0.6 -4" color="#ffffff" align="center"
+                        scale="0.6 0.6 0.6"></a-text>
+
+                    <!-- Diagnóstico -->
+                    <a-box class="clickable" position="3.2 0.2 -4" width="0.5" height="0.5" depth="0.5" color="#fb923c"
+                        data-title="Diagnóstico previo (Invertida)" data-tools="Brisk Teaching, Edpuzzle, Forms"
+                        data-use="Medir comprensión del material previo."
+                        data-risk="Usarlo para calificar punitivamente en lugar de para adaptar la clase."></a-box>
+                    <a-text value="Diagnostico" position="3.2 0.6 -4" color="#ffffff" align="center"
+                        scale="0.6 0.6 0.6"></a-text>
+
+                    <!-- Flujo central (Conectores virtuales) -->
+                    <a-entity position="0 0.5 -2.5">
+                        <a-sphere class="clickable" position="0 0 0" radius="0.4" color="#10b981"
+                            data-title="Validación Humana (Obligatoria)" data-tools="Estudiante / Docente"
+                            data-use="Revisar pertinencia, evidencia, sesgos y coherencia."
+                            data-risk="Delegación total del pensamiento crítico a la IA."></a-sphere>
+                        <a-text value="PUNTO DE\nVALIDACION" position="0 0.6 0" color="#ffffff" align="center"
+                            scale="0.8 0.8 0.8"></a-text>
+                    </a-entity>
+
+                    <a-camera position="0 1.6 0"></a-camera>
+                </a-scene>
+
+                <!-- Panel HTML superpuesto para mostrar información de los objetos 3D -->
+                <div id="ar-info-panel">
+                    <h3 id="ar-info-title" class="text-xl font-bold text-brand-blue mb-2">Haz clic en un objeto</h3>
+                    <p class="text-sm text-gray-500 mb-2">Herramientas: <span id="ar-info-tools"
+                            class="font-bold text-brand-orange">-</span></p>
+                    <p class="text-gray-700 mb-2 border-l-2 border-gray-300 pl-2 text-left text-sm" id="ar-info-use">-
+                    </p>
+                    <div class="bg-red-50 p-2 rounded text-left mt-2">
+                        <span class="text-xs font-bold text-red-600 block">Riesgo si se usa sin criterio:</span>
+                        <span class="text-sm text-red-800" id="ar-info-risk">-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTIVIDAD FINAL -->
+        <section id="actividad" class="no-print mb-20 bg-blue-50 p-8 rounded-xl border border-blue-100">
+            <h2 class="text-2xl font-bold text-brand-blue mb-2"><i class="fa-solid fa-users-viewfinder mr-2"></i>
+                Actividad para Clase: Elección de Herramientas</h2>
+            <p class="text-gray-600 mb-6"><i class="fa-regular fa-clock"></i> Duración: 25 minutos | Trabajo en grupos.
+            </p>
+
+            <p class="mb-4"><strong>Instrucciones:</strong> Cada grupo recibe una fase y debe seleccionar 1 o 2
+                herramientas, explicar cómo las usaría y qué cuidado ético aplicaría.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-orange">Grupo 1: Ideación</h4>
+                    <p class="text-sm text-gray-600 mb-2">Tema: Liderazgo institucional. Necesitan delimitar un
+                        problema.</p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> Problema, pregunta guía,
+                        evidencia.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-orange">Grupo 2: Búsqueda</h4>
+                    <p class="text-sm text-gray-600 mb-2">Necesitan sustentar el diagnóstico con literatura confiable.
+                    </p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> Fuentes verificadas y síntesis.
+                    </p>
+                </div>
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-orange">Grupo 3: Simulación</h4>
+                    <p class="text-sm text-gray-600 mb-2">Quieren practicar la defensa de su propuesta.</p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> 3 preguntas difíciles simuladas y
+                        respuestas.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-blue">Grupo 4: Mat. Previo</h4>
+                    <p class="text-sm text-gray-600 mb-2">Docente prepara contenido para sesión invertida.</p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> Resumen guiado o infografía.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-blue">Grupo 5: Diagnóstico</h4>
+                    <p class="text-sm text-gray-600 mb-2">Docente necesita saber qué entendieron antes de clase.</p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> Cuestionario y reporte.</p>
+                </div>
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h4 class="font-bold text-brand-blue">Grupo 6: Refuerzo</h4>
+                    <p class="text-sm text-gray-600 mb-2">Reforzar lo aprendido de forma diferenciada post-clase.</p>
+                    <p class="text-xs text-gray-500"><strong>Prod. esperado:</strong> Material distinto según nivel.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MATRIZ EDITABLE -->
+        <section id="matrix-section" class="mb-20">
+            <h2 class="print-only-title text-brand-blue mb-4">Matriz de Integración de IA</h2>
+            <div class="no-print flex justify-between items-end mb-6">
+                <h2 class="text-2xl font-bold text-brand-blue">Matriz Editable (Planificación)</h2>
+                <div class="space-x-2">
+                    <button type="button" onclick="loadExample()"
+                        class="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300">Ver
+                        ejemplo</button>
+                    <button type="button" onclick="clearMatrix()"
+                        class="text-sm bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200">Limpiar</button>
+                    <button type="button" onclick="window.print()"
+                        class="text-sm bg-brand-blue text-white px-3 py-1 rounded hover:bg-blue-800"><i
+                            class="fa-solid fa-file-pdf mr-1"></i> Exportar a PDF</button>
+                </div>
+            </div>
+
+            <!-- Formulario de ingreso (oculto al imprimir) -->
+            <div class="no-print bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
+                <form id="matrixForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fase o momento</label>
+                        <select id="m-fase"
+                            class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue focus:ring-1 focus:ring-brand-blue">
+                            <option value="ABP - Ideación">ABP - Ideación</option>
+                            <option value="ABP - Búsqueda">ABP - Búsqueda de evidencia</option>
+                            <option value="ABP - Diseño">ABP - Diseño de propuesta</option>
+                            <option value="ABP - Feedback/Defensa">ABP - Feedback y Defensa</option>
+                            <option value="Invertida - Material Previo">Invertida - Material Previo</option>
+                            <option value="Invertida - Diagnóstico">Invertida - Diagnóstico Previo</option>
+                            <option value="Invertida - Durante Clase">Invertida - Durante la Clase</option>
+                            <option value="Invertida - Refuerzo">Invertida - Refuerzo posterior</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Herramienta elegida</label>
+                        <input type="text" id="m-herramienta" placeholder="Ej: NotebookLM"
+                            class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue focus:ring-1 focus:ring-brand-blue">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Producto generado</label>
+                        <input type="text" id="m-producto" placeholder="Ej: Resumen guiado"
+                            class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue focus:ring-1 focus:ring-brand-blue">
+                    </div>
+                    <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cómo se usaría</label>
+                            <textarea id="m-uso" rows="2"
+                                class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue"></textarea>
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Validación humana</label>
+                            <textarea id="m-validacion" rows="2" placeholder="¿Qué revisará el docente/estudiante?"
+                                class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue"></textarea>
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cuidado ético</label>
+                            <textarea id="m-etica" rows="2" placeholder="Riesgos a evitar"
+                                class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:border-brand-blue"></textarea>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3 text-right">
+                        <button type="button" onclick="addToMatrix()"
+                            class="bg-brand-orange text-white px-4 py-2 rounded font-medium hover:bg-orange-600">Guardar
+                            en matriz</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabla de datos (Visible al imprimir) -->
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="mainMatrixTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fase / Momento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Herramienta</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Cómo se usará</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Producto</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Validación</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Ética</th>
+                            <th
+                                class="no-print px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixBody" class="bg-white divide-y divide-gray-200 text-sm">
+                        <!-- Filas dinámicas -->
+                        <tr>
+                            <td colspan="7" class="px-4 py-4 text-center text-gray-500 italic">No hay entradas. Usa el
+                                formulario o carga el ejemplo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- MÓDULO ÉTICO -->
+        <section id="etica" class="no-print bg-white rounded-xl shadow-lg border border-red-100 overflow-hidden mb-10">
+            <div class="bg-red-50 border-b border-red-100 px-6 py-4">
+                <h2 class="text-2xl font-bold text-red-800"><i class="fa-solid fa-shield-halved mr-2"></i> Antes de usar
+                    el resultado (Control Ético)</h2>
+                <p class="text-red-600 text-sm mt-1">Lista de verificación humana obligatoria.</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿El problema o contenido fue validado con criterio propio, no solo aceptado de la
+                            IA?</span>
+                    </label>
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿Las fuentes citadas existen y fueron leídas (no inventadas)?</span>
+                    </label>
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿El estudiante puede defender el contenido sin depender del texto generado?</span>
+                    </label>
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿Se evitó la delegación total del pensamiento crítico a la IA?</span>
+                    </label>
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿El uso de IA fue declarado de forma transparente en el entregable?</span>
+                    </label>
+                    <label class="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <input type="checkbox" class="mt-1 h-4 w-4 text-brand-orange border-gray-300 rounded">
+                        <span>¿Se protegieron los datos personales/institucionales al escribir el prompt?</span>
+                    </label>
+                </div>
+
+                <div class="mt-6 text-center border-t border-gray-100 pt-4">
+                    <p class="font-bold text-brand-blue text-lg italic">
+                        "La IA puede acelerar la investigación y la creación de materiales, pero el pensamiento crítico,
+                        la autoría y el juicio final deben seguir siendo humanos."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CIERRE -->
+        <section id="closing" class="no-print text-center py-12 bg-brand-blue text-white rounded-xl px-6">
+            <h2 class="text-2xl font-light mb-8 max-w-4xl mx-auto">
+                "La IA en las metodologías activas funciona como un <strong>andamiaje cognitivo</strong>: acelera la
+                investigación, el diseño y la retroalimentación, pero el estudiante construye el conocimiento y el
+                docente sigue siendo quien orquesta el proceso."
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-left">
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <i class="fa-solid fa-1 text-2xl text-brand-orange mb-3"></i>
+                    <p class="text-sm">La IA apoya cada fase del ABP y Clase Invertida, pero no reemplaza la autoría ni
+                        el juicio crítico del estudiante.</p>
+                </div>
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <i class="fa-solid fa-2 text-2xl text-brand-orange mb-3"></i>
+                    <p class="text-sm">Todo resultado generado debe validarse, defenderse con argumentos propios y
+                        documentarse con transparencia.</p>
+                </div>
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <i class="fa-solid fa-3 text-2xl text-brand-orange mb-3"></i>
+                    <p class="text-sm">El verdadero valor diferencial humano —la mentoría, el juicio ético y la conexión
+                        emocional— no es automatizable.</p>
+                </div>
+            </div>
+
+
+        </section>
+
+    </main>
+
+    <footer class="no-print bg-gray-900 text-gray-400 py-6 text-center text-sm">
+        <p>Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias</p>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        // Función para copiar prompts
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Prompt copiado al portapapeles.");
+            });
+        }
+
+        // --- Lógica de la Matriz Editable ---
+        let matrixData = [];
+
+        function renderMatrix() {
+            const tbody = document.getElementById('matrixBody');
+            tbody.innerHTML = '';
+
+            if (matrixData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-4 text-center text-gray-500 italic">No hay entradas. Usa el formulario o carga el ejemplo.</td></tr>';
+                return;
+            }
+
+            matrixData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-gray-800">${row.fase}</td>
+                    <td class="px-4 py-3 text-brand-blue">${row.herramienta}</td>
+                    <td class="px-4 py-3">${row.uso}</td>
+                    <td class="px-4 py-3 text-brand-orange">${row.producto}</td>
+                    <td class="px-4 py-3">${row.validacion}</td>
+                    <td class="px-4 py-3 text-red-600 text-xs">${row.etica}</td>
+                    <td class="no-print px-4 py-3 text-right">
+                        <button onclick="removeRow(${index})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addToMatrix() {
+            const row = {
+                fase: document.getElementById('m-fase').value,
+                herramienta: document.getElementById('m-herramienta').value || '-',
+                uso: document.getElementById('m-uso').value || '-',
+                producto: document.getElementById('m-producto').value || '-',
+                validacion: document.getElementById('m-validacion').value || '-',
+                etica: document.getElementById('m-etica').value || '-'
+            };
+            matrixData.push(row);
+            renderMatrix();
+            document.getElementById('matrixForm').reset();
+        }
+
+        function removeRow(index) {
+            matrixData.splice(index, 1);
+            renderMatrix();
+        }
+
+        function clearMatrix() {
+            if (confirm("¿Seguro que deseas limpiar la matriz?")) {
+                matrixData = [];
+                renderMatrix();
+            }
+        }
+
+        function loadExample() {
+            matrixData = [
+                {
+                    fase: "ABP - Búsqueda",
+                    herramienta: "Consensus",
+                    uso: "Ingresar el problema definido para buscar papers relevantes.",
+                    producto: "Síntesis de artículos con citas exactas.",
+                    validacion: "Verificar en Scholar que los artículos existen y leer la metodología.",
+                    etica: "No citar sin leer la fuente original."
+                },
+                {
+                    fase: "Invertida - Material Previo",
+                    herramienta: "NotebookLM",
+                    uso: "Subir 3 PDFs sobre liderazgo y pedir un podcast resumen de 5 min.",
+                    producto: "Audio MP3 y glosario clave.",
+                    validacion: "Docente escucha para asegurar que los conceptos no se tergiversen.",
+                    etica: "Usar solo material del cual se tengan derechos de distribución."
+                }
+            ];
+            renderMatrix();
+        }
+
+        // --- Lógica AR / A-Frame (Fallback 3D) ---
+        function startAR() {
+            document.getElementById('ar-prompt').style.display = 'none';
+            document.getElementById('ar-container').style.display = 'block';
+
+            // Re-render A-Frame para asegurar dimensiones correctas
+            const scene = document.querySelector('a-scene');
+            if (scene) scene.resize();
+        }
+
+        function closeAR() {
+            document.getElementById('ar-container').style.display = 'none';
+            document.getElementById('ar-prompt').style.display = 'block';
+        }
+
+        // Interacción con objetos 3D
+        document.addEventListener('DOMContentLoaded', function () {
+            const sceneEl = document.querySelector('a-scene');
+            const infoPanel = document.getElementById('ar-info-panel');
+
+            if (sceneEl) {
+                sceneEl.addEventListener('click', function (evt) {
+                    // Verificar si el elemento clickeado tiene la clase 'clickable'
+                    if (evt.detail.intersectedEl && evt.detail.intersectedEl.classList.contains('clickable')) {
+                        const el = evt.detail.intersectedEl;
+
+                        // Extraer datos del objeto
+                        const title = el.getAttribute('data-title');
+                        const tools = el.getAttribute('data-tools');
+                        const use = el.getAttribute('data-use');
+                        const risk = el.getAttribute('data-risk');
+
+                        // Actualizar UI
+                        document.getElementById('ar-info-title').innerText = title || 'Información';
+                        document.getElementById('ar-info-tools').innerText = tools || '-';
+                        document.getElementById('ar-info-use').innerText = use || '-';
+                        document.getElementById('ar-info-risk').innerText = risk || '-';
+
+                        // Mostrar panel
+                        infoPanel.style.display = 'block';
+
+                        // Animación sutil del objeto tocado
+                        const currentScale = el.getAttribute('scale');
+                        el.setAttribute('scale', { x: currentScale.x * 1.1, y: currentScale.y * 1.1, z: currentScale.z * 1.1 });
+                        setTimeout(() => {
+                            el.setAttribute('scale', currentScale);
+                        }, 200);
+                    } else {
+                        // Click en el fondo oculta el panel
+                        infoPanel.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA en la Evaluación: Feedback y Plagio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- jsPDF para exportar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- A-Frame para AR/3D -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8', // blue-700
+                        secondary: '#f97316', // orange-500
+                        lightbg: '#f8fafc', // slate-50
+                        darktext: '#1e293b', // slate-800
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .rubric-cell {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rubric-cell:hover {
+            background-color: #eff6ff;
+        }
+
+        .rubric-cell.selected {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+            border-width: 2px;
+        }
+
+        /* Ocultar barra de desplazamiento para A-Frame si está activo */
+        body.ar-active {
+            overflow: hidden;
+        }
+
+        #ar-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #000;
+        }
+
+        #ar-ui {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <nav class="fixed top-0 w-full bg-white shadow-md z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-graduation-cap text-primary text-2xl mr-2"></i>
+                    <span class="font-bold text-xl text-primary hidden md:block">EvaluaIA</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-4 text-sm font-medium">
+                    <a href="#inicio" class="text-gray-600 hover:text-primary transition">Inicio</a>
+                    <a href="#feedback" class="text-gray-600 hover:text-primary transition">Feedback</a>
+                    <a href="#rubricas" class="text-gray-600 hover:text-primary transition">Rúbricas</a>
+                    <a href="#similitud" class="text-gray-600 hover:text-primary transition">Similitud</a>
+                    <a href="#deteccion" class="text-gray-600 hover:text-primary transition">Detección IA</a>
+                    <a href="#herramientas" class="text-gray-600 hover:text-primary transition">Comparador</a>
+                    <a href="#actividad" class="text-gray-600 hover:text-primary transition">Actividad</a>
+                    <button onclick="startAR()"
+                        class="bg-primary text-white px-3 py-1 rounded hover:bg-blue-800 transition"><i
+                            class="fa-solid fa-vr-cardboard mr-1"></i> AR</button>
+                </div>
+                <!-- Menú Móvil Botón -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                        class="text-gray-600 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Menú Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t absolute w-full shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#inicio"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Inicio</a>
+                <a href="#feedback"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Feedback y Rúbricas</a>
+                <a href="#similitud"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Integridad y
+                    Detección</a>
+                <a href="#actividad"
+                    class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Actividad</a>
+                <button onclick="startAR()"
+                    class="w-full text-center block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50"><i
+                        class="fa-solid fa-vr-cardboard mr-1"></i> Realidad Aumentada</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Módulo 1: Inicio -->
+    <section id="inicio" class="pt-24 pb-12 px-4 bg-gradient-to-b from-blue-50 to-white min-h-screen flex items-center">
+        <div class="max-w-5xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-primary mb-4 leading-tight">
+                IA en la Evaluación: <span class="text-secondary">uso práctico de herramientas</span>
+            </h1>
+            <h2 class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Aprende cómo aplicar herramientas reales para dar feedback, revisar similitud, detectar alertas de IA y
+                tomar decisiones pedagógicas justas.
+            </h2>
+            <div><span
+                    class="inline-block bg-orange-500 text-white text-xs px-3 py-1 rounded-full uppercase font-semibold tracking-wider mb-3">
+                    Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias
+                </span>
+            </div>
+            <div
+                class="bg-white p-6 rounded-xl shadow-lg mb-10 border-l-4 border-secondary text-left max-w-4xl mx-auto glass-card">
+                <i class="fa-solid fa-quote-left text-gray-300 text-3xl float-left mr-4"></i>
+                <p class="text-lg text-gray-700 italic">
+                    "La IA puede apoyar la evaluación, pero no reemplaza el criterio docente. Un reporte automatizado
+                    orienta la revisión, pero la decisión final debe basarse en rúbrica, evidencias, contexto y juicio
+                    pedagógico."
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+                <a href="#feedback"
+                    class="bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-800 transition flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-route mr-2"></i> Iniciar recorrido
+                </a>
+                <button onclick="startAR()"
+                    class="bg-secondary text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-600 transition flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-camera mr-2"></i> Experiencia AR
+                </button>
+                <a href="#herramientas"
+                    class="bg-white text-primary border-2 border-primary py-3 px-6 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-toolbox mr-2"></i> Comparador
+                </a>
+                <a href="#actividad"
+                    class="bg-gray-800 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-900 transition flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-users mr-2"></i> Actividad
+                </a>
+            </div>
+
+            <!-- Flujo Central -->
+            <div class="mt-16">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Caso Práctico: Informe de Mejora Institucional</h3>
+                <p class="text-gray-600 mb-6 font-medium">Flujo de evaluación formativa asistida por IA (El camino
+                    correcto):</p>
+                <div class="flex flex-wrap justify-center items-center gap-2 md:gap-4 text-sm font-medium">
+                    <div class="bg-blue-100 text-blue-800 p-3 rounded-lg shadow border border-blue-200">Entrega del
+                        informe</div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-orange-100 text-orange-800 p-3 rounded-lg shadow border border-orange-200">Revisión
+                        con herramienta</div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-green-100 text-green-800 p-3 rounded-lg shadow border border-green-200">Feedback
+                        preliminar</div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-purple-100 text-purple-800 p-3 rounded-lg shadow border border-purple-200">Revisión
+                        docente</div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-yellow-100 text-yellow-800 p-3 rounded-lg shadow border border-yellow-200">Solicitud
+                        de evidencias</div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-blue-100 text-blue-800 p-3 rounded-lg shadow border border-blue-200">Segunda versión
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                    <div class="bg-gray-800 text-white p-3 rounded-lg shadow">Decisión pedagógica</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 2: Feedback Automatizado -->
+    <section id="feedback" class="py-16 px-4 bg-white border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-primary mb-2 border-b-2 border-primary pb-2 inline-block">1. Herramientas
+                para Feedback Automatizado</h2>
+            <p class="text-gray-600 mb-8 mt-4 text-lg">Simulaciones para retroalimentación formativa inmediata y
+                revisión asistida de borradores.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+                <!-- 1. Google Forms -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-brands fa-google text-blue-500 mr-2"></i>Google Forms</h3>
+                            <span
+                                class="text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-200">Evaluación
+                                Diagnóstica</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-blue-900 border-b border-blue-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Crear cuestionarios con respuestas automáticas
+                                orientadoras.</p>
+                            <p><strong>Uso docente:</strong> Identificar vacíos conceptuales antes de asignar trabajos
+                                complejos.</p>
+                            <p><strong>Resultado esperado:</strong> El estudiante corrige su razonamiento en el momento.
+                            </p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Dar un feedback limitante ("Incorrecto")
+                                sin explicar el por qué.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Orientar el error como
+                                oportunidad, no como sanción directa.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-blue-200 text-blue-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://www.google.com/intl/es/forms/about/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica</span>
+                            <p class="font-semibold text-gray-800 mb-3">¿Cuál es el propósito principal de un informe de
+                                mejora institucional?</p>
+                            <div class="space-y-2">
+                                <label
+                                    class="flex items-start p-3 bg-white border rounded shadow-sm hover:bg-blue-50 cursor-pointer transition">
+                                    <input type="radio" name="gf-q1" value="A"
+                                        class="mt-1 mr-3 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700">A. Describir una institución sin proponer
+                                        cambios.</span>
+                                </label>
+                                <label
+                                    class="flex items-start p-3 bg-white border rounded shadow-sm hover:bg-blue-50 cursor-pointer transition">
+                                    <input type="radio" name="gf-q1" value="B"
+                                        class="mt-1 mr-3 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700">B. Identificar un problema, analizar evidencias
+                                        y proponer una mejora viable.</span>
+                                </label>
+                                <label
+                                    class="flex items-start p-3 bg-white border rounded shadow-sm hover:bg-blue-50 cursor-pointer transition">
+                                    <input type="radio" name="gf-q1" value="C"
+                                        class="mt-1 mr-3 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700">C. Copiar información de documentos
+                                        institucionales.</span>
+                                </label>
+                            </div>
+                            <button onclick="checkGoogleForms()"
+                                class="mt-4 bg-primary text-white px-5 py-2 rounded font-semibold hover:bg-blue-800 w-full transition shadow">Verificar
+                                respuesta</button>
+                            <div id="gf-feedback" class="mt-3 hidden p-3 rounded text-sm font-medium border"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. ChatGPT -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-robot text-green-600 mr-2"></i>ChatGPT</h3>
+                            <span
+                                class="text-xs font-bold bg-green-100 text-green-800 px-3 py-1 rounded-full border border-green-200">IA
+                                Generativa</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-green-50 p-4 rounded-lg border border-green-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-green-900 border-b border-green-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Obtener comentarios preliminares estructurados desde una
+                                rúbrica.</p>
+                            <p><strong>Uso docente:</strong> Agilizar la lectura de borradores y extraer observaciones
+                                clave.</p>
+                            <p><strong>Resultado esperado:</strong> Comentarios separados en fortalezas y debilidades.
+                            </p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Reemplazar el juicio crítico y entregar
+                                feedback robótico.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> No subir nunca datos personales o
+                                sensibles al prompt.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-green-200 text-green-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://chatgpt.com/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica</span>
+                            <div class="bg-white p-3 rounded border shadow-inner mb-3">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Texto del Estudiante</span>
+                                <p class="text-sm italic text-gray-700 mt-1">"Se propone mejorar la gestión educativa
+                                    usando tecnología para que los docentes trabajen mejor... Esta propuesta es
+                                    importante porque existen problemas."</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded border border-blue-100 mb-3">
+                                <span class="text-[10px] font-bold text-blue-400 uppercase">Prompt del Docente</span>
+                                <p class="text-xs text-gray-800 mt-1 font-medium">Actúa como asistente de evaluación.
+                                    Revisa usando la rúbrica (Claridad, Evidencias, Viabilidad). No coloques nota.
+                                    Entrega: 1. Fortalezas, 2. Por mejorar, 3. Recomendaciones.</p>
+                            </div>
+                            <button onclick="simulateChatGPT()"
+                                class="w-full bg-green-600 text-white px-5 py-2 rounded font-semibold hover:bg-green-700 transition shadow flex items-center justify-center">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generar feedback simulado
+                            </button>
+                            <div id="chatgpt-feedback"
+                                class="mt-4 hidden p-4 bg-white border-l-4 border-green-500 rounded shadow-sm text-sm text-gray-700 space-y-2">
+                                <p><strong class="text-green-700">1. Fortalezas:</strong> Presenta una intención de
+                                    mejora y reconoce un problema institucional.</p>
+                                <p><strong class="text-orange-600">2. Por mejorar:</strong> Problema formulado de manera
+                                    general. Sin evidencias ni datos.</p>
+                                <p><strong class="text-blue-600">3. Recomendaciones:</strong> Agrega encuestas o
+                                    indicadores. Explica qué tecnología usarás.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- 3. Claude -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-brain text-purple-600 mr-2"></i>Claude</h3>
+                            <span
+                                class="text-xs font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full border border-purple-200">Análisis
+                                Documental</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-purple-900 border-b border-purple-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Revisar documentos extensos analizando estructura y
+                                argumentación.</p>
+                            <p><strong>Uso docente:</strong> Apoyo para cruzar variables (ej. objetivos vs
+                                conclusiones).</p>
+                            <p><strong>Resultado esperado:</strong> Matrices comparativas sobre el estado del trabajo.
+                            </p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Delegar la comprensión total del documento
+                                a la máquina.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Resguardar la propiedad
+                                intelectual; usar versiones seguras.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-purple-200 text-purple-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://claude.ai/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica</span>
+                            <div class="bg-purple-50 p-3 rounded border border-purple-100 mb-3">
+                                <span class="text-[10px] font-bold text-purple-500 uppercase">Prompt del Docente
+                                    (Análisis Extenso)</span>
+                                <p class="text-xs text-gray-800 mt-1 font-medium">Revisa este informe extenso. Analiza:
+                                    Problema, Evidencias, Propuesta y Fuentes. No coloques nota. Entrega el resultado en
+                                    una tabla de Aspecto, Observación y Recomendación.</p>
+                            </div>
+                            <button onclick="simulateClaude()"
+                                class="w-full bg-purple-600 text-white px-5 py-2 rounded font-semibold hover:bg-purple-700 transition shadow flex items-center justify-center">
+                                <i class="fa-solid fa-table mr-2"></i> Simular revisión de documento
+                            </button>
+                            <div id="claude-feedback"
+                                class="mt-4 hidden overflow-hidden rounded border border-gray-300 shadow-sm">
+                                <table class="w-full text-left bg-white text-sm">
+                                    <thead class="bg-purple-100 text-purple-900 text-xs uppercase">
+                                        <tr>
+                                            <th class="p-2 border-b">Aspecto</th>
+                                            <th class="p-2 border-b">Observación</th>
+                                            <th class="p-2 border-b">Recomendación</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-xs">
+                                        <tr>
+                                            <td class="p-2 border-b font-semibold">Problema</td>
+                                            <td class="p-2 border-b text-gray-600">Expresado de forma general</td>
+                                            <td class="p-2 border-b text-blue-600">Precisar con datos</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border-b font-semibold">Evidencias</td>
+                                            <td class="p-2 border-b text-gray-600">No se citan institucionales</td>
+                                            <td class="p-2 border-b text-blue-600">Agregar reportes</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border-b font-semibold">Propuesta</td>
+                                            <td class="p-2 border-b text-gray-600">Poco operativa</td>
+                                            <td class="p-2 border-b text-blue-600">Definir recursos/plazos</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. MagicSchool AI -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-check-double text-blue-700 mr-2"></i>Gradescope</h3>
+                            <span
+                                class="text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-200">Feedback
+                                Estructurado</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-blue-900 border-b border-blue-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Generar comentarios formativos sobre el informe
+                                entregado, vinculados a una rúbrica de evaluación.</p>
+                            <p><strong>Uso docente:</strong> Calificar y comentar el trabajo real del estudiante de
+                                forma más rápida y consistente entre secciones.</p>
+                            <p><strong>Resultado esperado:</strong> Informe devuelto con observaciones específicas por
+                                criterio (claridad, evidencias, viabilidad).</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Estandarizar el comentario y perder matices
+                                del trabajo individual del estudiante.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> El docente revisa y ajusta cada
+                                comentario antes de enviarlo; la IA no entrega la nota final.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-blue-200 text-blue-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://www.gradescope.com/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica</span>
+                            <div class="bg-white p-3 rounded border border-gray-200 mb-2">
+                                <span class="text-[10px] font-bold text-gray-500 uppercase">Texto del estudiante</span>
+                                <p class="text-xs text-gray-800 mt-1 italic">"Se propone mejorar la gestión educativa
+                                    usando tecnología para que los docentes trabajen mejor... Esta propuesta es
+                                    importante porque existen problemas."</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded border border-blue-100 mb-3">
+                                <span class="text-[10px] font-bold text-blue-500 uppercase">Prompt del docente</span>
+                                <p class="text-xs text-gray-800 mt-1 font-medium italic">"Revisa este informe entregado
+                                    usando la rúbrica (Claridad, Evidencias, Viabilidad). No coloques nota. Entrega: 1.
+                                    Fortalezas, 2. Por mejorar, 3. Recomendaciones."</p>
+                            </div>
+                            <button onclick="simulateMagicSchool()"
+                                class="w-full bg-blue-700 text-white px-5 py-2 rounded font-semibold hover:bg-blue-800 transition shadow flex items-center justify-center">
+                                <i class="fa-solid fa-bolt mr-2"></i> ⚡ Generar feedback sobre el informe
+                            </button>
+                            <div id="magicschool-feedback"
+                                class="mt-4 hidden overflow-hidden rounded border border-gray-300 shadow-sm">
+                                <div class="bg-white p-4 text-sm">
+                                    <h5 class="font-bold text-blue-700 mb-1">1. Fortalezas</h5>
+                                    <p class="text-gray-700 mb-2">Identifica correctamente el uso de tecnología en
+                                        gestión educativa como eje de mejora.</p>
+                                    <h5 class="font-bold text-blue-700 mb-1">2. Por mejorar</h5>
+                                    <p class="text-gray-700 mb-2">Falta de evidencias concretas. ¿Cuáles son los
+                                        problemas exactos? ¿Cómo trabajan mejor los docentes?</p>
+                                    <h5 class="font-bold text-blue-700 mb-1">3. Recomendaciones</h5>
+                                    <p class="text-gray-700">Incluye datos cuantitativos o citas que respalden la
+                                        existencia de los "problemas" mencionados.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 3: Rúbricas y Segunda Versión -->
+    <section id="rubricas" class="py-16 px-4 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-primary mb-2 border-b-2 border-primary pb-2 inline-block">2. Herramientas
+                para Rúbricas y Seguimiento</h2>
+            <p class="text-gray-600 mb-8 mt-4 text-lg">Plataformas formales para sistematizar la calificación y promover
+                la reentrega.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- 5. CoGrader -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-list-check text-purple-600 mr-2"></i>CoGrader</h3>
+                            <span
+                                class="text-xs font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full border border-purple-200">Corrección
+                                por Rúbrica</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-purple-900 border-b border-purple-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Calificar informes y ensayos aplicando una rúbrica ya
+                                creada, criterio por criterio, con seguimiento del progreso del estudiante.</p>
+                            <p><strong>Uso docente:</strong> Subir la rúbrica del curso y obtener una primera
+                                calificación justificada por cada criterio, lista para revisar.</p>
+                            <p><strong>Resultado esperado:</strong> Nota sugerida + feedback específico por criterio +
+                                comparación con entregas anteriores del mismo estudiante.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Aceptar la calificación sugerida sin
+                                revisar el razonamiento detrás de cada criterio.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> El docente aprueba cada nota antes
+                                de que llegue al estudiante; la IA no decide la calificación final.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-purple-200 text-purple-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://cograder.com/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica</span>
+                            <div class="bg-purple-50 p-3 rounded border border-purple-100 mb-3">
+                                <span class="text-[10px] font-bold text-purple-500 uppercase">Rúbrica subida</span>
+                                <p class="text-xs text-gray-800 mt-1 font-medium">Claridad, Evidencias, Viabilidad (3
+                                    niveles)</p>
+                            </div>
+                            <div class="bg-white p-3 rounded border border-gray-200 mb-3">
+                                <span class="text-[10px] font-bold text-gray-500 uppercase">Informe del
+                                    estudiante</span>
+                                <p class="text-xs text-gray-800 mt-1 italic">"Se propone mejorar la gestión educativa
+                                    usando tecnología para que los docentes trabajen mejor... Esta propuesta es
+                                    importante porque existen problemas."</p>
+                            </div>
+                            <button onclick="checkGradescope()"
+                                class="w-full bg-purple-600 text-white px-5 py-2 rounded font-semibold hover:bg-purple-700 transition shadow flex justify-center items-center">
+                                ⚡ Calificar según rúbrica y generar seguimiento
+                            </button>
+                            <div id="gradescope-feedback"
+                                class="mt-4 hidden p-3 bg-white border border-gray-300 rounded shadow-sm text-sm text-gray-800">
+                                <p class="font-bold text-purple-700 mb-2">Nota sugerida: 12/20</p>
+                                <ul class="list-disc pl-4 space-y-1 mb-3 text-xs">
+                                    <li><strong>Claridad (Logrado):</strong> El enfoque es comprensible.</li>
+                                    <li><strong>Evidencias (En inicio):</strong> Faltan datos que respalden los
+                                        problemas.</li>
+                                    <li><strong>Viabilidad (En proceso):</strong> Propuesta muy general.</li>
+                                </ul>
+                                <p class="text-xs text-gray-600 italic border-t border-gray-200 pt-2"><i
+                                        class="fa-solid fa-chart-line mr-1 text-purple-500"></i> Progreso: El alumno
+                                    mejoró en "Claridad" respecto al informe anterior.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Moodle -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-graduation-cap text-orange-500 mr-2"></i>Moodle LMS</h3>
+                            <span
+                                class="text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full border border-orange-200">Rúbricas
+                                LMS</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-orange-50 p-4 rounded-lg border border-orange-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-orange-900 border-b border-orange-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Formalizar la entrega, aplicar rúbricas y habilitar
+                                segundos intentos.</p>
+                            <p><strong>Uso docente:</strong> Centralizar la calificación y la gestión del proceso
+                                formativo.</p>
+                            <p><strong>Resultado esperado:</strong> Calificación fundamentada que fomenta la mejora en
+                                la V2.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Convertirlo en un repositorio frío solo
+                                para asentar la nota final.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Usar el LMS para promover
+                                evaluación formativa, no punitiva.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-orange-200 text-orange-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://moodle.org/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Simulación
+                                Práctica: Rúbrica Interactiva</span>
+                            <p class="text-sm text-gray-700 mb-3">Selecciona niveles en esta matriz para generar un
+                                comentario formativo de reentrega.</p>
+
+                            <div class="overflow-x-auto rounded border border-gray-300 shadow-sm mb-4">
+                                <table class="min-w-full bg-white text-xs">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase">
+                                        <tr>
+                                            <th class="py-2 px-2 border-b text-left">Criterio</th>
+                                            <th class="py-2 px-2 border-b text-center">Bajo</th>
+                                            <th class="py-2 px-2 border-b text-center">Medio</th>
+                                            <th class="py-2 px-2 border-b text-center">Alto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rubric-body" class="text-gray-800">
+                                        <!-- Generado dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button onclick="generateRubricFeedback()"
+                                class="w-full bg-secondary text-white px-5 py-2 rounded font-semibold hover:bg-orange-600 transition shadow">Generar
+                                Comentario a Estudiante</button>
+                            <textarea id="rubric-feedback-text"
+                                class="w-full mt-3 p-3 border border-gray-300 rounded text-sm bg-white focus:ring-secondary focus:border-secondary transition shadow-inner"
+                                rows="3" placeholder="El comentario automático aparecerá aquí..." readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 4: Similitud y Plagio -->
+    <section id="similitud" class="py-16 px-4 bg-white border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-primary mb-2 border-b-2 border-primary pb-2 inline-block">3. Herramientas
+                para Similitud e Integridad</h2>
+            <p class="text-gray-600 mb-8 mt-4 text-lg">Indicadores de texto coincidente que requieren validación e
+                interpretación humana.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- 7. Turnitin -->
+                <div
+                    class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="absolute top-0 right-0 bg-red-600 text-white px-4 py-1 font-bold rounded-bl-lg shadow-md">
+                            Similitud: 38%</div>
+                        <div class="flex items-center mb-4 pt-2">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-copy text-red-500 mr-2"></i>Turnitin</h3>
+                            <span
+                                class="ml-4 text-xs font-bold bg-red-50 text-red-700 px-3 py-1 rounded-full border border-red-200">Reporte
+                                Similitud</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-red-900 border-b border-red-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Revisar coincidencias contra bases de datos e internet.
+                            </p>
+                            <p><strong>Uso docente:</strong> Auditar originalidad en entregas formales (tesis, informes
+                                finales).</p>
+                            <p><strong>Resultado esperado:</strong> Porcentaje de similitud desglosado por fuentes.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Convertir el 30% en una regla
+                                inquebrantable para desaprobar y confundir citas con plagio.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> La similitud es un indicador
+                                numérico, no prueba legal de deshonestidad.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-red-200 text-red-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://www.turnitin.com/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Simulación
+                                Práctica</span>
+                            <div class="space-y-2 text-sm bg-white p-3 border rounded shadow-inner mb-4">
+                                <div class="p-2 border-l-4 border-green-500 bg-green-50 rounded">
+                                    <span class="font-bold text-green-700">(15%)</span> "Liderazgo distribuido" (Gómez,
+                                    2022). <span class="text-xs ml-1 font-semibold text-gray-500 uppercase">- Cita
+                                        correcta</span>
+                                </div>
+                                <div class="p-2 border-l-4 border-yellow-400 bg-yellow-50 rounded">
+                                    <span class="font-bold text-yellow-700">(7%)</span> "El presente informe tiene como
+                                    objetivo..." <span class="text-xs ml-1 font-semibold text-gray-500 uppercase">-
+                                        Frase común</span>
+                                </div>
+                                <div class="p-2 border-l-4 border-red-500 bg-red-50 rounded">
+                                    <span class="font-bold text-red-700">(16%)</span> "La institución carece de un
+                                    plan..." <span class="text-xs ml-1 font-semibold text-gray-500 uppercase">- Sin
+                                        cita</span>
+                                </div>
+                            </div>
+
+                            <p class="font-bold text-gray-800 mb-2">Con este reporte desglosado, ¿qué debe hacer el
+                                docente?</p>
+                            <select id="turnitin-select"
+                                class="w-full p-3 border border-gray-300 rounded text-sm mb-4 focus:ring-primary focus:border-primary shadow-sm bg-white">
+                                <option value="">Seleccione decisión...</option>
+                                <option value="A">A. Colocar cero automáticamente (es más del 30%).</option>
+                                <option value="B">B. Revisar origen, verificar citas y pedir corrección.</option>
+                                <option value="C">C. Ignorar el reporte.</option>
+                            </select>
+                            <button onclick="checkTurnitin()"
+                                class="w-full bg-red-600 text-white px-5 py-2 rounded font-semibold hover:bg-red-700 transition shadow">Evaluar
+                                decisión</button>
+                            <div id="turnitin-result" class="mt-4 text-sm hidden p-3 rounded font-medium border"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Copyleaks -->
+                <div
+                    class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="absolute top-0 right-0 bg-orange-500 text-white px-4 py-1 font-bold rounded-bl-lg shadow-md">
+                            Alerta: 82%</div>
+                        <div class="flex items-center mb-4 pt-2">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-shield-halved text-orange-500 mr-2"></i>Copyleaks</h3>
+                            <span
+                                class="ml-4 text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full border border-orange-200">Detección
+                                Híbrida</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-orange-50 p-4 rounded-lg border border-orange-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-orange-900 border-b border-orange-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Identificar patrones de similitud algorítmicos o
+                                parafraseo automatizado.</p>
+                            <p><strong>Uso docente:</strong> Obtener señales de alerta para abrir un diálogo pedagógico.
+                            </p>
+                            <p><strong>Resultado esperado:</strong> Reporte que señala qué párrafos podrían ser
+                                artificiales.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Acusar al estudiante basándose solo en la
+                                herramienta (falso positivo).</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Una máquina no puede ser el juez
+                                final de la honestidad de un humano.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-orange-200 text-orange-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://copyleaks.com/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Simulación
+                                Práctica</span>
+                            <div class="bg-white p-3 border border-orange-200 rounded shadow-inner mb-4 relative">
+                                <span
+                                    class="absolute -top-3 left-3 bg-red-100 text-red-800 text-[10px] font-bold px-2 py-1 rounded border border-red-200">Posible
+                                    IA detectada</span>
+                                <p class="text-sm italic text-gray-700 mt-2">"El presente informe aborda una
+                                    problemática desde una perspectiva integral..."</p>
+                            </div>
+
+                            <p class="font-bold text-gray-800 text-sm mb-3">El detector arrojó 82%. Antes de decidir,
+                                ¿qué evidencias debes solicitar? <span
+                                    class="text-xs font-normal text-gray-500">(Selecciona varias)</span></p>
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-4 bg-white p-3 rounded border shadow-sm">
+                                <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1"><input
+                                        type="checkbox"
+                                        class="ia-evid mr-2 w-4 h-4 text-secondary focus:ring-secondary rounded"
+                                        value="ok"> Bitácora fuentes</label>
+                                <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1"><input
+                                        type="checkbox"
+                                        class="ia-evid mr-2 w-4 h-4 text-secondary focus:ring-secondary rounded"
+                                        value="ok"> Versiones previas</label>
+                                <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1"><input
+                                        type="checkbox"
+                                        class="ia-evid mr-2 w-4 h-4 text-secondary focus:ring-secondary rounded"
+                                        value="ok"> Defensa oral</label>
+                                <label class="flex items-center cursor-pointer hover:bg-gray-50 p-1"><input
+                                        type="checkbox"
+                                        class="ia-evid mr-2 w-4 h-4 text-red-500 focus:ring-red-500 rounded"
+                                        value="bad"> Rep. asistencia</label>
+                            </div>
+                            <button onclick="checkIAEvidences()"
+                                class="w-full bg-secondary text-white px-5 py-2 rounded font-semibold hover:bg-orange-600 transition shadow">Verificar
+                                acción docente</button>
+                            <div id="ia-result" class="mt-4 text-sm hidden p-3 rounded font-medium border"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 5: Detección Específica IA -->
+    <section id="deteccion" class="py-16 px-4 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-primary mb-2 border-b-2 border-primary pb-2 inline-block">4. Detección de
+                Modelos de Lenguaje (IA)</h2>
+            <p class="text-gray-600 mb-8 mt-4 text-lg">Analizadores de predictibilidad léxica. <strong
+                    class="text-red-600">Advertencia: Altas tasas de falsos positivos.</strong></p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- 9. GPTZero -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-microscope text-teal-600 mr-2"></i>GPTZero</h3>
+                            <span
+                                class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full border border-teal-200">Detector
+                                IA Específico</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-teal-50 p-4 rounded-lg border border-teal-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-teal-900 border-b border-teal-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Evaluar la predictibilidad ("perplejidad" y "ráfaga")
+                                del texto.</p>
+                            <p><strong>Uso docente:</strong> Filtro exploratorio ante un texto que parece artificial.
+                            </p>
+                            <p><strong>Resultado esperado:</strong> Probabilidad estadística de intervención de IA.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Castigar a alumnos neurodivergentes o de
+                                habla no nativa (falsos positivos frecuentes).</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Usar la duda a favor del
+                                estudiante hasta recolectar evidencias reales.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-emerald-200 text-emerald-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://gptzero.me/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Simulación
+                                Práctica</span>
+                            <div class="space-y-3 mb-4">
+                                <div class="p-3 bg-white border-l-4 border-green-400 rounded shadow-sm text-sm">
+                                    <strong class="text-green-700 text-xs uppercase block mb-1">Texto A (Baja prob.
+                                        IA)</strong>
+                                    "Mi propuesta busca mejorar la comunicación familiar porque vi en encuestas que no
+                                    conocen los canales."
+                                </div>
+                                <div class="p-3 bg-white border-l-4 border-red-400 rounded shadow-sm text-sm">
+                                    <strong class="text-red-700 text-xs uppercase block mb-1">Texto B (Alta prob.
+                                        IA)</strong>
+                                    "El documento desarrolla una propuesta integral orientada a optimizar procesos
+                                    comunicacionales..."
+                                </div>
+                            </div>
+
+                            <p class="font-bold text-gray-800 text-sm mb-2">¿Qué riesgo grave existe si el docente
+                                confía ciegamente en el resultado B?</p>
+                            <select id="gptzero-select"
+                                class="w-full p-3 border border-gray-300 rounded text-sm mb-4 focus:ring-teal-500 shadow-sm bg-white">
+                                <option value="">Seleccione riesgo...</option>
+                                <option value="A">A. Acusar injustamente y romper la confianza pedagógica.</option>
+                                <option value="B">B. Que la nota se demore unos minutos.</option>
+                                <option value="C">C. Que el estudiante mejore su redacción automáticamente.</option>
+                            </select>
+                            <button onclick="checkGPTZeroRisk()"
+                                class="w-full bg-teal-600 text-white px-5 py-2 rounded font-semibold hover:bg-teal-700 transition shadow">Validar
+                                respuesta</button>
+                            <div id="gptzero-result" class="mt-4 hidden p-3 rounded text-sm font-medium border"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Originality.ai -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-800"><i
+                                    class="fa-solid fa-chart-pie text-cyan-600 mr-2"></i>Originality.ai</h3>
+                            <span
+                                class="text-xs font-bold bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full border border-cyan-200">Análisis
+                                Integral</span>
+                        </div>
+
+                        <!-- Panel de Explicación Visible -->
+                        <div
+                            class="bg-cyan-50 p-4 rounded-lg border border-cyan-200 mb-4 text-sm text-gray-800 space-y-2">
+                            <h4 class="font-bold text-cyan-900 border-b border-cyan-200 pb-1 mb-2"><i
+                                    class="fa-solid fa-circle-info mr-1"></i> Explicación Pedagógica</h4>
+                            <p><strong>Para qué sirve:</strong> Obtener métricas conjuntas de originalidad, IA y
+                                claridad.</p>
+                            <p><strong>Uso docente:</strong> Cruzar indicadores para tener una visión holística del
+                                trabajo.</p>
+                            <p><strong>Resultado esperado:</strong> Un panel con múltiples indicadores que guían la
+                                revisión manual.</p>
+                            <p class="text-red-700"><strong>Riesgo:</strong> Asumir que las métricas algorítmicas son
+                                pruebas contundentes.</p>
+                            <p class="text-green-700"><strong>Cuidado ético:</strong> Decisiones basadas en detectores
+                                deben garantizar derecho a réplica.</p>
+                            <p
+                                class="mt-2 pt-2 border-t border-cyan-200 text-cyan-600 font-bold text-xs uppercase tracking-wider">
+                                <a href="https://originality.ai/" target="_blank"
+                                    class="hover:underline flex items-center"><i
+                                        class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Visitar sitio
+                                    oficial</a>
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+                            <span
+                                class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Simulación:
+                                Dashboard</span>
+                            <div class="flex justify-around items-center bg-white p-4 border rounded shadow-inner mb-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-black text-red-600">61%</div>
+                                    <div class="text-[10px] font-bold text-gray-500 uppercase mt-1">Posible IA</div>
+                                </div>
+                                <div class="w-px h-10 bg-gray-200"></div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-black text-orange-500">18%</div>
+                                    <div class="text-[10px] font-bold text-gray-500 uppercase mt-1">Similitud</div>
+                                </div>
+                                <div class="w-px h-10 bg-gray-200"></div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-black text-green-600">Alta</div>
+                                    <div class="text-[10px] font-bold text-gray-500 uppercase mt-1">Legibilidad</div>
+                                </div>
+                            </div>
+
+                            <p class="font-bold text-gray-800 text-sm mb-2">Con este panel híbrido, ¿cuál es la mejor
+                                decisión docente?</p>
+                            <select id="originality-select"
+                                class="w-full p-3 border border-gray-300 rounded text-sm mb-4 focus:ring-cyan-500 shadow-sm bg-white">
+                                <option value="">Seleccione...</option>
+                                <option value="A">A. Sancionar automáticamente (61% es alto).</option>
+                                <option value="B">B. Usar como insumo, revisar fuentes y conversar con el estudiante.
+                                </option>
+                                <option value="C">C. Pedir a la herramienta que asigne nota.</option>
+                            </select>
+                            <button onclick="checkOriginality()"
+                                class="w-full bg-cyan-600 text-white px-5 py-2 rounded font-semibold hover:bg-cyan-700 transition shadow">Tomar
+                                decisión</button>
+                            <div id="originality-result" class="mt-4 hidden p-3 rounded text-sm font-medium border">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 6: Comparador -->
+    <section id="herramientas" class="py-16 px-4 bg-white border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-primary mb-6 text-center">Comparador General de Herramientas Reales</h2>
+            <div class="overflow-x-auto shadow-lg rounded-xl border border-gray-200">
+                <table class="min-w-full bg-white text-sm">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="py-4 px-5 text-left font-semibold">Herramienta</th>
+                            <th class="py-4 px-5 text-left font-semibold">Categoría</th>
+                            <th class="py-4 px-5 text-left font-semibold">Tipo</th>
+                            <th class="py-4 px-5 text-left font-semibold">Uso principal</th>
+                            <th class="py-4 px-5 text-left font-semibold">Mejor momento de uso</th>
+                            <th class="py-4 px-5 text-left font-semibold border-l border-gray-600">Riesgo principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-4 px-5 font-bold text-blue-500">Google Forms</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Feedback Automatizado</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-bold">Diagnóstico</span>
+                            </td>
+                            <td class="py-4 px-5">Feedback inmediato</td>
+                            <td class="py-4 px-5">Inicio del tema</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Feedback superficial</td>
+                        </tr>
+                        <tr class="hover:bg-green-50 transition">
+                            <td class="py-4 px-5 font-bold text-green-600">ChatGPT</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Feedback Automatizado</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">IA
+                                    Generativa</span></td>
+                            <td class="py-4 px-5">Feedback preliminar</td>
+                            <td class="py-4 px-5">Borradores</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Alucinaciones o sesgos</td>
+                        </tr>
+                        <tr class="hover:bg-purple-50 transition">
+                            <td class="py-4 px-5 font-bold text-purple-600">Claude</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Feedback Automatizado</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold">IA
+                                    Generativa</span></td>
+                            <td class="py-4 px-5">Análisis de documentos</td>
+                            <td class="py-4 px-5">Borradores largos</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Subir datos sensibles</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 transition">
+                            <td class="py-4 px-5 font-bold text-blue-700">Gradescope</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Feedback Automatizado</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">Feedback
+                                    Estructurado</span></td>
+                            <td class="py-4 px-5">Comentarios formativos</td>
+                            <td class="py-4 px-5">Durante la corrección</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Estandarizar demasiado</td>
+                        </tr>
+                        <tr class="hover:bg-purple-50 transition">
+                            <td class="py-4 px-5 font-bold text-purple-700">CoGrader</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Rúbricas y Seguimiento</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold">Corrección
+                                    por Rúbrica</span>
+                            </td>
+                            <td class="py-4 px-5">Calificar con rúbrica</td>
+                            <td class="py-4 px-5">Evaluación de informes</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Aceptar nota a ciegas</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition">
+                            <td class="py-4 px-5 font-bold text-orange-600">Moodle</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Rúbricas y Seguimiento</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-bold">LMS/Rúbrica</span>
+                            </td>
+                            <td class="py-4 px-5">Tareas y segunda versión</td>
+                            <td class="py-4 px-5">Antes y después de entrega</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Usarlo solo para nota</td>
+                        </tr>
+                        <tr class="hover:bg-red-50 transition">
+                            <td class="py-4 px-5 font-bold text-red-600">Turnitin</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Control de Similitud</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Similitud</span>
+                            </td>
+                            <td class="py-4 px-5">Coincidencias textuales</td>
+                            <td class="py-4 px-5">Entrega formal</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Confundir similitud con plagio</td>
+                        </tr>
+                        <tr class="hover:bg-orange-50 transition">
+                            <td class="py-4 px-5 font-bold text-orange-500">Copyleaks</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Control de Similitud</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-bold">Integridad</span>
+                            </td>
+                            <td class="py-4 px-5">Similitud y posible IA</td>
+                            <td class="py-4 px-5">Revisión de alertas</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Falsos positivos</td>
+                        </tr>
+                        <tr class="hover:bg-teal-50 transition">
+                            <td class="py-4 px-5 font-bold text-teal-600">GPTZero</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Detección de IA</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-teal-100 text-teal-800 px-2 py-1 rounded text-xs font-bold">Detector
+                                    IA</span></td>
+                            <td class="py-4 px-5">Posible texto generado por IA</td>
+                            <td class="py-4 px-5">Revisión inicial</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Sanción injusta</td>
+                        </tr>
+                        <tr class="hover:bg-cyan-50 transition">
+                            <td class="py-4 px-5 font-bold text-cyan-600">Originality.ai</td>
+                            <td class="py-4 px-5 text-gray-700 font-medium">Detección de IA</td>
+                            <td class="py-4 px-5"><span
+                                    class="bg-cyan-100 text-cyan-800 px-2 py-1 rounded text-xs font-bold">Integridad</span>
+                            </td>
+                            <td class="py-4 px-5">IA, plagio, legibilidad</td>
+                            <td class="py-4 px-5">Revisión complementaria</td>
+                            <td class="py-4 px-5 text-red-600 border-l font-medium">Tomarlo como prueba absoluta</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Módulo 7: Actividad Práctica Final -->
+    <section id="actividad" class="py-16 px-4 bg-gray-800 text-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-secondary mb-2 text-center">Actividad Práctica: Del reporte automático al
+                feedback formativo</h2>
+            <p class="text-gray-300 mb-8 text-center max-w-3xl mx-auto">Trabajo en grupos (25 min). Analicen los 5 casos
+                de la sesión, elijan la herramienta adecuada y completen la matriz de decisión pedagógica.</p>
+
+            <div class="bg-gray-700 p-6 rounded-xl border border-gray-600 shadow-2xl">
+                <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                    <h3 class="text-xl font-bold"><i class="fa-solid fa-table border-r pr-2 mr-2"></i>Matriz de Decisión
+                        Docente</h3>
+                    <div class="space-x-2 flex flex-wrap gap-2">
+                        <button onclick="fillExampleMatrix()"
+                            class="text-sm bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded font-semibold transition"><i
+                                class="fa-solid fa-eye mr-1"></i> Ver ejemplo completo</button>
+                        <button onclick="clearMatrix()"
+                            class="text-sm border border-gray-400 hover:bg-gray-600 px-4 py-2 rounded font-semibold transition"><i
+                                class="fa-solid fa-eraser mr-1"></i> Limpiar</button>
+                        <button onclick="exportToPDF()"
+                            class="text-sm bg-primary hover:bg-blue-600 px-4 py-2 rounded font-bold shadow-lg transition"><i
+                                class="fa-solid fa-file-pdf mr-1"></i> Exportar matriz PDF</button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded border border-gray-600">
+                    <table id="matrix-table" class="min-w-full text-sm text-gray-800 bg-white">
+                        <thead class="bg-gray-200 border-b border-gray-300">
+                            <tr>
+                                <th class="py-3 px-4 text-left w-1/5 font-bold text-gray-700">Caso</th>
+                                <th class="py-3 px-4 text-left font-bold text-gray-700">Herramienta elegida</th>
+                                <th class="py-3 px-4 text-left font-bold text-gray-700">Qué revisa / Resultado</th>
+                                <th class="py-3 px-4 text-left font-bold text-gray-700">Qué debe hacer el docente</th>
+                                <th class="py-3 px-4 text-left font-bold text-gray-700">Feedback al estudiante</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-body" class="divide-y divide-gray-200">
+                            <!-- Filas generadas por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cierre -->
+    <footer class="bg-gray-900 text-white py-16 px-4 text-center border-t-4 border-secondary">
+        <div class="max-w-5xl mx-auto">
+            <i class="fa-solid fa-scale-balanced text-5xl text-secondary mb-6 block"></i>
+            <h3 class="text-2xl md:text-3xl font-extrabold mb-10 leading-relaxed text-blue-100">
+                "La IA mejora la evaluación cuando ayuda a retroalimentar, revisar y acompañar. Se vuelve riesgosa
+                cuando reemplaza el juicio docente."
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+                <div
+                    class="bg-gray-800 p-6 rounded-xl border-t-4 border-blue-500 shadow-lg hover:-translate-y-1 transition duration-300">
+                    <i class="fa-solid fa-1 text-2xl text-blue-500 mb-3 block"></i>
+                    <p class="text-base text-gray-300">El feedback automatizado debe ser <strong>formativo, no
+                            punitivo</strong>. Debe orientar la mejora.</p>
+                </div>
+                <div
+                    class="bg-gray-800 p-6 rounded-xl border-t-4 border-orange-500 shadow-lg hover:-translate-y-1 transition duration-300">
+                    <i class="fa-solid fa-2 text-2xl text-orange-500 mb-3 block"></i>
+                    <p class="text-base text-gray-300">Los detectores de similitud o IA son <strong>indicadores y
+                            alertas</strong>, no pruebas absolutas de plagio.</p>
+                </div>
+                <div
+                    class="bg-gray-800 p-6 rounded-xl border-t-4 border-green-500 shadow-lg hover:-translate-y-1 transition duration-300">
+                    <i class="fa-solid fa-3 text-2xl text-green-500 mb-3 block"></i>
+                    <p class="text-base text-gray-300">El docente conserva la responsabilidad <strong>ética, pedagógica
+                            y evaluativa</strong>. Él tiene la palabra final.</p>
+                </div>
+            </div>
+
+
+        </div>
+    </footer>
+
+    <!-- Contenedor WebAR (A-Frame) -->
+    <div id="ar-container">
+        <button onclick="stopAR()"
+            class="absolute top-6 right-6 bg-red-600 text-white px-5 py-3 rounded-lg z-[10001] shadow-2xl font-bold flex items-center hover:bg-red-700">
+            <i class="fa-solid fa-xmark mr-2 text-xl"></i> Cerrar Experiencia AR
+        </button>
+
+        <div id="ar-ui">
+            <button onclick="switchScene(1)"
+                class="bg-primary text-white px-6 py-3 rounded-l-lg shadow-lg opacity-90 text-sm font-bold hover:bg-blue-800">Escena
+                1: Mesa de Herramientas</button>
+            <button onclick="switchScene(2)"
+                class="bg-secondary text-white px-6 py-3 rounded-r-lg shadow-lg opacity-90 text-sm font-bold hover:bg-orange-600">Escena
+                2: Flujo Formativo</button>
+        </div>
+
+        <a-scene embedded xr-mode-ui="enabled: true; enterARButton: #enter-ar-btn" cursor="rayOrigin: mouse">
+            <a-assets>
+                <a-mixin id="title-text" text="color: #60a5fa; align: center; width: 5; font: mozillavr"></a-mixin>
+                <a-mixin id="desc-text"
+                    text="color: #e2e8f0; align: center; width: 4; wrapCount: 40; font: mozillavr"></a-mixin>
+            </a-assets>
+
+            <a-camera position="0 1.6 4">
+                <a-entity cursor="fuse: false;" position="0 0 -1"
+                    geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                    material="color: white; shader: flat" visible="false"></a-entity>
+            </a-camera>
+
+            <a-sky color="#0f172a"></a-sky>
+            <a-light type="ambient" color="#fff" intensity="0.7"></a-light>
+            <a-light type="directional" position="-1 2 1" intensity="0.5"></a-light>
+
+            <!-- ESCENA 1: Carrusel -->
+            <a-entity id="scene1" visible="true">
+                <a-entity position="0 2.5 -2.5">
+                    <a-plane width="4.5" height="1.8" color="#1e293b" opacity="0.95" radius="0.2" border="1"></a-plane>
+                    <a-text id="ar-main-title" value="Mesa de Evaluacion AR" position="0 0.5 0.02"
+                        mixin="title-text"></a-text>
+                    <a-text id="ar-main-desc"
+                        value="Toca una herramienta para ver su simulacion.\n\nLa herramienta ayuda;\nel docente interpreta y decide."
+                        position="0 -0.2 0.02" mixin="desc-text"></a-text>
+                </a-entity>
+
+                <a-box position="-3 1 -2" rotation="0 30 0" width="1" height="0.8" depth="0.1" color="#22c55e"
+                    class="clickable"
+                    onclick="updateARInfo('ChatGPT', 'Genera comentario formativo en 3 partes. Docente debe revisar para evitar alucinaciones.')"><a-text
+                        value="ChatGPT" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="-1.5 1 -2.5" rotation="0 15 0" width="1" height="0.8" depth="0.1" color="#1d4ed8"
+                    class="clickable"
+                    onclick="updateARInfo('Gradescope', 'Evaluacion Asistida. Aplica criterios rapidos a respuestas abiertas.')"><a-text
+                        value="Gradescope" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="0 1 -2.8" rotation="0 0 0" width="1" height="0.8" depth="0.1" color="#ef4444"
+                    class="clickable"
+                    onclick="updateARInfo('Turnitin', 'Similitud 38%. Revisa colores verde (citas) y rojo (sin cita). No es plagio automatico.')"><a-text
+                        value="Turnitin" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="1.5 1 -2.5" rotation="0 -15 0" width="1" height="0.8" depth="0.1" color="#f97316"
+                    class="clickable"
+                    onclick="updateARInfo('GPTZero', 'Alerta IA 82%. Riesgo de falso positivo. Pide evidencias y defensa oral.')"><a-text
+                        value="GPTZero" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="3 1 -2" rotation="0 -30 0" width="1" height="0.8" depth="0.1" color="#8b5cf6"
+                    class="clickable"
+                    onclick="updateARInfo('Moodle', 'LMS. Formaliza la rubrica y permite la reentrega (segunda version).')"><a-text
+                        value="Moodle" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="-3 0 -1.5" rotation="0 40 0" width="1" height="0.6" depth="0.1" color="#3b82f6"
+                    class="clickable"
+                    onclick="updateARInfo('Google Forms', 'Diagnostico con feedback inmediato. No debe ser solo Correcto/Incorrecto.')"><a-text
+                        value="Forms" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="-1.5 0 -2" rotation="0 20 0" width="1" height="0.6" depth="0.1" color="#a855f7"
+                    class="clickable"
+                    onclick="updateARInfo('Claude', 'Analiza coherencia de tesis extensas. Entrega tabla de observaciones.')"><a-text
+                        value="Claude" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="0 0 -2.2" rotation="0 0 0" width="1" height="0.6" depth="0.1" color="#6366f1"
+                    class="clickable"
+                    onclick="updateARInfo('MagicSchool', 'Apoyo docente. Genera rubrica base, pero debe adaptarse al contexto.')"><a-text
+                        value="MagicSchool" position="0 0 0.06" align="center" color="#fff"
+                        width="3.5"></a-text></a-box>
+                <a-box position="1.5 0 -2" rotation="0 -20 0" width="1" height="0.6" depth="0.1" color="#ea580c"
+                    class="clickable"
+                    onclick="updateARInfo('Copyleaks', 'Alerta hibrida. Nunca usar como prueba unica de sancion.')"><a-text
+                        value="Copyleaks" position="0 0 0.06" align="center" color="#fff" width="4"></a-text></a-box>
+                <a-box position="3 0 -1.5" rotation="0 -40 0" width="1" height="0.6" depth="0.1" color="#06b6d4"
+                    class="clickable"
+                    onclick="updateARInfo('Originality', 'Dashboard integral: IA, Similitud, Legibilidad. Insumo para decision docente.')"><a-text
+                        value="Originality" position="0 0 0.06" align="center" color="#fff"
+                        width="3.5"></a-text></a-box>
+            </a-entity>
+
+            <!-- ESCENA 2: Flujo -->
+            <a-entity id="scene2" visible="false">
+                <a-text value="Flujo de Evaluacion Formativa" position="0 3 -3.5" mixin="title-text"></a-text>
+
+                <a-entity position="-3 1.5 -3" class="clickable"
+                    onclick="updateARFlow('1. Entrega en LMS. Inicio del proceso evaluativo.')">
+                    <a-sphere radius="0.5" color="#bfdbfe"></a-sphere>
+                    <a-text value="1. Informe" position="0 0.7 0" align="center" color="#fff"></a-text>
+                </a-entity>
+
+                <a-entity position="-1 1.5 -3" class="clickable"
+                    onclick="updateARFlow('2. Comentario preliminar de IA. No reemplaza al docente. Fortalezas y mejoras.')">
+                    <a-sphere radius="0.5" color="#bbf7d0"></a-sphere>
+                    <a-text value="2. Feedback IA" position="0 0.7 0" align="center" color="#fff"></a-text>
+                </a-entity>
+
+                <a-entity position="1 1.5 -3" class="clickable"
+                    onclick="updateARFlow('3. Similitud / Alerta IA. Indicador que debe interpretarse. Pide evidencias.')">
+                    <a-sphere radius="0.5" color="#fecaca"></a-sphere>
+                    <a-text value="3. Reportes" position="0 0.7 0" align="center" color="#fff"></a-text>
+                </a-entity>
+
+                <a-entity position="3 1.5 -3" class="clickable"
+                    onclick="updateARFlow('4. El docente contextualiza, valida, aplica rubrica oficial y permite 2da version.')">
+                    <a-sphere radius="0.5" color="#fef08a"></a-sphere>
+                    <a-text value="4. Decision Docente" position="0 0.7 0" align="center" color="#fff"></a-text>
+                </a-entity>
+
+                <a-entity position="0 0 -2.5">
+                    <a-plane width="5" height="1" color="#1e293b" opacity="0.9"></a-plane>
+                    <a-text id="ar-flow-desc" value="Toca cada esfera para ver el flujo correcto." position="0 0 0.02"
+                        mixin="desc-text"></a-text>
+                </a-entity>
+            </a-entity>
+
+        </a-scene>
+        <button id="enter-ar-btn" style="display:none;"></button>
+    </div>
+
+    <!-- JavaScript Lógica -->
+    <script>
+        // Funciones interactivas (Forms, ChatGPT, Claude, etc)
+        function checkGoogleForms() {
+            const selected = document.querySelector('input[name="gf-q1"]:checked');
+            const fb = document.getElementById('gf-feedback');
+            fb.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-300', 'bg-green-100', 'text-green-800', 'border-green-300', 'bg-gray-100', 'text-gray-800');
+
+            if (!selected) {
+                fb.textContent = "Por favor selecciona una opción.";
+                fb.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-300', 'block');
+            } else if (selected.value === 'B') {
+                fb.textContent = "Correcto. El informe debe conectar problema, evidencia, propuesta y evaluación de resultados.";
+                fb.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'block');
+            } else {
+                fb.textContent = "Revisa el propósito del informe. Una mejora institucional debe partir de un problema real, usar evidencias y proponer acciones viables.";
+                fb.classList.add('bg-red-100', 'text-red-800', 'border-red-300', 'block');
+            }
+        }
+
+        function simulateChatGPT() {
+            const fb = document.getElementById('chatgpt-feedback');
+            fb.classList.remove('hidden');
+            fb.classList.add('animate-pulse');
+            setTimeout(() => fb.classList.remove('animate-pulse'), 800);
+        }
+
+        function simulateClaude() {
+            const fb = document.getElementById('claude-feedback');
+            fb.classList.remove('hidden');
+            fb.classList.add('animate-pulse');
+            setTimeout(() => fb.classList.remove('animate-pulse'), 600);
+        }
+
+        function simulateMagicSchool() {
+            const fb = document.getElementById('magicschool-feedback');
+            fb.classList.remove('hidden');
+            fb.classList.add('animate-pulse');
+            setTimeout(() => fb.classList.remove('animate-pulse'), 600);
+        }
+
+        function checkGradescope() {
+            const fb = document.getElementById('gradescope-feedback');
+            fb.classList.remove('hidden');
+            fb.classList.add('animate-pulse');
+            setTimeout(() => fb.classList.remove('animate-pulse'), 500);
+        }
+
+        const rubricData = [
+            { id: 'c1', name: 'Diagnóstico', low: 'General', med: 'Con algunas evidencias', high: 'Claro y con evidencias' },
+            { id: 'c2', name: 'Propuesta', low: 'Poco viable', med: 'Viable, incompleta', high: 'Clara y contextualizada' },
+            { id: 'c3', name: 'Fuentes', low: 'Pocas fuentes', med: 'Integradas parcialmente', high: 'Pertinentes, bien citadas' },
+            { id: 'c4', name: 'Reflexión', low: 'Ideas generales', med: 'Análisis parcial', high: 'Argumentación profunda' }
+        ];
+
+        const rubricState = { c1: null, c2: null, c3: null, c4: null };
+
+        function renderRubric() {
+            const tbody = document.getElementById('rubric-body');
+            tbody.innerHTML = '';
+            rubricData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.classList.add('border-b', 'border-gray-200');
+                tr.innerHTML = `
+                    <td class="py-2 px-2 font-medium bg-gray-50 border-r border-gray-200">${row.name}</td>
+                    <td class="py-2 px-2 text-center border-r border-gray-200 rubric-cell hover:bg-orange-50" onclick="selectRubric('${row.id}', 'low', this)">${row.low}</td>
+                    <td class="py-2 px-2 text-center border-r border-gray-200 rubric-cell hover:bg-orange-50" onclick="selectRubric('${row.id}', 'med', this)">${row.med}</td>
+                    <td class="py-2 px-2 text-center rubric-cell hover:bg-orange-50" onclick="selectRubric('${row.id}', 'high', this)">${row.high}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function selectRubric(critId, level, cellElement) {
+            rubricState[critId] = level;
+            const siblings = cellElement.parentElement.children;
+            for (let i = 1; i < siblings.length; i++) {
+                siblings[i].classList.remove('bg-orange-100', 'border-orange-500', 'border-2', 'font-bold');
+            }
+            cellElement.classList.add('bg-orange-100', 'border-orange-500', 'border-2', 'font-bold');
+        }
+
+        function generateRubricFeedback() {
+            const text = document.getElementById('rubric-feedback-text');
+            if (!rubricState.c1 || !rubricState.c2 || !rubricState.c3 || !rubricState.c4) {
+                text.value = "Por favor, selecciona un nivel para cada uno de los cuatro criterios.";
+                return;
+            }
+
+            let fb = "Hola. ";
+            if (rubricState.c1 === 'low') fb += "Tu informe identifica el problema, pero necesita mayor evidencia institucional. ";
+            else if (rubricState.c1 === 'high') fb += "El diagnóstico es claro y está excelentemente apoyado en evidencias. ";
+            else fb += "El diagnóstico es adecuado, pero podría robustecerse con más datos concretos. ";
+
+            if (rubricState.c2 === 'low' || rubricState.c2 === 'med') fb += "Para la segunda versión, explica mejor la viabilidad de la propuesta. ";
+            if (rubricState.c3 === 'low' || rubricState.c3 === 'med') fb += "Agrega datos concretos y fuentes para respaldarte. ";
+
+            fb += "¡Quedo atento a tu reentrega!";
+            text.value = fb;
+        }
+
+        function checkTurnitin() {
+            const val = document.getElementById('turnitin-select').value;
+            const res = document.getElementById('turnitin-result');
+            res.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-300', 'bg-green-100', 'text-green-800', 'border-green-300');
+
+            if (val === 'B') {
+                res.textContent = "Correcto. El porcentaje de similitud no prueba plagio por sí solo. El docente debe revisar el origen, diferenciar citas válidas de copia no atribuida y orientar al estudiante.";
+                res.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'block');
+            } else if (val === '') {
+                res.classList.add('hidden');
+            } else {
+                res.textContent = "Incorrecto. La similitud es un indicador, no debe convertirse en sanción automática ni ser ignorada. Requiere revisión manual.";
+                res.classList.add('bg-red-100', 'text-red-800', 'border-red-300', 'block');
+            }
+        }
+
+        function checkIAEvidences() {
+            const checkboxes = document.querySelectorAll('.ia-evid');
+            const res = document.getElementById('ia-result');
+            res.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-300', 'bg-green-100', 'text-green-800', 'border-green-300', 'bg-gray-100', 'text-gray-800');
+
+            let badChecked = false;
+            let countGood = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.value === 'bad' && cb.checked) badChecked = true;
+                if (cb.value === 'ok' && cb.checked) countGood++;
+            });
+
+            if (badChecked) {
+                res.textContent = "Incorrecto. El reporte de asistencia no demuestra el proceso de autoría del trabajo.";
+                res.classList.add('bg-red-100', 'text-red-800', 'border-red-300', 'block');
+            } else if (countGood > 0) {
+                res.textContent = "¡Excelente! La detección de IA no prueba plagio. Pedir bitácora, versiones previas, historial o una breve defensa oral sirve para iniciar una revisión humana justa.";
+                res.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'block');
+            } else {
+                res.textContent = "Debes seleccionar al menos una evidencia pertinente.";
+                res.classList.add('bg-gray-100', 'text-gray-800', 'border-gray-300', 'block');
+            }
+        }
+
+        function checkGPTZeroRisk() {
+            const val = document.getElementById('gptzero-select').value;
+            const res = document.getElementById('gptzero-result');
+            res.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-300', 'bg-green-100', 'text-green-800', 'border-green-300');
+
+            if (val === 'A') {
+                res.textContent = "Correcto. Puede acusar injustamente a un estudiante por un falso positivo y romper la confianza pedagógica irreversiblemente.";
+                res.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'block');
+            } else if (val === '') {
+                res.classList.add('hidden');
+            } else {
+                res.textContent = "Incorrecto. El riesgo es generar una sanción académica infundada. El reporte debe ser confidencial y complementado con evidencias.";
+                res.classList.add('bg-red-100', 'text-red-800', 'border-red-300', 'block');
+            }
+        }
+
+        function checkOriginality() {
+            const val = document.getElementById('originality-select').value;
+            const res = document.getElementById('originality-result');
+            res.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-300', 'bg-green-100', 'text-green-800', 'border-green-300');
+
+            if (val === 'B') {
+                res.textContent = "Correcto. El resultado debe ser parte de una revisión formativa integral, no una decisión final punitiva.";
+                res.classList.add('bg-green-100', 'text-green-800', 'border-green-300', 'block');
+            } else if (val === '') {
+                res.classList.add('hidden');
+            } else {
+                res.textContent = "Incorrecto. Las alertas algorítmicas son insumos para el docente, no sentencias que habiliten la sanción directa o delegación de nota.";
+                res.classList.add('bg-red-100', 'text-red-800', 'border-red-300', 'block');
+            }
+        }
+
+        const matrixCases = [
+            "1: Diagnóstico rápido (evaluar comprensión)",
+            "2: Evaluación de informes con rúbrica",
+            "3: Feedback formativo a borrador general",
+            "4: Alta similitud (38%) con citas",
+            "5: Alerta IA (82%) en un texto bien escrito"
+        ];
+
+        function renderMatrix() {
+            const tbody = document.getElementById('matrix-body');
+            tbody.innerHTML = '';
+            matrixCases.forEach((c, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium bg-gray-50 border-r">${c}</td>
+                    <td class="py-3 px-4 border-r"><input type="text" class="w-full p-2 border border-gray-300 rounded text-sm matrix-input tool-in focus:ring-primary" data-idx="${index}" placeholder="Ej. Google Forms"></td>
+                    <td class="py-3 px-4 border-r"><input type="text" class="w-full p-2 border border-gray-300 rounded text-sm matrix-input result-in focus:ring-primary" data-idx="${index}" placeholder="Qué revisa/reporta"></td>
+                    <td class="py-3 px-4 border-r"><input type="text" class="w-full p-2 border border-gray-300 rounded text-sm matrix-input action-in focus:ring-primary" data-idx="${index}" placeholder="Acción del docente"></td>
+                    <td class="py-3 px-4"><input type="text" class="w-full p-2 border border-gray-300 rounded text-sm matrix-input feed-in focus:ring-primary" data-idx="${index}" placeholder="Mensaje al estudiante"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function fillExampleMatrix() {
+            const tools = ["Google Forms", "Moodle / Gradescope", "ChatGPT / Claude", "Turnitin / Originality", "GPTZero / Copyleaks"];
+            const results = [
+                "Nivel de comprensión del tema",
+                "Puntaje según niveles de logro",
+                "Fortalezas, debilidades y mejoras",
+                "Porcentaje de coincidencias y fuentes",
+                "Probabilidad estadística de IA"
+            ];
+            const actions = [
+                "Identificar vacíos en el grupo",
+                "Aplicar niveles de rúbrica y habilitar V2",
+                "Validar que el feedback se alinea al curso",
+                "Filtrar citas/bibliografía, auditar original",
+                "Solicitar evidencias (bitácora, defensa)"
+            ];
+            const feeds = [
+                "Feedback automático orientador",
+                "Comentario indicando qué mejorar para V2",
+                "Entregar las 3 recomendaciones clave",
+                "Orientar sobre cómo citar según normas",
+                "Conversar sobre el proceso de escritura"
+            ];
+
+            document.querySelectorAll('.tool-in').forEach((el, i) => el.value = tools[i]);
+            document.querySelectorAll('.result-in').forEach((el, i) => el.value = results[i]);
+            document.querySelectorAll('.action-in').forEach((el, i) => el.value = actions[i]);
+            document.querySelectorAll('.feed-in').forEach((el, i) => el.value = feeds[i]);
+        }
+
+        function clearMatrix() {
+            document.querySelectorAll('.matrix-input').forEach(el => el.value = '');
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
+
+            doc.setFontSize(18);
+            doc.setTextColor(29, 78, 216);
+            doc.text("Matriz de Decisión Docente: IA en Evaluación", 14, 20);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text("Caso Práctico: Del reporte automático al feedback formativo en Gestión Educativa.", 14, 28);
+
+            const rows = [];
+            const inputsTool = document.querySelectorAll('.tool-in');
+            const inputsRes = document.querySelectorAll('.result-in');
+            const inputsAction = document.querySelectorAll('.action-in');
+            const inputsFeed = document.querySelectorAll('.feed-in');
+
+            for (let i = 0; i < matrixCases.length; i++) {
+                rows.push([
+                    matrixCases[i],
+                    inputsTool[i].value || '-',
+                    inputsRes[i].value || '-',
+                    inputsAction[i].value || '-',
+                    inputsFeed[i].value || '-'
+                ]);
+            }
+
+            doc.autoTable({
+                head: [['Caso', 'Herramienta Elegida', 'Qué revisa / Resultado', 'Acción del Docente', 'Feedback al Estudiante']],
+                body: rows,
+                startY: 35,
+                theme: 'grid',
+                headStyles: { fillColor: [31, 41, 55] },
+                styles: { fontSize: 9, cellPadding: 4, overflow: 'linebreak' },
+                columnStyles: { 0: { cellWidth: 45 } }
+            });
+
+            doc.save('matriz_decision_ia.pdf');
+        }
+
+        function downloadGuide() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(22);
+            doc.setTextColor(29, 78, 216);
+            doc.text("Guía Docente: Evaluación e Inteligencia Artificial", 14, 25);
+
+            doc.setFontSize(11);
+            doc.setTextColor(50);
+            let y = 40;
+
+            const content = [
+                "PRINCIPIOS CLAVE:",
+                "1. La IA asiste la evaluación formativa, no reemplaza el juicio docente.",
+                "2. Los porcentajes de similitud o IA son alertas tempranas, no pruebas absolutas de plagio.",
+                "3. Priorice solicitar evidencias (bitácoras, versiones, defensa oral) antes de sancionar.",
+                "",
+                "HERRAMIENTAS SEGÚN SU PROPÓSITO:",
+                "- Para Feedback Formativo Rápido: Google Forms (diagnóstico).",
+                "- Para Feedback de Borradores: ChatGPT, Claude (revisar que no alucinen, no subir datos).",
+                "- Para Rúbricas y Seguimiento: Moodle, Gradescope (formaliza la reentrega y mejora continua).",
+                "- Para Revisión de Similitud: Turnitin (filtrar siempre citas y bibliografía).",
+                "- Para Detección de IA: GPTZero, Copyleaks, Originality.ai.",
+                "  *Riesgo: Falsos positivos. Usar solo como inicio de diálogo con el estudiante.*",
+                "",
+                "EL FLUJO CORRECTO:",
+                "Entrega -> Revisión Herramienta -> Feedback Preliminar -> Validación Docente -> ",
+                "Solicitud de Evidencias -> Segunda Versión -> Decisión Pedagógica."
+            ];
+
+            content.forEach(line => {
+                if (line.startsWith("P") || line.startsWith("H") || line.startsWith("E")) {
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(249, 115, 22);
+                    y += 4;
+                } else if (line.startsWith("-")) {
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(30);
+                } else {
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(70);
+                }
+
+                var splitTitle = doc.splitTextToSize(line, 180);
+                doc.text(splitTitle, 14, y);
+                y += (splitTitle.length * 6);
+            });
+
+            doc.save('Guia_Docente_IA_Evaluacion.pdf');
+        }
+
+        // Funciones AR
+        function startAR() {
+            document.body.classList.add('ar-active');
+            document.getElementById('ar-container').style.display = 'block';
+            const scene = document.querySelector('a-scene');
+            if (scene) scene.resize();
+        }
+
+        function stopAR() {
+            document.body.classList.remove('ar-active');
+            document.getElementById('ar-container').style.display = 'none';
+        }
+
+        function switchScene(sceneNum) {
+            if (sceneNum === 1) {
+                document.getElementById('scene1').setAttribute('visible', 'true');
+                document.getElementById('scene2').setAttribute('visible', 'false');
+            } else {
+                document.getElementById('scene1').setAttribute('visible', 'false');
+                document.getElementById('scene2').setAttribute('visible', 'true');
+            }
+        }
+
+        function updateARInfo(title, desc) {
+            document.getElementById('ar-main-title').setAttribute('value', title);
+            document.getElementById('ar-main-desc').setAttribute('value', desc);
+        }
+
+        function updateARFlow(desc) {
+            document.getElementById('ar-flow-desc').setAttribute('value', desc);
+        }
+
+        window.onload = () => {
+            renderRubric();
+            renderMatrix();
+        };
+    </script>
+</body>
+
+</html>
