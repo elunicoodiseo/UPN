@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gobernanza de IA en Instituciones Educativas</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- A-Frame CDN para experiencia 3D -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#F6F4F2',
+                        primary: '#0F172A',
+                        secondary: '#475569',
+                        copper: '#C97B63',
+                        permitted: '#10B981',
+                        restricted: '#F59E0B',
+                        prohibited: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos personalizados para scrollbar y transiciones */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F6F4F2;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        .custom-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+
+<body class="bg-background text-primary font-sans min-h-screen flex flex-col antialiased">
+
+    <!-- AVISO DE RECARGA DE PÁGINA (ESTADO EN MEMORIA) -->
+    <script>
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            e.returnValue = 'El progreso de la política se almacena temporalmente en la memoria del navegador. Si recargas la página, reiniciarás el recorrido.';
+        });
+    </script>
+
+    <!-- HEADER PRINCIPAL -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 px-4 py-3 custom-transition">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary text-white p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-tight md:text-base">Gobernanza y Políticas de IA</h1>
+                    <p class="text-xs text-secondary">Maestría en IA Aplicada a la Educación</p>
+                </div>
+            </div>
+
+            <!-- Métricas de Progreso -->
+            <div class="flex flex-wrap items-center gap-4 md:gap-6 w-full md:w-auto justify-end">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-secondary font-medium">Progreso del Recorrido:</span>
+                    <div class="w-24 bg-gray-200 rounded-full h-2">
+                        <div id="journeyProgressBar" class="bg-copper h-2 rounded-full custom-transition"
+                            style="width: 0%"></div>
+                    </div>
+                    <span id="journeyProgressText" class="text-xs font-bold">0 de 4 Módulos</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-secondary font-medium">Borrador de Política:</span>
+                    <div class="w-24 bg-gray-200 rounded-full h-2">
+                        <div id="policyProgressBar" class="bg-permitted h-2 rounded-full custom-transition"
+                            style="width: 0%"></div>
+                    </div>
+                    <span id="policyProgressText" class="text-xs font-bold text-permitted">0/12 Secciones</span>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL: DASHBOARD -->
+    <div class="flex-grow max-w-7xl w-full mx-auto p-4 flex flex-col lg:flex-row gap-6 relative">
+
+        <!-- BARRA LATERAL IZQUIERDA: MENÚ DE NAVEGACIÓN -->
+        <aside class="w-full lg:w-64 flex-shrink-0 space-y-2 lg:sticky lg:top-24 h-fit">
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-1">
+                <p class="text-xs font-bold text-secondary uppercase tracking-wider px-2 mb-3">Secciones del Taller</p>
+
+                <button id="navBtnPortada" onclick="navigateTo('portada')"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between bg-primary text-white">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🏰</span> Portada e Inicio
+                    </span>
+                    <span id="statusIconPortada" class="text-xs text-green-400">●</span>
+                </button>
+
+                <button id="navBtnMod1" onclick="navigateTo('mod1')"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between hover:bg-gray-100 text-secondary">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">⚖️</span> M1. Fundamentos
+                    </span>
+                    <span id="statusIconMod1" class="text-xs text-amber-500">○</span>
+                </button>
+
+                <button id="navBtnMod2" onclick="navigateTo('mod2')"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between hover:bg-gray-100 text-secondary">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🚦</span> M2. Clasificación
+                    </span>
+                    <span id="statusIconMod2" class="text-xs text-amber-500">○</span>
+                </button>
+
+                <button id="navBtnMod3" onclick="navigateTo('mod3')"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between hover:bg-gray-100 text-secondary">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">👥</span> M3. Gobernanza
+                    </span>
+                    <span id="statusIconMod3" class="text-xs text-amber-500">○</span>
+                </button>
+
+                <button id="navBtnMod4" onclick="navigateTo('mod4')"
+                    class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between hover:bg-gray-100 text-secondary">
+                    <span class="flex items-center gap-2">
+                        <span class="text-lg">🔺</span> M4. Consolidación
+                    </span>
+                    <span id="statusIconMod4" class="text-xs text-amber-500">○</span>
+                </button>
+            </div>
+
+            <div class="bg-copper/5 p-4 rounded-xl border border-copper/20 space-y-2">
+                <h4 class="text-xs font-bold text-copper uppercase tracking-wider">Metodología Activa</h4>
+                <p class="text-xs text-secondary leading-relaxed">
+                    Las actividades no restringen el avance. Avanza, edita y consolida tu propuesta de políticas a tu
+                    criterio profesional.
+                </p>
+            </div>
+        </aside>
+
+        <!-- ÁREA CENTRAL DE CONTENIDO -->
+        <main class="flex-grow min-w-0 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative min-h-[70vh]">
+
+            <!-- CONTENIDO - PORTADA -->
+            <section id="sectionPortada" class="space-y-6">
+                <div class="space-y-4 max-w-2xl">
+                    <span
+                        class="bg-copper/10 text-copper text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Taller
+                        Práctico Profesional</span>
+                    <h2 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-primary leading-tight">
+                        Diseño de Políticas Institucionales para la Gobernanza de la IA
+                    </h2>
+                    <p class="text-lg text-copper font-medium leading-relaxed">
+                        De la ética a la acción institucional: al final de este recorrido habrás diseñado el borrador de
+                        política de IA de tu Institución educativa.
+                    </p>
+                    <p class="text-secondary leading-relaxed">
+                        La Inteligencia Artificial puede transformar la gestión pedagógica, el soporte administrativo y
+                        el análisis de datos. Sin embargo, su despliegue debe sustentarse en la protección de datos, la
+                        transparencia, el debido proceso y la gobernanza liderada por personas.
+                    </p>
+                </div>
+
+                <!-- Mapa Visual de Módulos -->
+                <div class="mt-8 border-t border-gray-100 pt-8">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary mb-6">Mapa de la Construcción
+                        de la Política</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-copper">Módulo 1</span>
+                                <span class="text-xs bg-gray-200 px-2 py-0.5 rounded">Pasos 1-3</span>
+                            </div>
+                            <h4 class="font-bold text-sm">Fundamentos</h4>
+                            <p class="text-xs text-secondary">Finalidad, alcance y principios éticos rectores.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-copper">Módulo 2</span>
+                                <span class="text-xs bg-gray-200 px-2 py-0.5 rounded">Pasos 4-7</span>
+                            </div>
+                            <h4 class="font-bold text-sm">Límites y Reglas</h4>
+                            <p class="text-xs text-secondary">Clasificación de usos (semáforo) y protección de datos.
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-copper">Módulo 3</span>
+                                <span class="text-xs bg-gray-200 px-2 py-0.5 rounded">Pasos 8-11</span>
+                            </div>
+                            <h4 class="font-bold text-sm">Gobernanza</h4>
+                            <p class="text-xs text-secondary">Comité responsable, incidentes y formación de la
+                                comunidad.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-copper">Módulo 4</span>
+                                <span class="text-xs bg-gray-200 px-2 py-0.5 rounded">Paso 12</span>
+                            </div>
+                            <h4 class="font-bold text-sm">Consolidación</h4>
+                            <p class="text-xs text-secondary">Arquitectura de tres niveles, simulación final y borrador
+                                definitivo.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button onclick="navigateTo('mod1')"
+                        class="bg-primary hover:bg-copper text-white px-8 py-4 rounded-xl font-semibold inline-flex items-center gap-2 custom-transition shadow-lg shadow-primary/20">
+                        Comenzar a diseñar mi política
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECCIÓN DEFINICIONES (GLOSARIO EMERGENTE GENERAL) -->
+            <div id="glossaryModal" class="fixed inset-0 bg-primary/40 hidden items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl relative">
+                    <button onclick="toggleGlossary('', false)"
+                        class="absolute top-4 right-4 text-secondary hover:text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <h4 id="glossaryTitle" class="text-lg font-bold mb-2 text-copper">Glosario Explicativo</h4>
+                    <p id="glossaryDesc" class="text-secondary text-sm leading-relaxed">Definición de ejemplo
+                        institucional...</p>
+                </div>
+            </div>
+
+            <!-- MÓDULO 1: FUNDAMENTOS -->
+            <section id="sectionMod1" class="space-y-8 hidden">
+                <div class="border-b border-gray-100 pb-4">
+                    <span class="text-xs font-bold text-copper uppercase tracking-wider">Módulo 1 de 4</span>
+                    <h2 class="text-2xl font-bold mt-1">Fundamentos: ¿Por qué mi institución necesita una política?</h2>
+                    <p class="text-sm text-secondary">Establece la justificación, visión y los principios éticos que
+                        regirán la IA en tu comunidad.</p>
+                </div>
+
+                <!-- Tarjetas Interactivas de Riesgo -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">1. Gestión del Riesgo sin
+                        Políticas</h3>
+                    <p class="text-xs text-secondary">Explora los riesgos organizacionales más comunes cuando se carece
+                        de directrices centralizadas (toca cada tarjeta para analizar su implicancia real):</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div onclick="toggleCardDetail('risk1')"
+                            class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper rounded-xl p-4 cursor-pointer custom-transition relative space-y-2">
+                            <span class="text-2xl">🔒</span>
+                            <h4 class="font-bold text-sm">Decisiones Descentralizadas</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Uso libre e independiente de herramientas
+                                sin supervisión adecuada.</p>
+                            <div id="risk1-desc"
+                                class="hidden text-xs text-copper bg-copper/5 p-2 rounded border border-copper/10 mt-2">
+                                <strong>Impacto Real:</strong> Un área de secretaría o académica decide procesar
+                                expedientes de becas o matrículas cargando datos sensibles en herramientas en línea que
+                                carecen de contratos de privacidad, vulnerando regulaciones locales.
+                            </div>
+                        </div>
+
+                        <div onclick="toggleCardDetail('risk2')"
+                            class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper rounded-xl p-4 cursor-pointer custom-transition relative space-y-2">
+                            <span class="text-2xl">📊</span>
+                            <h4 class="font-bold text-sm">Criterios Individuales</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Cada docente aplica su propio juicio ante
+                                herramientas de IA en el aula.</p>
+                            <div id="risk2-desc"
+                                class="hidden text-xs text-copper bg-copper/5 p-2 rounded border border-copper/10 mt-2">
+                                <strong>Impacto Real:</strong> Sesgos injustificados en las evaluaciones e
+                                inconsistencia metodológica. Alumnos expuestos a exigencias tecnológicas dispares que
+                                incrementan la brecha y la desigualdad.
+                            </div>
+                        </div>
+
+                        <div onclick="toggleCardDetail('risk3')"
+                            class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper rounded-xl p-4 cursor-pointer custom-transition relative space-y-2">
+                            <span class="text-2xl">🚨</span>
+                            <h4 class="font-bold text-sm">Ausencia de Protocolos</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Falta de procedimientos de respuesta ante
+                                fallos o sesgos detectados.</p>
+                            <div id="risk3-desc"
+                                class="hidden text-xs text-copper bg-copper/5 p-2 rounded border border-copper/10 mt-2">
+                                <strong>Impacto Real:</strong> Imposibilidad de responder formalmente ante reclamos de
+                                familias o estudiantes, generando crisis reputacionales y riesgos de demandas legales.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Balanza Interactiva -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">2. El Equilibrio de la
+                        Gobernanza de la IA</h3>
+                    <p class="text-xs text-secondary">Usa el simulador para comprender la diferencia crítica entre tener
+                        un documento teórico y un sistema de control activo.</p>
+
+                    <div class="flex flex-col md:flex-row gap-6 items-center justify-around py-4">
+                        <!-- Columna Izquierda (Política) -->
+                        <div id="weightLeft"
+                            class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm w-full md:w-64 space-y-2 custom-transition">
+                            <h4 class="font-bold text-sm text-copper flex items-center justify-between">
+                                Documento de Política
+                                <span class="text-xs font-normal text-secondary">Reglas</span>
+                            </h4>
+                            <p class="text-xs text-secondary leading-relaxed">
+                                Define las directivas, principios, límites de uso institucional, responsabilidades
+                                iniciales y compromisos organizacionales formalizados.
+                            </p>
+                        </div>
+
+                        <!-- El Pívot / Balanza Visual -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-2 bg-primary rounded-full relative transform custom-transition"
+                                id="scaleBar">
+                                <div class="absolute w-2 h-2 bg-copper rounded-full left-1/2 -ml-1 top-0"></div>
+                            </div>
+                            <div
+                                class="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[16px] border-b-primary">
+                            </div>
+                            <p class="text-xs text-center font-bold text-secondary mt-2" id="scaleMessage">Equilibrio
+                                Institucional</p>
+                        </div>
+
+                        <!-- Columna Derecha (Gobernanza) -->
+                        <div id="weightRight"
+                            class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm w-full md:w-64 space-y-2 custom-transition">
+                            <h4 class="font-bold text-sm text-primary flex items-center justify-between">
+                                Sistema de Gobernanza
+                                <span class="text-xs font-normal text-secondary">Acción</span>
+                            </h4>
+                            <p class="text-xs text-secondary leading-relaxed">
+                                Asegura el cumplimiento real a través de un comité evaluador, procesos de auditoría del
+                                software, resolución de incidentes y formación continua.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+                        <button onclick="tiltScale('left')"
+                            class="text-xs border border-copper hover:bg-copper hover:text-white text-copper px-3 py-1.5 rounded-lg custom-transition font-medium">Priorizar
+                            Reglas</button>
+                        <button onclick="tiltScale('center')"
+                            class="text-xs bg-primary hover:bg-copper text-white px-3 py-1.5 rounded-lg custom-transition font-medium">Equilibrar
+                            Ambos</button>
+                        <button onclick="tiltScale('right')"
+                            class="text-xs border border-primary hover:bg-primary hover:text-white text-primary px-3 py-1.5 rounded-lg custom-transition font-medium">Priorizar
+                            Acción</button>
+                    </div>
+                    <div class="bg-copper/10 border-l-4 border-copper p-3 rounded">
+                        <p class="text-xs text-primary font-medium leading-relaxed">
+                            <strong>Frase Clave:</strong> "La política establece las reglas del juego; la gobernanza
+                            asegura su cumplimiento real y adaptativo frente a los cambios tecnológicos."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Componentes Mínimos -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">3. Pilares de la Política
+                        </h3>
+                        <button onclick="showPolicyDraftSample()"
+                            class="text-xs text-copper font-medium hover:underline flex items-center gap-1">
+                            Ver modelo de redacción 📋
+                        </button>
+                    </div>
+
+                    <div id="policySampleText"
+                        class="hidden p-4 bg-gray-50 border border-copper/20 rounded-xl text-xs text-secondary leading-relaxed space-y-2">
+                        <p class="font-bold text-copper">Ejemplo de Redacción:</p>
+                        <p class="italic">"La Institución educativa utilizará herramientas de IA únicamente cuando
+                            contribuyan a mejorar la calidad educativa, respeten la privacidad de los datos, permitan
+                            supervisión humana y cuenten con evaluación previa de riesgos."</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="border border-gray-100 p-4 rounded-xl space-y-1">
+                            <div class="font-bold text-xs text-copper">Componente A</div>
+                            <h4 class="font-bold text-sm">Finalidad</h4>
+                            <p class="text-xs text-secondary">Objetivo por el cual la escuela incorpora la tecnología.
+                            </p>
+                        </div>
+                        <div class="border border-gray-100 p-4 rounded-xl space-y-1">
+                            <div class="font-bold text-xs text-copper">Componente B</div>
+                            <h4 class="font-bold text-sm">Alcance</h4>
+                            <p class="text-xs text-secondary">Define a qué estamentos y herramientas se aplicará.</p>
+                        </div>
+                        <div class="border border-gray-100 p-4 rounded-xl space-y-1">
+                            <div class="font-bold text-xs text-copper">Componente C</div>
+                            <h4 class="font-bold text-sm">Principios Éticos</h4>
+                            <p class="text-xs text-secondary">Valores inalterables como privacidad y equidad.</p>
+                        </div>
+                        <div class="border border-gray-100 p-4 rounded-xl space-y-1">
+                            <div class="font-bold text-xs text-copper">Componente D</div>
+                            <h4 class="font-bold text-sm">Responsabilidades</h4>
+                            <p class="text-xs text-secondary">Quién autoriza, quién ejecuta y quién audita.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSTRUYE TU POLÍTICA M1 -->
+                <div class="bg-primary text-white p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🏗️</span>
+                        <h3 class="text-lg font-bold">Construye tu Política (Parte 1)</h3>
+                    </div>
+                    <p class="text-xs text-gray-300">
+                        Completa los siguientes campos para formular las primeras 3 secciones de la política para tu
+                        institución educativa. Se actualizarán en tiempo real en tu borrador.
+                    </p>
+
+                    <div class="space-y-4 text-primary">
+                        <!-- 1. Finalidad -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">1. Finalidad de la Política de
+                                IA:</label>
+                            <span class="block text-[10px] text-gray-400">Ejemplo: Guiar la adopción segura de sistemas
+                                automatizados que optimicen la gestión del aprendizaje y la docencia, resguardando los
+                                derechos fundamentales.</span>
+                            <textarea id="inputFinalidad" oninput="updateDraft('finalidad', this.value)" rows="3"
+                                placeholder="Escribe aquí la finalidad para tu institución..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 2. Alcance -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">2. Alcance Institucional:</label>
+                            <span class="block text-[10px] text-gray-400">Ejemplo: Aplica a todo el personal docente,
+                                estudiantes, personal administrativo, directivos y proveedores tecnológicos de la
+                                institución.</span>
+                            <input type="text" id="inputAlcance" oninput="updateDraft('alcance', this.value)"
+                                placeholder="Escribe aquí el alcance institucional..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper">
+                        </div>
+
+                        <!-- 3. Principios éticos -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-gray-200">3. Selección de Principios Éticos
+                                Rectores (Selecciona los prioritarios):</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-white">
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Privacidad de Datos" onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Privacidad
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Equidad y No Discriminación"
+                                        onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Equidad
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Transparencia y Explicabilidad"
+                                        onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Transparencia
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Responsabilidad Humana" onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Control Humano
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Inclusión Educativa" onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Inclusión
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Seguridad de la Información"
+                                        onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Seguridad
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Auditoría Tecnológica" onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Auditoría
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Bienestar del Estudiante"
+                                        onchange="updatePrinciples()"
+                                        class="rounded border-gray-300 text-copper focus:ring-copper"> Bienestar
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones navegación del módulo -->
+                <div class="flex justify-between items-center border-t border-gray-100 pt-6">
+                    <button onclick="navigateTo('portada')"
+                        class="text-sm border border-gray-300 hover:border-primary text-secondary hover:text-primary px-4 py-2.5 rounded-lg font-semibold custom-transition">
+                        Volver a Portada
+                    </button>
+                    <button onclick="navigateTo('mod2')"
+                        class="bg-primary hover:bg-copper text-white px-5 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2 custom-transition">
+                        Siguiente Módulo
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- MÓDULO 2: LAS REGLAS -->
+            <section id="sectionMod2" class="space-y-8 hidden">
+                <div class="border-b border-gray-100 pb-4">
+                    <span class="text-xs font-bold text-copper uppercase tracking-wider">Módulo 2 de 4</span>
+                    <h2 class="text-2xl font-bold mt-1">Las reglas: qué se permite, qué se restringe, qué se prohíbe
+                    </h2>
+                    <p class="text-sm text-secondary">Clasifica el nivel de riesgo de los sistemas de IA y establece
+                        salvaguardas claras para los datos confidenciales de la comunidad.</p>
+                </div>
+
+                <!-- Semáforo de Riesgo -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">1. Semáforo del Riesgo
+                        Institucional</h3>
+                    <p class="text-xs text-secondary">Cada nivel requiere un enfoque regulatorio proporcional:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div class="border-l-4 border-permitted bg-emerald-50/50 p-4 rounded-r-xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-permitted rounded-full"></span>
+                                <h4 class="font-bold text-sm text-emerald-800">Usos Permitidos</h4>
+                            </div>
+                            <p class="text-xs text-secondary leading-relaxed">
+                                Herramientas de bajo impacto. Apoyo administrativo no automatizado, diseño de materiales
+                                docentes sugeridos, asistencia en redacción de comunicaciones o resúmenes documentales.
+                                No requieren aprobación compleja.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-restricted bg-amber-50/50 p-4 rounded-r-xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-restricted rounded-full"></span>
+                                <h4 class="font-bold text-sm text-amber-800">Usos Restringidos</h4>
+                            </div>
+                            <p class="text-xs text-secondary leading-relaxed">
+                                Analítica del aprendizaje, alertas tempranas de deserción o software de apoyo en
+                                calificación. Requieren obligatoriamente transparencia informativa a las familias,
+                                consentimiento y estricta supervisión docente.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-prohibited bg-red-50/50 p-4 rounded-r-xl space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-prohibited rounded-full"></span>
+                                <h4 class="font-bold text-sm text-red-800">Usos Prohibidos</h4>
+                            </div>
+                            <p class="text-xs text-secondary leading-relaxed">
+                                Decisiones de alto impacto automatizadas sin presencia humana, vigilancia facial
+                                excesiva del alumnado, sanciones automáticas o denegación de matrículas y becas de forma
+                                exclusiva por sistemas automáticos.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Actividad Interactiva de Clasificación -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">2. Actividad: Clasificación de
+                        Casos Escolares</h3>
+                    <p class="text-xs text-secondary">Toma un caso del listado de la izquierda y asígnale su categoría
+                        de riesgo correspondiente de acuerdo con la política:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Casos -->
+                        <div class="space-y-2" id="casesContainer">
+                            <!-- Caso 1 -->
+                            <div id="caseBox1"
+                                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-copper transition-all cursor-pointer text-xs space-y-2">
+                                <p class="font-semibold">Caso A: Resumir un documento institucional para un informe
+                                    administrativo interno.</p>
+                                <div class="flex gap-1">
+                                    <button onclick="classifyCase(1, 'permitido')"
+                                        class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-medium text-[10px]">Permitido</button>
+                                    <button onclick="classifyCase(1, 'restringido')"
+                                        class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-medium text-[10px]">Restringido</button>
+                                    <button onclick="classifyCase(1, 'prohibido')"
+                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded font-medium text-[10px]">Prohibido</button>
+                                </div>
+                                <div id="feedbackCase1" class="hidden text-[10px] p-2 rounded mt-1"></div>
+                            </div>
+
+                            <!-- Caso 2 -->
+                            <div id="caseBox2"
+                                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-copper transition-all cursor-pointer text-xs space-y-2">
+                                <p class="font-semibold">Caso B: Asignar becas estudiantiles de manera automatizada
+                                    usando algoritmos predictivos.</p>
+                                <div class="flex gap-1">
+                                    <button onclick="classifyCase(2, 'permitido')"
+                                        class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-medium text-[10px]">Permitido</button>
+                                    <button onclick="classifyCase(2, 'restringido')"
+                                        class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-medium text-[10px]">Restringido</button>
+                                    <button onclick="classifyCase(2, 'prohibido')"
+                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded font-medium text-[10px]">Prohibido</button>
+                                </div>
+                                <div id="feedbackCase2" class="hidden text-[10px] p-2 rounded mt-1"></div>
+                            </div>
+
+                            <!-- Caso 3 -->
+                            <div id="caseBox3"
+                                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-copper transition-all cursor-pointer text-xs space-y-2">
+                                <p class="font-semibold">Caso C: Alertas tempranas de abandono escolar validadas por el
+                                    tutor del aula.</p>
+                                <div class="flex gap-1">
+                                    <button onclick="classifyCase(3, 'permitido')"
+                                        class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-medium text-[10px]">Permitido</button>
+                                    <button onclick="classifyCase(3, 'restringido')"
+                                        class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-medium text-[10px]">Restringido</button>
+                                    <button onclick="classifyCase(3, 'prohibido')"
+                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded font-medium text-[10px]">Prohibido</button>
+                                </div>
+                                <div id="feedbackCase3" class="hidden text-[10px] p-2 rounded mt-1"></div>
+                            </div>
+
+                            <!-- Caso 4 -->
+                            <div id="caseBox4"
+                                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-copper transition-all cursor-pointer text-xs space-y-2">
+                                <p class="font-semibold">Caso D: Generar una sanción disciplinaria de suspensión de
+                                    forma directa por un algoritmo.</p>
+                                <div class="flex gap-1">
+                                    <button onclick="classifyCase(4, 'permitido')"
+                                        class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-medium text-[10px]">Permitido</button>
+                                    <button onclick="classifyCase(4, 'restringido')"
+                                        class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-medium text-[10px]">Restringido</button>
+                                    <button onclick="classifyCase(4, 'prohibido')"
+                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded font-medium text-[10px]">Prohibido</button>
+                                </div>
+                                <div id="feedbackCase4" class="hidden text-[10px] p-2 rounded mt-1"></div>
+                            </div>
+
+                            <!-- Caso 5 -->
+                            <div id="caseBox5"
+                                class="bg-white p-3 rounded-lg border border-gray-200 hover:border-copper transition-all cursor-pointer text-xs space-y-2">
+                                <p class="font-semibold">Caso E: Ayuda a un docente en el borrador de un plan de clase
+                                    adaptado al currículo escolar.</p>
+                                <div class="flex gap-1">
+                                    <button onclick="classifyCase(5, 'permitido')"
+                                        class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-medium text-[10px]">Permitido</button>
+                                    <button onclick="classifyCase(5, 'restringido')"
+                                        class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded font-medium text-[10px]">Restringido</button>
+                                    <button onclick="classifyCase(5, 'prohibido')"
+                                        class="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded font-medium text-[10px]">Prohibido</button>
+                                </div>
+                                <div id="feedbackCase5" class="hidden text-[10px] p-2 rounded mt-1"></div>
+                            </div>
+                        </div>
+
+                        <!-- Puntaje -->
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 flex flex-col justify-between">
+                            <div class="space-y-2">
+                                <h4 class="font-bold text-sm text-copper">Estado de la Actividad</h4>
+                                <p class="text-xs text-secondary leading-relaxed">
+                                    Evaluar los sistemas informáticos desde una escala basada en riesgos es el pilar de
+                                    regulaciones robustas, como el Reglamento Europeo de IA o marcos institucionales
+                                    latinoamericanos.
+                                </p>
+                            </div>
+                            <div class="border-t border-gray-100 pt-4 mt-4 flex items-center justify-between">
+                                <span class="text-xs text-secondary font-medium">Respuestas Correctas:</span>
+                                <span id="scoreClasificacion" class="text-lg font-bold text-primary">0 de 5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protección de Datos -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">3. Gestión de Datos y
+                        Privacidad (Bóveda del Alumno)</h3>
+                    <p class="text-xs text-secondary font-medium">Haciendo referencia a la legislación local de
+                        protección de datos (como la Ley N° 29733 del Perú), estructuramos 3 reglas críticas:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <div onclick="toggleVaultInfo('rule1')"
+                            class="bg-white border border-gray-200 hover:border-copper p-4 rounded-xl cursor-pointer custom-transition space-y-2">
+                            <span class="text-2xl">📋</span>
+                            <h4 class="font-bold text-sm">Minimización de Datos</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Solo recopilar los datos estrictamente
+                                necesarios para cumplir con el propósito educativo.</p>
+                            <p id="rule1-detail"
+                                class="hidden text-[11px] text-copper mt-2 italic bg-copper/5 p-2 rounded">
+                                Ejemplo: El sistema de asistencia facial solo genera hashes matemáticos y descarta las
+                                imágenes originales para evitar almacenamiento biométrico inseguro.
+                            </p>
+                        </div>
+
+                        <div onclick="toggleVaultInfo('rule2')"
+                            class="bg-white border border-gray-200 hover:border-copper p-4 rounded-xl cursor-pointer custom-transition space-y-2">
+                            <span class="text-2xl">✍️</span>
+                            <h4 class="font-bold text-sm">Consentimiento Informado</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Toda recopilación para analíticas requiere
+                                la aceptación escrita de familias o tutores.</p>
+                            <p id="rule2-detail"
+                                class="hidden text-[11px] text-copper mt-2 italic bg-copper/5 p-2 rounded">
+                                Ejemplo: Formulario previo a la matrícula donde se autoriza explícitamente el uso de
+                                plataformas para detección de rezago académico.
+                            </p>
+                        </div>
+
+                        <div onclick="toggleVaultInfo('rule3')"
+                            class="bg-white border border-gray-200 hover:border-copper p-4 rounded-xl cursor-pointer custom-transition space-y-2">
+                            <span class="text-2xl">🛡️</span>
+                            <h4 class="font-bold text-sm">Control de Proveedores</h4>
+                            <p class="text-xs text-secondary leading-relaxed">Revisar los términos del software
+                                contratado, prohibiendo que reutilicen datos con fines comerciales o de modelado
+                                externo.</p>
+                            <p id="rule3-detail"
+                                class="hidden text-[11px] text-copper mt-2 italic bg-copper/5 p-2 rounded">
+                                Ejemplo: Prohibir el uso de herramientas gratuitas de chatbot para redactar informes de
+                                estudiantes si el proveedor se reserva el uso de los textos ingresados.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Checklist de Verificación Previa -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">4. Lista de Verificación de
+                        Privacidad (8 Ítems Clave)</h3>
+                    <p class="text-xs text-secondary">Para que un software de IA ingrese a la institución, se debe
+                        auditar bajo los siguientes criterios (marca aquellos que consideras que tu centro ya tiene
+                        integrados o mapeados):</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Se define qué datos se recopilarán explícitamente?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Esos datos son estrictamente necesarios para el propósito educativo?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Se informó a los estudiantes y a sus familias de manera transparente?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Se cuenta con el consentimiento correspondiente según la edad?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Las condiciones de la licencia del proveedor resguardan la seguridad de los
+                                datos?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Se implementan medidas de seguridad de almacenamiento (encriptación/acceso)?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Existen mecanismos de anonimización al finalizar la necesidad educativa?</span>
+                        </label>
+                        <label
+                            class="flex items-start gap-2 bg-white p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-copper focus:ring-copper">
+                            <span>¿Se asignó formalmente un responsable institucional de vigilar este
+                                tratamiento?</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- CONSTRUYE TU POLÍTICA M2 -->
+                <div class="bg-primary text-white p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🏗️</span>
+                        <h3 class="text-lg font-bold">Construye tu Política (Parte 2)</h3>
+                    </div>
+                    <p class="text-xs text-gray-300">
+                        Define la clasificación de uso y políticas de tratamiento de datos personales para la gobernanza
+                        interna de tu institución.
+                    </p>
+
+                    <div class="space-y-4 text-primary">
+                        <!-- 4. Usos permitidos -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">4. Usos Permitidos en tu
+                                Institución:</label>
+                            <textarea id="inputPermitidos" oninput="updateDraft('permitidos', this.value)" rows="2"
+                                placeholder="Ejemplo: Redacción de comunicaciones de soporte, lluvia de ideas pedagógicas, correcciones de estilo y ortografía..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 5. Usos restringidos -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">5. Usos Restringidos y sus Condiciones
+                                de Control:</label>
+                            <textarea id="inputRestringidos" oninput="updateDraft('restringidos', this.value)" rows="2"
+                                placeholder="Ejemplo: Clasificación automatizada de rendimiento estudiantil bajo control docente estricto e informe por escrito al apoderado..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 6. Usos prohibidos -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">6. Usos Prohibidos:</label>
+                            <textarea id="inputProhibidos" oninput="updateDraft('prohibidos', this.value)" rows="2"
+                                placeholder="Ejemplo: Calificación final automática sin mediación docente, biometría emocional, exclusión escolar usando algoritmos..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 7. Reglas de privacidad -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">7. Normativa de Privacidad de
+                                Datos:</label>
+                            <textarea id="inputPrivacidad" oninput="updateDraft('privacidad', this.value)" rows="2"
+                                placeholder="Ejemplo: Toda herramienta contratada debe cumplir con la Ley N° 29733 de Protección de Datos Personales, prohibiendo que los datos de los estudiantes sean reutilizados por terceros..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones navegación del módulo -->
+                <div class="flex justify-between items-center border-t border-gray-100 pt-6">
+                    <button onclick="navigateTo('mod1')"
+                        class="text-sm border border-gray-300 hover:border-primary text-secondary hover:text-primary px-4 py-2.5 rounded-lg font-semibold custom-transition">
+                        Módulo Anterior
+                    </button>
+                    <button onclick="navigateTo('mod3')"
+                        class="bg-primary hover:bg-copper text-white px-5 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2 custom-transition">
+                        Siguiente Módulo
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- MÓDULO 3: LA GOBERNANZA -->
+            <section id="sectionMod3" class="space-y-8 hidden">
+                <div class="border-b border-gray-100 pb-4">
+                    <span class="text-xs font-bold text-copper uppercase tracking-wider">Módulo 3 de 4</span>
+                    <h2 class="text-2xl font-bold mt-1">La gobernanza: quién vigila, cómo se supervisa y cómo se
+                        responde</h2>
+                    <p class="text-sm text-secondary">Estructura el órgano decisorio colegiado, evalúa matrices de
+                        riesgos y simula planes de respuesta ante incidentes tecnológicos.</p>
+                </div>
+
+                <!-- Transparencia y Revisión Humana -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">1. Capas Visuales de
+                        Transparencia Tecnológica</h3>
+                    <p class="text-xs text-secondary">La transparencia se despliega en tres niveles progresivos:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-1">
+                            <h4 class="font-bold text-copper">Nivel A: Avisos Claros</h4>
+                            <p class="text-secondary leading-relaxed">
+                                Informar de forma pública y oportuna sobre qué sistemas de IA se encuentran operando
+                                actualmente en la plataforma escolar.
+                            </p>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-1">
+                            <h4 class="font-bold text-copper">Nivel B: Explicabilidad</h4>
+                            <p class="text-secondary leading-relaxed">
+                                Toda decisión asistida por IA debe poseer justificaciones legibles. La comunidad debe
+                                poder auditar cómo llegó a ese resultado un sistema automatizado.
+                            </p>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl space-y-1">
+                            <h4 class="font-bold text-copper flex items-center gap-1">
+                                Nivel C: Human-in-the-loop
+                                <button onclick="toggleGlossary('human-in-the-loop', true)" class="text-copper"
+                                    title="Ver definición">ℹ️</button>
+                            </h4>
+                            <p class="text-secondary leading-relaxed">
+                                Asegura que las determinaciones de la IA no actúan solas: un ser humano (como un docente
+                                u orientador) valida, contextualiza y ratifica la salida tecnológica.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Caso obligatorio analizado -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                        <p class="text-xs text-slate-800 leading-relaxed">
+                            <strong>Caso de Éxito:</strong> Un software predictivo detecta un riesgo severo de deserción
+                            en un estudiante de secundaria. En lugar de sancionar o aislar, el sistema emite una alerta
+                            directa con las causas (ausentismo, notas) para que el tutor de aula revise la situación en
+                            una sesión de mentoría personalizada y adapte las estrategias psicopedagógicas.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mesa Circular Interactiva del Comité -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-6">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">2. Mesa Circular: Comité
+                        Institucional de IA</h3>
+                    <p class="text-xs text-secondary">La gobernanza no depende de una sola persona. Toca los distintos
+                        roles representados en esta mesa circular colegiada para conocer su función específica en la
+                        escuela:</p>
+
+                    <div class="flex flex-col lg:flex-row gap-6 items-center">
+
+                        <!-- SVG Mesa Circular -->
+                        <div class="relative w-64 h-64 flex-shrink-0">
+                            <svg viewBox="0 0 200 200" class="w-full h-full">
+                                <!-- Mesa -->
+                                <circle cx="100" cy="100" r="50" fill="#E2E8F0" stroke="#0F172A" stroke-width="3" />
+                                <text x="100" y="105" text-anchor="middle" font-size="10" font-weight="bold"
+                                    fill="#0F172A">COMITÉ IA</text>
+
+                                <!-- Sillas/Roles -->
+                                <!-- Dirección (Top) -->
+                                <circle cx="100" cy="25" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Dirección')" />
+                                <text x="100" y="29" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">DIR</text>
+
+                                <!-- Académica (Top-Right) -->
+                                <circle cx="153" cy="47" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Académica')" />
+                                <text x="153" y="51" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">ACA</text>
+
+                                <!-- Legal/Cumplimiento (Right) -->
+                                <circle cx="175" cy="100" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Legal')" />
+                                <text x="175" y="104" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">LEG</text>
+
+                                <!-- Tecnológica (Bottom-Right) -->
+                                <circle cx="153" cy="153" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Tecnología')" />
+                                <text x="153" y="157" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">TEC</text>
+
+                                <!-- Representante Docente (Bottom) -->
+                                <circle cx="100" cy="175" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Docentes')" />
+                                <text x="100" y="179" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">DOC</text>
+
+                                <!-- Representante Estudiantil (Bottom-Left) -->
+                                <circle cx="47" cy="153" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Estudiantes')" />
+                                <text x="47" y="157" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">EST</text>
+
+                                <!-- Protección de Datos (Left) -->
+                                <circle cx="25" cy="100" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Privacidad')" />
+                                <text x="25" y="104" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">PRV</text>
+
+                                <!-- Calidad Educativa (Top-Left) -->
+                                <circle cx="47" cy="47" r="14" fill="#0F172A"
+                                    class="cursor-pointer hover:fill-copper transition-colors"
+                                    onclick="selectCommitteeRole('Calidad')" />
+                                <text x="47" y="51" text-anchor="middle" font-size="8" fill="#FFF"
+                                    class="pointer-events-none">CAL</text>
+                            </svg>
+                        </div>
+
+                        <!-- Panel Detalle Rol -->
+                        <div
+                            class="bg-white p-4 rounded-xl border border-gray-200 flex-grow h-full min-h-[160px] flex flex-col justify-between">
+                            <div id="committeeDetailBox">
+                                <h4 class="font-bold text-sm text-copper" id="committeeRoleTitle">Toca una silla en la
+                                    mesa circular</h4>
+                                <p class="text-xs text-secondary mt-1 leading-relaxed" id="committeeRoleDesc">
+                                    Analiza el rol de cada participante clave para asegurar una gobernanza democrática y
+                                    multidisciplinaria en tu centro educativo.
+                                </p>
+                            </div>
+                            <div
+                                class="border-t border-gray-100 pt-3 mt-3 flex justify-between items-center text-[10px] text-secondary">
+                                <span>Comité Institucional Recomendado</span>
+                                <span>8 Estamentos representados</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Actividad Simular Reunión del Comité -->
+                    <div class="border-t border-gray-200 pt-6 space-y-3">
+                        <div class="flex justify-between items-center flex-wrap gap-2">
+                            <h4 class="font-bold text-sm">Simulador de Reunión: Compra de Plataforma Predictiva</h4>
+                            <button onclick="startCommitteeSimulation()"
+                                class="bg-copper hover:bg-primary text-white text-xs px-3 py-1.5 rounded-lg custom-transition font-medium">Evaluar
+                                Compra Ficticia</button>
+                        </div>
+
+                        <div id="committeeSimWorkspace"
+                            class="hidden bg-white p-4 rounded-xl border border-gray-200 text-xs space-y-4">
+                            <p class="leading-relaxed text-secondary">
+                                <strong>Caso:</strong> Un proveedor ofrece una plataforma que promete "predecir la
+                                deserción de los estudiantes mediante análisis conductual en redes sociales y uso de
+                                Internet". Como comité, evalúa qué aspectos deben auditarse obligatoriamente antes de
+                                autorizar su compra:
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2" id="simChecksContainer">
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck1"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Revisar qué datos de navegación privada de los alumnos planean extraer
+                                        (Protección de datos).</span>
+                                </label>
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck2"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Verificar si el algoritmo discrimina a minorías o ciertos grupos (Mitigación
+                                        de sesgos).</span>
+                                </label>
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck3"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Exigir explicabilidad del porqué califica a un estudiante en riesgo para
+                                        fundamentar la tutoría.</span>
+                                </label>
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck4"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Comprobar la licencia comercial del proveedor para asegurar que no venda la
+                                        información recopilada.</span>
+                                </label>
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck5"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Asegurar que la última palabra en la alerta siempre la tome el tutor asignado
+                                        (Human-in-the-loop).</span>
+                                </label>
+                                <label
+                                    class="flex items-start gap-2 p-2 hover:bg-gray-50 rounded border border-gray-100 cursor-pointer">
+                                    <input type="checkbox" id="simCheck6"
+                                        class="mt-0.5 rounded border-gray-300 text-copper">
+                                    <span>Definir una fecha de auditoría periódica de efectividad del sistema para
+                                        evitar falsos positivos.</span>
+                                </label>
+                            </div>
+
+                            <div class="flex justify-end gap-2 pt-2">
+                                <button onclick="checkCommitteeSimulation()"
+                                    class="bg-primary hover:bg-copper text-white text-xs px-4 py-2 rounded-lg custom-transition font-medium">Confirmar
+                                    Veredicto del Comité</button>
+                            </div>
+                            <div id="committeeSimFeedback" class="hidden text-xs p-3 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matriz de Riesgos Interactiva -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">3. Evaluación de Riesgos y
+                        Auditorías</h3>
+                    <p class="text-xs text-secondary">Toca las tarjetas para evaluar y ubicar riesgos según su Impacto ×
+                        Probabilidad, definiendo su plan de mitigación en la institución:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Selector de Riesgos -->
+                        <div class="space-y-2">
+                            <div onclick="evaluateRiskCard('sesgo')"
+                                class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper p-3 rounded-xl cursor-pointer custom-transition text-xs space-y-1">
+                                <h4 class="font-bold">Sesgo y discriminación algoritmos de evaluación</h4>
+                                <p class="text-[11px] text-secondary">El sistema evalúa de forma dispareja a alumnos con
+                                    necesidades específicas.</p>
+                                <span
+                                    class="inline-block text-[9px] bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Impacto
+                                    Alto - Probabilidad Media</span>
+                            </div>
+
+                            <div onclick="evaluateRiskCard('exposicion')"
+                                class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper p-3 rounded-xl cursor-pointer custom-transition text-xs space-y-1">
+                                <h4 class="font-bold">Filtración masiva de datos personales</h4>
+                                <p class="text-[11px] text-secondary">Subida de nombres y notas a plataformas públicas
+                                    gratuitas sin encriptar.</p>
+                                <span
+                                    class="inline-block text-[9px] bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">Impacto
+                                    Crítico - Probabilidad Alta</span>
+                            </div>
+
+                            <div onclick="evaluateRiskCard('dependencia')"
+                                class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-copper p-3 rounded-xl cursor-pointer custom-transition text-xs space-y-1">
+                                <h4 class="font-bold">Falta de capacitación en docentes</h4>
+                                <p class="text-[11px] text-secondary">Los profesores desconocen cómo funciona la IA y
+                                    aprueban todo el contenido generado.</p>
+                                <span
+                                    class="inline-block text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-medium">Impacto
+                                    Medio - Probabilidad Alta</span>
+                            </div>
+                        </div>
+
+                        <!-- Panel Detalle Mitigación -->
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col justify-between">
+                            <div id="riskMitigationBox">
+                                <h4 class="font-bold text-sm text-copper" id="selectedRiskTitle">Selecciona un riesgo de
+                                    la izquierda</h4>
+                                <p class="text-xs text-secondary leading-relaxed mt-2" id="selectedRiskDesc">
+                                    Cada riesgo detectado requiere un protocolo de auditoría pre-implementación,
+                                    auditoría periódica de calidad y revisión de impacto institucional.
+                                </p>
+                            </div>
+                            <div
+                                class="border-t border-gray-100 pt-3 mt-4 text-[10px] text-secondary flex justify-between">
+                                <span>Enfoque Preventivo</span>
+                                <span>Auditoría en 3 Momentos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protocolo de Incidentes y Reportes Ficticios -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">4. Protocolo de Incidentes
+                        (Línea de Tiempo)</h3>
+                    <p class="text-xs text-secondary">Secuencia estandarizada de 6 fases frente a fallos éticos o
+                        técnicos de IA en el centro:</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center">
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">🔍</span>
+                            <h5 class="font-bold text-[10px] text-primary">1. Detección</h5>
+                            <p class="text-[9px] text-secondary">Identificar anomalía o reclamo.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">⚠️</span>
+                            <h5 class="font-bold text-[10px] text-primary">2. Alerta Rápida</h5>
+                            <p class="text-[9px] text-secondary">Notificar al Comité de IA.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">🛑</span>
+                            <h5 class="font-bold text-[10px] text-primary">3. Contención</h5>
+                            <p class="text-[9px] text-secondary">Suspender preventivamente el uso.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">🕵️</span>
+                            <h5 class="font-bold text-[10px] text-primary">4. Investigación</h5>
+                            <p class="text-[9px] text-secondary">Auditar el software / sesgo.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">🛠️</span>
+                            <h5 class="font-bold text-[10px] text-primary">5. Corrección</h5>
+                            <p class="text-[9px] text-secondary">Aplicar parches / actualizar.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-gray-200 space-y-1">
+                            <span class="text-lg">📖</span>
+                            <h5 class="font-bold text-[10px] text-primary">6. Aprendizaje</h5>
+                            <p class="text-[9px] text-secondary">Actualizar la política.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulador de Reportes -->
+                    <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-sm">Simulador: Reportar Incidente Ficticio</h4>
+                            <button onclick="toggleIncidentForm()"
+                                class="bg-primary hover:bg-copper text-white text-xs px-3 py-1.5 rounded-lg custom-transition font-medium">Abrir
+                                Formulario</button>
+                        </div>
+
+                        <div id="incidentFormContainer"
+                            class="hidden bg-white p-4 rounded-xl border border-gray-200 space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="block font-bold text-secondary mb-1">Tipo de Incidente:</label>
+                                    <select id="incType" class="w-full p-2 border border-gray-200 rounded">
+                                        <option value="filtracion">Filtración de Datos Personales</option>
+                                        <option value="sesgo">Discriminación / Sesgo en evaluación</option>
+                                        <option value="alerta_falsa">Alerta de abandono falsa e injustificada</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-secondary mb-1">Nivel de Urgencia:</label>
+                                    <select id="incUrgency" class="w-full p-2 border border-gray-200 rounded">
+                                        <option value="critico">Crítico (Requiere contención inmediata)</option>
+                                        <option value="moderado">Moderado</option>
+                                        <option value="bajo">Bajo (Informativo)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-xs">
+                                <label class="block font-bold text-secondary mb-1">Descripción de la Evidencia:</label>
+                                <textarea id="incDesc" placeholder="Detalle qué ocurrió en la plataforma..." rows="2"
+                                    class="w-full p-2 border border-gray-200 rounded"></textarea>
+                            </div>
+                            <div class="flex justify-end gap-2">
+                                <button onclick="submitIncidentSimulation()"
+                                    class="bg-copper hover:bg-primary text-white text-xs px-4 py-2 rounded-lg custom-transition font-medium">Simular
+                                    Envío</button>
+                            </div>
+                            <div id="incidentFeedback" class="hidden text-xs p-3 rounded leading-relaxed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formación Continua (Pestañas) -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">5. Plan de Formación Continua
+                        para la Comunidad</h3>
+                    <p class="text-xs text-secondary">Selecciona el perfil para adecuar los contenidos formativos
+                        indispensables:</p>
+
+                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                        <!-- Pestañas -->
+                        <div class="flex border-b border-gray-200 bg-gray-50 text-xs">
+                            <button onclick="selectTrainingTab('docentes')" id="tabBtnDocentes"
+                                class="px-4 py-3 font-semibold border-b-2 border-copper text-copper">Docentes y
+                                Pedagogos</button>
+                            <button onclick="selectTrainingTab('estudiantes')" id="tabBtnEstudiantes"
+                                class="px-4 py-3 font-semibold text-secondary hover:text-primary">Estudiantes y
+                                Alumnos</button>
+                            <button onclick="selectTrainingTab('administrativos')" id="tabBtnAdministrativos"
+                                class="px-4 py-3 font-semibold text-secondary hover:text-primary">Personal
+                                Administrativo</button>
+                        </div>
+                        <!-- Contenido Pestañas -->
+                        <div class="p-4 text-xs space-y-3" id="trainingTabContent">
+                            <h4 class="font-bold text-sm text-copper">Ejes Formativos: Alfabetización IA y Evaluación
+                                Crítica</h4>
+                            <p class="text-secondary leading-relaxed">
+                                Formación en revisión crítica de material didáctico, ingeniería de instrucciones en
+                                lenguaje pedagógico escolar, resguardo de privacidad en el aula y detección de falsos
+                                positivos en el rendimiento estudiantil.
+                            </p>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-100">
+                                <p class="font-bold text-primary">Mini-Caso Docente:</p>
+                                <p class="text-secondary italic">Un docente genera una rúbrica en segundos. El taller le
+                                    enseña que debe evaluar si el diseño responde a la realidad socio-contextual de su
+                                    grupo y adaptar las preguntas antes de compartirlo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSTRUYE TU POLÍTICA M3 -->
+                <div class="bg-primary text-white p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🏗️</span>
+                        <h3 class="text-lg font-bold">Construye tu Política (Parte 3)</h3>
+                    </div>
+                    <p class="text-xs text-gray-300">
+                        Establece los parámetros operativos y responsables directos para consolidar la gobernanza.
+                    </p>
+
+                    <div class="space-y-4 text-primary">
+                        <!-- 8. Revisión humana -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">8. Decisiones con Revisión Humana
+                                Obligatoria:</label>
+                            <textarea id="inputRevision" oninput="updateDraft('revisionHumana', this.value)" rows="2"
+                                placeholder="Ejemplo: Evaluaciones disciplinarias, planes de apoyo para estudiantes con bajo rendimiento, y asignación de matrículas..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 9. Comité responsable -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-gray-200">9. Conformación del Comité
+                                Institucional de IA (Selecciona mínimo 3):</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-white">
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Dirección General" onchange="updateCommittee()"
+                                        class="rounded border-gray-300 text-copper"> Dirección General
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Coordinación Académica" onchange="updateCommittee()"
+                                        class="rounded border-gray-300 text-copper"> Coord. Académica
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Representante de Docentes"
+                                        onchange="updateCommittee()" class="rounded border-gray-300 text-copper"> Repr.
+                                    Docentes
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Representante de Estudiantes"
+                                        onchange="updateCommittee()" class="rounded border-gray-300 text-copper"> Repr.
+                                    Estudiantes
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Responsable de Sistemas" onchange="updateCommittee()"
+                                        class="rounded border-gray-300 text-copper"> Responsable de Sistemas
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Oficial de Privacidad de Datos"
+                                        onchange="updateCommittee()" class="rounded border-gray-300 text-copper">
+                                    Oficial de Datos
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 10. Protocolo de incidentes -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">10. Protocolo ante Incidentes Éticos o
+                                Técnicos:</label>
+                            <textarea id="inputProtocolo" oninput="updateDraft('protocolo', this.value)" rows="2"
+                                placeholder="Ejemplo: (1) Reporte inmediato al Oficial de Datos, (2) Suspensión temporal de la plataforma, (3) Auditoría externa por parte del Comité en menos de 48 horas..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+
+                        <!-- 11. Plan de formación -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-gray-200">11. Prioridades de Formación
+                                Institucional:</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-white">
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Evaluación crítica de rúbricas docentes"
+                                        onchange="updateTraining()" class="rounded border-gray-300 text-copper"> Crítica
+                                    de rúbricas (Docentes)
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Uso ético y plagio en IA en las tareas"
+                                        onchange="updateTraining()" class="rounded border-gray-300 text-copper"> Uso
+                                    ético en tareas (Alumnos)
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 text-xs cursor-pointer hover:text-copper transition-colors">
+                                    <input type="checkbox" value="Seguridad y subida segura de expedientes"
+                                        onchange="updateTraining()" class="rounded border-gray-300 text-copper"> Subida
+                                    segura de expedientes (Admin)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones navegación del módulo -->
+                <div class="flex justify-between items-center border-t border-gray-100 pt-6">
+                    <button onclick="navigateTo('mod2')"
+                        class="text-sm border border-gray-300 hover:border-primary text-secondary hover:text-primary px-4 py-2.5 rounded-lg font-semibold custom-transition">
+                        Módulo Anterior
+                    </button>
+                    <button onclick="navigateTo('mod4')"
+                        class="bg-primary hover:bg-copper text-white px-5 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2 custom-transition">
+                        Siguiente Módulo
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- MÓDULO 4: INTEGRACIÓN Y ARQUITECTURA -->
+            <section id="sectionMod4" class="space-y-8 hidden">
+                <div class="border-b border-gray-100 pb-4">
+                    <span class="text-xs font-bold text-copper uppercase tracking-wider">Módulo 4 de 4</span>
+                    <h2 class="text-2xl font-bold mt-1">Integración: mi política completa y su arquitectura</h2>
+                    <p class="text-sm text-secondary">Estructura final del documento bajo la pirámide de tres niveles.
+                        Realiza el examen final, interactúa con el espacio 3D y descarga tu propuesta formal.</p>
+                </div>
+
+                <!-- Pirámide de Tres Niveles -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">1. Modelo Institucional de
+                        Tres Niveles</h3>
+                    <p class="text-xs text-secondary">Toda política organizacional sólida responde a una jerarquía
+                        conceptual:</p>
+
+                    <div class="space-y-2">
+                        <!-- Nivel 1 -->
+                        <div onclick="selectPyramidLayer(1)"
+                            class="bg-primary hover:bg-copper text-white p-4 rounded-xl cursor-pointer custom-transition relative space-y-1">
+                            <span class="text-xs font-bold uppercase text-gray-300">Nivel Superior 1</span>
+                            <h4 class="font-bold text-sm">Principios Rectores (Visión Estratégica)</h4>
+                            <p class="text-xs text-gray-200">Valores de privacidad, equidad y respeto a la dignidad
+                                humana. (Se conecta con tu borrador del Módulo 1)</p>
+                            <div id="pyramid-layer1" class="hidden text-xs bg-white/10 p-2 rounded mt-2">
+                                Conecta tus compromisos éticos más profundos con la identidad de la comunidad educativa.
+                            </div>
+                        </div>
+
+                        <!-- Nivel 2 -->
+                        <div onclick="selectPyramidLayer(2)"
+                            class="bg-slate-800 hover:bg-copper text-white p-4 rounded-xl cursor-pointer custom-transition relative space-y-1">
+                            <span class="text-xs font-bold uppercase text-gray-300">Nivel Intermedio 2</span>
+                            <h4 class="font-bold text-sm">Procedimientos Operativos (Acción)</h4>
+                            <p class="text-xs text-gray-200">Límites (Semáforo de usos) y reglas de tratamiento de datos
+                                personales. (Se conecta con tu borrador del Módulo 2)</p>
+                            <div id="pyramid-layer2" class="hidden text-xs bg-white/10 p-2 rounded mt-2">
+                                Asegura que el uso del día a día del docente respete los acuerdos formales del centro
+                                educativo.
+                            </div>
+                        </div>
+
+                        <!-- Nivel 3 -->
+                        <div onclick="selectPyramidLayer(3)"
+                            class="bg-slate-700 hover:bg-copper text-white p-4 rounded-xl cursor-pointer custom-transition relative space-y-1">
+                            <span class="text-xs font-bold uppercase text-gray-300">Nivel Base 3</span>
+                            <h4 class="font-bold text-sm">Gobernanza y Sostenibilidad</h4>
+                            <p class="text-xs text-gray-200">El Comité de IA, el Plan de Formación y los protocolos ante
+                                incidentes. (Se conecta con tu borrador del Módulo 3)</p>
+                            <div id="pyramid-layer3" class="hidden text-xs bg-white/10 p-2 rounded mt-2">
+                                Estructura el soporte organizativo que supervisa, corrige y actualiza las normas
+                                periódicamente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Espacio 3D/AR de la Gobernanza con A-Frame -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">2. Explora la Arquitectura
+                            de Gobernanza de IA</h3>
+                        <button onclick="requestCameraAR()"
+                            class="text-xs bg-copper hover:bg-primary text-white px-3 py-1.5 rounded-lg custom-transition font-medium">Activar
+                            Realidad Aumentada (AR)</button>
+                    </div>
+                    <p class="text-xs text-secondary">Utiliza el mouse para rotar el visor y haz clic en los objetos
+                        circundantes (Balanza, Escudo de Privacidad, Alerta) para detallar los engranajes
+                        institucionales de tu política:</p>
+
+                    <div
+                        class="relative w-full h-80 rounded-2xl border border-gray-200 overflow-hidden bg-slate-900 shadow-inner">
+                        <a-scene embedded style="height: 100%; width: 100%; background: #0F172A;"
+                            vr-mode-ui="enabled: false">
+                            <!-- Cámara -->
+                            <a-entity position="0 1.5 3">
+                                <a-camera look-controls="enabled: true" wasd-controls="enabled: false"></a-camera>
+                            </a-entity>
+
+                            <!-- Iluminación -->
+                            <a-light type="ambient" color="#FFF" intensity="0.5"></a-light>
+                            <a-light type="directional" color="#C97B63" intensity="0.8" position="-1 2 1"></a-light>
+
+                            <!-- Pirámide de la Gobernanza (Cilindros apilados representando los 3 niveles) -->
+                            <!-- Nivel 1: Cúspide -->
+                            <a-cylinder position="0 1.2 0" radius="0.3" height="0.4" color="#C97B63" roughness="0.5">
+                                <a-animation attribute="rotation" dur="5000" to="0 360 0" repeat="indefinite"
+                                    easing="linear"></a-animation>
+                            </a-cylinder>
+                            <!-- Nivel 2: Medio -->
+                            <a-cylinder position="0 0.7 0" radius="0.5" height="0.4" color="#475569"
+                                roughness="0.5"></a-cylinder>
+                            <!-- Nivel 3: Base -->
+                            <a-cylinder position="0 0.2 0" radius="0.7" height="0.4" color="#0F172A"
+                                roughness="0.5"></a-cylinder>
+
+                            <!-- Objetos que orbitan alrededor (Esferas flotantes interactivas) -->
+                            <!-- Escudo de Privacidad -->
+                            <a-sphere position="-1.2 0.7 0.5" radius="0.15" color="#10B981" cursor-listener
+                                onclick="window.parent.showARDetail('privacidad')">
+                                <a-text value="DATOS" align="center" position="0 0.25 0" scale="0.3 0.3 0.3"
+                                    color="#FFF"></a-text>
+                            </a-sphere>
+
+                            <!-- Balanza / Control Ético -->
+                            <a-sphere position="1.2 0.7 -0.5" radius="0.15" color="#F59E0B" cursor-listener
+                                onclick="window.parent.showARDetail('etica')">
+                                <a-text value="ETICA" align="center" position="0 0.25 0" scale="0.3 0.3 0.3"
+                                    color="#FFF"></a-text>
+                            </a-sphere>
+
+                            <!-- Alerta / Gestión de Incidentes -->
+                            <a-sphere position="0 1.7 -0.8" radius="0.15" color="#EF4444" cursor-listener
+                                onclick="window.parent.showARDetail('incidente')">
+                                <a-text value="ALERTA" align="center" position="0 0.25 0" scale="0.3 0.3 0.3"
+                                    color="#FFF"></a-text>
+                            </a-sphere>
+
+                            <!-- Suelo / Rejilla decorativa -->
+                            <a-grid position="0 0 0" width="10" height="10" color="#475569" opacity="0.2"></a-grid>
+                        </a-scene>
+                    </div>
+                    <!-- Mensaje explicativo emergente desde el 3D -->
+                    <div id="arDetailMessage"
+                        class="hidden text-xs bg-copper/10 border border-copper/30 p-3 rounded text-slate-800 leading-relaxed">
+                    </div>
+                </div>
+
+                <!-- Simulador de Decisiones (Autoevaluación Final) -->
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">3. Simulador del Toma de
+                        Decisiones Directivas (Autoevaluación)</h3>
+                    <p class="text-xs text-secondary">Como directivo, define el veredicto para estos casos basándote en
+                        la política de IA institucional diseñada en el taller:</p>
+
+                    <div class="space-y-4" id="directiveQuizContainer">
+                        <!-- Caso Quiz 1 -->
+                        <div class="bg-white p-3 rounded-lg border border-gray-100 space-y-2 text-xs">
+                            <p class="font-bold">Caso 1: Un docente decide calificar el examen final de su curso de
+                                manera 100% automática a través de un chatbot, aduciendo que le ahorra tiempo para otras
+                                tareas de investigación.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="answerQuiz(1, 'no_permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-red-100 hover:text-red-800 rounded font-medium">Prohibido
+                                    / Incumple Supervisión Humana</button>
+                                <button onclick="answerQuiz(1, 'permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-emerald-100 hover:text-emerald-800 rounded font-medium">Permitido
+                                    sin restricciones</button>
+                            </div>
+                            <p id="quizFeedback1" class="hidden text-[10px] p-2 rounded"></p>
+                        </div>
+
+                        <!-- Caso Quiz 2 -->
+                        <div class="bg-white p-3 rounded-lg border border-gray-100 space-y-2 text-xs">
+                            <p class="font-bold">Caso 2: Un tutor académico utiliza un sistema automatizado de alertas
+                                tempranas para identificar alumnos en riesgo académico, valida las sugerencias y llama a
+                                sesión de acompañamiento individual.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="answerQuiz(2, 'permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-emerald-100 hover:text-emerald-800 rounded font-medium">Uso
+                                    Restringido Permitido con Acompañamiento Humano</button>
+                                <button onclick="answerQuiz(2, 'no_permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-red-100 hover:text-red-800 rounded font-medium">Prohibido
+                                    / Vulneración de autonomía</button>
+                            </div>
+                            <p id="quizFeedback2" class="hidden text-[10px] p-2 rounded"></p>
+                        </div>
+
+                        <!-- Caso Quiz 3 -->
+                        <div class="bg-white p-3 rounded-lg border border-gray-100 space-y-2 text-xs">
+                            <p class="font-bold">Caso 3: La secretaría académica sube la base de datos de calificaciones
+                                de toda la escuela con nombres y documentos de identidad a un sitio web en línea público
+                                para generar resúmenes estadísticos rápidos.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="answerQuiz(3, 'no_permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-red-100 hover:text-red-800 rounded font-medium">Prohibido
+                                    / Vulneración Grave de Privacidad</button>
+                                <button onclick="answerQuiz(3, 'permitido')"
+                                    class="px-3 py-1.5 bg-gray-100 hover:bg-emerald-100 hover:text-emerald-800 rounded font-medium">Permitido
+                                    por eficiencia de gestión</button>
+                            </div>
+                            <p id="quizFeedback3" class="hidden text-[10px] p-2 rounded"></p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="border-t border-gray-200 pt-4 mt-4 flex items-center justify-between flex-wrap gap-2 text-xs">
+                        <span class="text-secondary font-medium">Desempeño Ético de Decisiones:</span>
+                        <div class="flex items-center gap-2">
+                            <span id="scoreQuiz" class="font-bold text-sm">0 de 3 correctas</span>
+                            <span id="badgeQuiz"
+                                class="bg-gray-200 text-slate-800 px-2 py-0.5 rounded font-bold text-[10px]">Sin
+                                Insignia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSTRUYE TU POLÍTICA M4 (Paso 12) -->
+                <div class="bg-primary text-white p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🏗️</span>
+                        <h3 class="text-lg font-bold">Construye tu Política (Parte Final)</h3>
+                    </div>
+                    <p class="text-xs text-gray-300">
+                        Último paso. Define qué indicadores vas a emplear para supervisar que se cumpla la política de
+                        IA de tu escuela.
+                    </p>
+
+                    <div class="space-y-4 text-primary">
+                        <!-- 12. Indicadores de seguimiento -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-gray-200">12. Indicadores de Cumplimiento y
+                                Seguimiento de la Política:</label>
+                            <textarea id="inputIndicadores" oninput="updateDraft('indicadores', this.value)" rows="3"
+                                placeholder="Ejemplo: Porcentaje de docentes capacitados en el uso ético, tasa de incidentes resueltos en menos de 48 horas, nivel de satisfacción de las familias con la transparencia de plataformas de IA..."
+                                class="w-full p-3 rounded-lg text-sm bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-copper"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GENERAR DOCUMENTO COMPLETO -->
+                <div class="border-t-2 border-dashed border-gray-200 pt-8 space-y-6">
+                    <div class="text-center max-w-xl mx-auto space-y-2">
+                        <h3 class="text-2xl font-extrabold text-primary">Mi Política Institucional Completa</h3>
+                        <p class="text-sm text-secondary">A continuación se consolida tu borrador con toda la
+                            información y redacción formulada a lo largo del taller. Si falta alguna sección, puedes
+                            editarla directamente.</p>
+                    </div>
+
+                    <!-- DOCUMENTO FORMATEADO -->
+                    <div id="fullDocumentLayout"
+                        class="bg-white p-8 rounded-2xl border-2 border-gray-300 shadow-xl max-w-4xl mx-auto space-y-6 text-sm relative">
+                        <div
+                            class="absolute top-4 right-4 bg-copper/10 text-copper text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                            Borrador Técnico Oficial
+                        </div>
+
+                        <!-- Cabecera Institucional -->
+                        <div class="text-center border-b pb-6 space-y-1">
+                            <h4 class="text-xs font-bold uppercase text-secondary tracking-widest">PROPUESTA DE POLÍTICA
+                                Y GOBERNANZA INSTITUCIONAL</h4>
+                            <h2 class="text-xl font-extrabold text-primary">REGLAMENTO PARA EL USO RESPONSABLE DE
+                                INTELIGENCIA ARTIFICIAL</h2>
+                            <p class="text-xs text-secondary">Ámbito: Institución Educativa • Fecha: <span
+                                    id="currentDate"></span></p>
+                        </div>
+
+                        <!-- Cuerpo del documento -->
+                        <div class="space-y-4 text-justify leading-relaxed">
+                            <!-- Sección 1 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">1. FINALIDAD DE LA
+                                    POLÍTICA</h5>
+                                <p id="docFinalidad" class="text-xs text-secondary italic mt-1">Pendiente de formular en
+                                    el Módulo 1...</p>
+                            </div>
+
+                            <!-- Sección 2 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">2. ALCANCE</h5>
+                                <p id="docAlcance" class="text-xs text-secondary italic mt-1">Pendiente de formular en
+                                    el Módulo 1...</p>
+                            </div>
+
+                            <!-- Sección 3 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">3. PRINCIPIOS ÉTICOS
+                                    RECTORES</h5>
+                                <p id="docPrincipios" class="text-xs text-secondary italic mt-1">Pendiente de
+                                    seleccionar en el Módulo 1...</p>
+                            </div>
+
+                            <!-- Sección 4 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">4. USOS PERMITIDOS
+                                    (BAJO RIESGO)</h5>
+                                <p id="docPermitidos" class="text-xs text-secondary italic mt-1">Pendiente de formular
+                                    en el Módulo 2...</p>
+                            </div>
+
+                            <!-- Sección 5 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">5. USOS RESTRINGIDOS
+                                    Y MEDIDAS DE CONTROL</h5>
+                                <p id="docRestringidos" class="text-xs text-secondary italic mt-1">Pendiente de formular
+                                    en el Módulo 2...</p>
+                            </div>
+
+                            <!-- Sección 6 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">6. USOS PROHIBIDOS
+                                    (ALTO RIESGO)</h5>
+                                <p id="docProhibidos" class="text-xs text-secondary italic mt-1">Pendiente de formular
+                                    en el Módulo 2...</p>
+                            </div>
+
+                            <!-- Sección 7 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">7. TRATAMIENTO DE
+                                    DATOS PERSONALES Y PRIVACIDAD</h5>
+                                <p id="docPrivacidad" class="text-xs text-secondary italic mt-1">Pendiente de formular
+                                    en el Módulo 2...</p>
+                            </div>
+
+                            <!-- Sección 8 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">8. REVISIÓN HUMANA
+                                    OBLIGATORIA (HUMAN-IN-THE-LOOP)</h5>
+                                <p id="docRevision" class="text-xs text-secondary italic mt-1">Pendiente de formular en
+                                    el Módulo 3...</p>
+                            </div>
+
+                            <!-- Sección 9 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">9. COMPOSICIÓN DEL
+                                    COMITÉ INSTITUCIONAL DE GOBERNANZA DE IA</h5>
+                                <p id="docComite" class="text-xs text-secondary italic mt-1">Pendiente de seleccionar en
+                                    el Módulo 3...</p>
+                            </div>
+
+                            <!-- Sección 10 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">10. PROTOCOLO
+                                    OPERATIVO ANTE INCIDENTES ÉTICOS Y TÉCNICOS</h5>
+                                <p id="docProtocolo" class="text-xs text-secondary italic mt-1">Pendiente de formular en
+                                    el Módulo 3...</p>
+                            </div>
+
+                            <!-- Sección 11 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">11. PLAN DE
+                                    FORMACIÓN CONTINUA DE LA COMUNIDAD</h5>
+                                <p id="docFormacion" class="text-xs text-secondary italic mt-1">Pendiente de seleccionar
+                                    en el Módulo 3...</p>
+                            </div>
+
+                            <!-- Sección 12 -->
+                            <div>
+                                <h5 class="font-bold text-primary text-xs uppercase tracking-wider">12. INDICADORES DE
+                                    SEGUIMIENTO Y MEJORA CONTINUA</h5>
+                                <p id="docIndicadores" class="text-xs text-secondary italic mt-1">Pendiente de formular
+                                    en el Módulo 4...</p>
+                            </div>
+                        </div>
+
+                        <!-- Firma / Cierre -->
+                        <div class="border-t pt-6 text-center space-y-1">
+                            <p class="text-xs text-secondary">Documento base listo para revisión y oficialización por el
+                                consejo directivo y el comité escolar.</p>
+                            <p class="text-xs font-bold text-primary">Diseñado de forma responsable</p>
+                        </div>
+                    </div>
+
+                    <!-- Acciones del Documento -->
+                    <div class="flex justify-center gap-4 py-4">
+                        <button onclick="copyDocumentToClipboard()"
+                            class="bg-primary hover:bg-copper text-white text-xs px-5 py-2.5 rounded-lg custom-transition font-medium inline-flex items-center gap-2">
+                            Copiar mi borrador 📋
+                        </button>
+                        <button onclick="downloadDocumentAsTXT()"
+                            class="bg-copper hover:bg-primary text-white text-xs px-5 py-2.5 rounded-lg custom-transition font-medium inline-flex items-center gap-2">
+                            Descargar archivo (.txt) 📥
+                        </button>
+                    </div>
+
+                    <!-- Notificación temporal interna de copiado -->
+                    <div id="copyToast"
+                        class="hidden text-xs bg-emerald-500 text-white text-center py-2 px-4 rounded max-w-xs mx-auto">
+                        ¡Copiado con éxito al portapapeles!
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Conclusiones Clave -->
+                <div class="space-y-4 border-t pt-8">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary">Conclusiones Clave del Taller
+                        de Gobernanza</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1">
+                            <span class="text-lg">🛡️</span>
+                            <h5 class="font-bold text-xs">Protección como Base</h5>
+                            <p class="text-[10px] text-secondary leading-relaxed">No hay IA segura sin cumplimiento de
+                                la legislación de protección de datos personales.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1">
+                            <span class="text-lg">🔍</span>
+                            <h5 class="font-bold text-xs">Transparencia</h5>
+                            <p class="text-[10px] text-secondary leading-relaxed">La comunidad educativa tiene derecho a
+                                conocer las lógicas explicables de evaluación.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1">
+                            <span class="text-lg">👥</span>
+                            <h5 class="font-bold text-xs">Mitigación de Sesgos</h5>
+                            <p class="text-[10px] text-secondary leading-relaxed">Auditorías continuas previenen
+                                decisiones automatizadas discriminatorias.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1">
+                            <span class="text-lg">⚖️</span>
+                            <h5 class="font-bold text-xs">Políticas Claras</h5>
+                            <p class="text-[10px] text-secondary leading-relaxed">La gobernanza activa diferencia la
+                                declaración formal de la operatividad en el aula.</p>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1">
+                            <span class="text-lg">🚀</span>
+                            <h5 class="font-bold text-xs">Innovación Humana</h5>
+                            <p class="text-[10px] text-secondary leading-relaxed">El foco siempre radica en optimizar
+                                los aprendizajes y priorizar el bienestar estudiantil.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Botones navegación del módulo -->
+                <div class="flex justify-between items-center border-t border-gray-100 pt-6">
+                    <button onclick="navigateTo('mod3')"
+                        class="text-sm border border-gray-300 hover:border-primary text-secondary hover:text-primary px-4 py-2.5 rounded-lg font-semibold custom-transition">
+                        Módulo Anterior
+                    </button>
+                    <button onclick="navigateTo('portada')"
+                        class="bg-primary hover:bg-copper text-white px-5 py-2.5 rounded-lg text-sm font-semibold inline-flex items-center gap-2 custom-transition">
+                        Volver a Inicio
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BARRA LATERAL DERECHA: MI POLÍTICA EN CONSTRUCCIÓN -->
+        <aside class="w-full lg:w-72 flex-shrink-0 space-y-4">
+            <div
+                class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm sticky top-24 max-h-[85vh] overflow-y-auto space-y-4">
+
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
+                        <span>📝</span> Mi Política en Construcción
+                    </h3>
+                    <span id="asideCompletedGauge" class="text-xs font-bold text-permitted">0/12</span>
+                </div>
+
+                <p class="text-[11px] text-secondary leading-relaxed">
+                    Tus respuestas en los bloques de redacción se consolidan aquí de manera inmediata.
+                </p>
+
+                <!-- Listado de Secciones Estado Rápido -->
+                <div class="space-y-2 text-xs" id="asideSectionsContainer">
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec1">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">1. Finalidad</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge1">Pendiente</span>
+                        </div>
+                        <p id="asideText1" class="text-[10px] text-secondary truncate">Formular finalidad del uso de
+                            IA...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">2. Alcance</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge2">Pendiente</span>
+                        </div>
+                        <p id="asideText2" class="text-[10px] text-secondary truncate">Indicar alcance institucional...
+                        </p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">3. Principios</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge3">Pendiente</span>
+                        </div>
+                        <p id="asideText3" class="text-[10px] text-secondary truncate">Seleccionar principios
+                            fundamentales...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec4">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">4. Usos Permitidos</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge4">Pendiente</span>
+                        </div>
+                        <p id="asideText4" class="text-[10px] text-secondary truncate">Detallar usos permitidos de bajo
+                            riesgo...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec5">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">5. Usos Restringidos</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge5">Pendiente</span>
+                        </div>
+                        <p id="asideText5" class="text-[10px] text-secondary truncate">Detallar usos restringidos bajo
+                            control...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec6">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">6. Usos Prohibidos</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge6">Pendiente</span>
+                        </div>
+                        <p id="asideText6" class="text-[10px] text-secondary truncate">Explicar prohibiciones por alto
+                            riesgo...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec7">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">7. Privacidad</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge7">Pendiente</span>
+                        </div>
+                        <p id="asideText7" class="text-[10px] text-secondary truncate">Garantizar resguardo de datos
+                            (Ley 29733)...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec8">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">8. Control Humano</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge8">Pendiente</span>
+                        </div>
+                        <p id="asideText8" class="text-[10px] text-secondary truncate">Definir decisiones asistidas con
+                            revisión...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec9">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">9. Comité de IA</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge9">Pendiente</span>
+                        </div>
+                        <p id="asideText9" class="text-[10px] text-secondary truncate">Indicar participantes e
+                            integrantes del comité...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec10">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">10. Protocolo</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge10">Pendiente</span>
+                        </div>
+                        <p id="asideText10" class="text-[10px] text-secondary truncate">Asignar flujo operativo ante
+                            incidentes...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec11">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">11. Formación</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge11">Pendiente</span>
+                        </div>
+                        <p id="asideText11" class="text-[10px] text-secondary truncate">Definir ejes curriculares
+                            prioritarios...</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1" id="asideSec12">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[10px]">12. Indicadores</span>
+                            <span class="text-[9px] text-red-500 font-bold uppercase" id="asideBadge12">Pendiente</span>
+                        </div>
+                        <p id="asideText12" class="text-[10px] text-secondary truncate">Definir métricas de auditoría
+                            institucional...</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-12 px-4 text-center">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p class="text-xs text-secondary">Diseñado de forma pedagógica para directores, coordinadores y gestores
+                educativos.</p>
+            <p class="text-[10px] text-slate-400">© 2026 Inteligencia Artificial Aplicada a las Instituciones Educativas
+                • Gobernanza Responsable</p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE JAVASCRIPT GLOBAL -->
+    <script>
+        // Variables globales de estado del alumno
+        const state = {
+            navigation: {
+                activeSection: 'portada',
+                visitedModules: ['portada']
+            },
+            policy: {
+                finalidad: '',
+                alcance: '',
+                principios: [],
+                permitidos: '',
+                restringidos: '',
+                prohibidos: '',
+                privacidad: '',
+                revisionHumana: '',
+                comite: [],
+                protocolo: '',
+                formacion: [],
+                indicadores: ''
+            },
+            activities: {
+                clasificacionScores: {},
+                committeeSimCompleted: false,
+                committeeSimScore: 0,
+                quizScores: {}
+            }
+        };
+
+        // Al cargar la página, asignar fecha actual en borrador
+        window.addEventListener('load', () => {
+            const dateSpan = document.getElementById('currentDate');
+            if (dateSpan) {
+                const opt = { year: 'numeric', month: 'long', day: 'numeric' };
+                dateSpan.textContent = new Date().toLocaleDateString('es-ES', opt);
+            }
+            updateUI();
+        });
+
+        // NAVEGACIÓN LIBRE
+        function navigateTo(sectionId) {
+            // Ocultar todas las secciones
+            document.getElementById('sectionPortada').classList.add('hidden');
+            document.getElementById('sectionMod1').classList.add('hidden');
+            document.getElementById('sectionMod2').classList.add('hidden');
+            document.getElementById('sectionMod3').classList.add('hidden');
+            document.getElementById('sectionMod4').classList.add('hidden');
+
+            // Mostrar sección seleccionada
+            const targetSection = document.getElementById(`section${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            state.navigation.activeSection = sectionId;
+            if (!state.navigation.visitedModules.includes(sectionId)) {
+                state.navigation.visitedModules.push(sectionId);
+            }
+
+            // Actualizar estilo botones navegación lateral
+            const btns = ['Portada', 'Mod1', 'Mod2', 'Mod3', 'Mod4'];
+            btns.forEach(b => {
+                const btn = document.getElementById(`navBtn${b}`);
+                if (btn) {
+                    btn.className = "w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between hover:bg-gray-100 text-secondary";
+                }
+            });
+
+            const activeBtn = document.getElementById(`navBtn${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}`);
+            if (activeBtn) {
+                activeBtn.className = "w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-between bg-primary text-white";
+            }
+
+            updateUI();
+            // Enviar scroll arriba
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ACTUALIZACIONES DE INTERFAZ Y PROGRESO
+        function updateUI() {
+            // 1. Progreso Recorrido
+            const modulesCount = 4;
+            let visitedCount = 0;
+            if (state.navigation.visitedModules.includes('mod1')) visitedCount++;
+            if (state.navigation.visitedModules.includes('mod2')) visitedCount++;
+            if (state.navigation.visitedModules.includes('mod3')) visitedCount++;
+            if (state.navigation.visitedModules.includes('mod4')) visitedCount++;
+
+            const pctJourney = (visitedCount / modulesCount) * 100;
+            document.getElementById('journeyProgressBar').style.width = `${pctJourney}%`;
+            document.getElementById('journeyProgressText').textContent = `${visitedCount} de ${modulesCount} Módulos`;
+
+            // Actualizar estado de iconos circulares del menu lateral
+            updateMenuIndicator('Portada', true);
+            updateMenuIndicator('Mod1', state.navigation.visitedModules.includes('mod1'));
+            updateMenuIndicator('Mod2', state.navigation.visitedModules.includes('mod2'));
+            updateMenuIndicator('Mod3', state.navigation.visitedModules.includes('mod3'));
+            updateMenuIndicator('Mod4', state.navigation.visitedModules.includes('mod4'));
+
+            // 2. Progreso de la política (12 componentes)
+            let definedCount = 0;
+            if (state.policy.finalidad.trim()) definedCount++;
+            if (state.policy.alcance.trim()) definedCount++;
+            if (state.policy.principios.length > 0) definedCount++;
+            if (state.policy.permitidos.trim()) definedCount++;
+            if (state.policy.restringidos.trim()) definedCount++;
+            if (state.policy.prohibidos.trim()) definedCount++;
+            if (state.policy.privacidad.trim()) definedCount++;
+            if (state.policy.revisionHumana.trim()) definedCount++;
+            if (state.policy.comite.length > 0) definedCount++;
+            if (state.policy.protocolo.trim()) definedCount++;
+            if (state.policy.formacion.length > 0) definedCount++;
+            if (state.policy.indicadores.trim()) definedCount++;
+
+            const pctPolicy = (definedCount / 12) * 100;
+            document.getElementById('policyProgressBar').style.width = `${pctPolicy}%`;
+            document.getElementById('policyProgressText').textContent = `${definedCount}/12 Secciones`;
+            document.getElementById('asideCompletedGauge').textContent = `${definedCount}/12`;
+
+            // 3. Sincronizar con el panel lateral derecho "Mi Política en Construcción"
+            syncAsideDraftItem(1, 'Finalidad', state.policy.finalidad, 'Formular finalidad del uso de IA...');
+            syncAsideDraftItem(2, 'Alcance', state.policy.alcance, 'Indicar alcance institucional...');
+            syncAsideDraftItem(3, 'Principios', state.policy.principios.join(', '), 'Seleccionar principios fundamentales...');
+            syncAsideDraftItem(4, 'Usos Permitidos', state.policy.permitidos, 'Detallar usos permitidos de bajo riesgo...');
+            syncAsideDraftItem(5, 'Usos Restringidos', state.policy.restringidos, 'Detallar usos restringidos bajo control...');
+            syncAsideDraftItem(6, 'Usos Prohibidos', state.policy.prohibidos, 'Explicar prohibiciones por alto riesgo...');
+            syncAsideDraftItem(7, 'Privacidad', state.policy.privacidad, 'Garantizar resguardo de datos (Ley 29733)...');
+            syncAsideDraftItem(8, 'Control Humano', state.policy.revisionHumana, 'Definir decisiones asistidas con revisión...');
+            syncAsideDraftItem(9, 'Comité de IA', state.policy.comite.join(', '), 'Indicar participantes e integrantes del comité...');
+            syncAsideDraftItem(10, 'Protocolo', state.policy.protocolo, 'Asignar flujo operativo ante incidentes...');
+            syncAsideDraftItem(11, 'Formación', state.policy.formacion.join(', '), 'Definir ejes curriculares prioritarios...');
+            syncAsideDraftItem(12, 'Indicadores', state.policy.indicadores, 'Definir métricas de auditoría institucional...');
+
+            // 4. Sincronizar documento borrador final del módulo 4
+            syncDocumentFinalText('docFinalidad', state.policy.finalidad, 'Pendiente de formular en el Módulo 1...');
+            syncDocumentFinalText('docAlcance', state.policy.alcance, 'Pendiente de formular en el Módulo 1...');
+            syncDocumentFinalText('docPrincipios', state.policy.principios.join(', '), 'Pendiente de seleccionar en el Módulo 1...');
+            syncDocumentFinalText('docPermitidos', state.policy.permitidos, 'Pendiente de formular en el Módulo 2...');
+            syncDocumentFinalText('docRestringidos', state.policy.restringidos, 'Pendiente de formular en el Módulo 2...');
+            syncDocumentFinalText('docProhibidos', state.policy.prohibidos, 'Pendiente de formular en el Módulo 2...');
+            syncDocumentFinalText('docPrivacidad', state.policy.privacidad, 'Pendiente de formular en el Módulo 2...');
+            syncDocumentFinalText('docRevision', state.policy.revisionHumana, 'Pendiente de formular en el Módulo 3...');
+            syncDocumentFinalText('docComite', state.policy.comite.join(', '), 'Pendiente de seleccionar en el Módulo 3...');
+            syncDocumentFinalText('docProtocolo', state.policy.protocolo, 'Pendiente de formular en el Módulo 3...');
+            syncDocumentFinalText('docFormacion', state.policy.formacion.join(', '), 'Pendiente de seleccionar en el Módulo 3...');
+            syncDocumentFinalText('docIndicadores', state.policy.indicadores, 'Pendiente de formular en el Módulo 4...');
+        }
+
+        function updateMenuIndicator(moduleKey, isCompleted) {
+            const icon = document.getElementById(`statusIcon${moduleKey}`);
+            if (icon) {
+                if (isCompleted) {
+                    icon.textContent = '✓';
+                    icon.className = "text-xs font-bold text-permitted";
+                } else {
+                    icon.textContent = '○';
+                    icon.className = "text-xs text-amber-500";
+                }
+            }
+        }
+
+        function syncAsideDraftItem(index, title, val, placeholder) {
+            const box = document.getElementById(`asideSec${index}`);
+            const badge = document.getElementById(`asideBadge${index}`);
+            const txt = document.getElementById(`asideText${index}`);
+
+            if (val && val.trim().length > 0) {
+                box.className = "p-2.5 rounded-lg border bg-white border-permitted/20 shadow-sm space-y-1";
+                badge.textContent = "Definido";
+                badge.className = "text-[9px] text-permitted font-bold uppercase";
+                txt.textContent = val;
+                txt.className = "text-[10px] text-slate-800 font-medium truncate";
+            } else {
+                box.className = "p-2.5 rounded-lg border bg-gray-50 border-gray-200 space-y-1";
+                badge.textContent = "Pendiente";
+                badge.className = "text-[9px] text-red-500 font-bold uppercase";
+                txt.textContent = placeholder;
+                txt.className = "text-[10px] text-secondary italic truncate";
+            }
+        }
+
+        function syncDocumentFinalText(elementId, val, placeholder) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                if (val && val.trim().length > 0) {
+                    el.textContent = val;
+                    el.className = "text-xs text-slate-900 font-medium whitespace-pre-line mt-1";
+                } else {
+                    el.textContent = placeholder;
+                    el.className = "text-xs text-red-400 italic mt-1";
+                }
+            }
+        }
+
+        // GESTIÓN DEL DRAFT (EN MEMORIA)
+        function updateDraft(field, value) {
+            state.policy[field] = value;
+            updateUI();
+        }
+
+        function updatePrinciples() {
+            const checked = [];
+            const checkboxes = document.querySelectorAll('#sectionMod1 input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => checked.push(cb.value));
+            state.policy.principios = checked;
+            updateUI();
+        }
+
+        function updateCommittee() {
+            const checked = [];
+            const checkboxes = document.querySelectorAll('#sectionMod3 input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => checked.push(cb.value));
+            state.policy.comite = checked;
+            updateUI();
+        }
+
+        function updateTraining() {
+            const checked = [];
+            const checkboxes = document.querySelectorAll('#sectionMod3 input[type="checkbox"][onchange="updateTraining()"]:checked');
+            checkboxes.forEach(cb => checked.push(cb.value));
+            state.policy.formacion = checked;
+            updateUI();
+        }
+
+        // MODULO 1: TARJETAS DE RIESGO
+        function toggleCardDetail(id) {
+            const desc = document.getElementById(`${id}-desc`);
+            if (desc) {
+                desc.classList.toggle('hidden');
+            }
+        }
+
+        // MODULO 1: BALANZA INTERACTIVA
+        function tiltScale(side) {
+            const scaleBar = document.getElementById('scaleBar');
+            const scaleMessage = document.getElementById('scaleMessage');
+            const leftW = document.getElementById('weightLeft');
+            const rightW = document.getElementById('weightRight');
+
+            if (side === 'left') {
+                scaleBar.style.transform = 'rotate(-10deg)';
+                scaleMessage.textContent = 'Enfoque Técnico / Teórico Excesivo';
+                scaleMessage.className = "text-xs text-center font-bold text-copper mt-2";
+                leftW.className = "bg-copper/5 p-4 rounded-xl border-2 border-copper shadow-sm w-full md:w-64 space-y-2 custom-transition";
+                rightW.className = "bg-white p-4 rounded-xl border border-gray-200 shadow-sm w-full md:w-64 space-y-2 custom-transition";
+            } else if (side === 'right') {
+                scaleBar.style.transform = 'rotate(10deg)';
+                scaleMessage.textContent = 'Acciones desorganizadas sin regulación';
+                scaleMessage.className = "text-xs text-center font-bold text-primary mt-2";
+                leftW.className = "bg-white p-4 rounded-xl border border-gray-200 shadow-sm w-full md:w-64 space-y-2 custom-transition";
+                rightW.className = "bg-primary/5 p-4 rounded-xl border-2 border-primary shadow-sm w-full md:w-64 space-y-2 custom-transition";
+            } else {
+                scaleBar.style.transform = 'rotate(0deg)';
+                scaleMessage.textContent = 'Equilibrio Institucional Óptimo';
+                scaleMessage.className = "text-xs text-center font-bold text-permitted mt-2";
+                leftW.className = "bg-emerald-50/50 p-4 rounded-xl border border-emerald-200 shadow-sm w-full md:w-64 space-y-2 custom-transition";
+                rightW.className = "bg-emerald-50/50 p-4 rounded-xl border border-emerald-200 shadow-sm w-full md:w-64 space-y-2 custom-transition";
+            }
+        }
+
+        function showPolicyDraftSample() {
+            const text = document.getElementById('policySampleText');
+            text.classList.toggle('hidden');
+        }
+
+        // GLOSARIO INTERACTIVO
+        function toggleGlossary(term, show) {
+            const modal = document.getElementById('glossaryModal');
+            const title = document.getElementById('glossaryTitle');
+            const desc = document.getElementById('glossaryDesc');
+
+            if (!show) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                return;
+            }
+
+            if (term === 'human-in-the-loop') {
+                title.textContent = 'Human-in-the-loop (Control Humano)';
+                desc.textContent = 'Metodología de diseño regulatorio donde el software automatizado emite recomendaciones o clasificaciones, pero la toma de decisión final y formal es resguardada estrictamente por una persona competente (ej. el psicopedagogo del aula autoriza y adapta un plan curricular sugerido por la IA).';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // MODULO 2: CLASIFICACIÓN DE CASOS (QUIZ INTERACTIVO)
+        const classificationCorrect = {
+            1: 'permitido',
+            2: 'prohibido',
+            3: 'restringido',
+            4: 'prohibido',
+            5: 'permitido'
+        };
+
+        function classifyCase(caseNum, selectedOption) {
+            const correctOption = classificationCorrect[caseNum];
+            const feedback = document.getElementById(`feedbackCase${caseNum}`);
+
+            feedback.classList.remove('hidden');
+            state.activities.clasificacionScores[caseNum] = (selectedOption === correctOption);
+
+            if (selectedOption === correctOption) {
+                feedback.className = "text-[10px] p-2 rounded mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium";
+                if (caseNum === 1) feedback.textContent = "¡Correcto! Resumir informes internos sin datos personales confidenciales es de riesgo mínimo (Permitido).";
+                if (caseNum === 2) feedback.textContent = "¡Correcto! Delegar la entrega de becas financieras a algoritmos automatizados sin auditoría está Prohibido éticamente.";
+                if (caseNum === 3) feedback.textContent = "¡Correcto! Las alertas predictivas tempranas requieren validación del tutor institucional, siendo un caso Restringido.";
+                if (caseNum === 4) feedback.textContent = "¡Correcto! Una sanción directa por un software sin debido proceso ni supervisión humana constituye una Prohibición absoluta.";
+                if (caseNum === 5) feedback.textContent = "¡Correcto! El diseño de clases sugerido como apoyo pedagógico es una actividad complementaria permitida de bajo riesgo.";
+            } else {
+                feedback.className = "text-[10px] p-2 rounded mt-1 bg-red-50 text-red-800 border border-red-200 font-medium";
+                feedback.textContent = `Incorrecto. Este caso se clasifica formalmente como ${correctOption.toUpperCase()} para salvaguardar los derechos fundamentales de la comunidad. Intenta de nuevo.`;
+            }
+
+            // Contar puntuación
+            let correctCount = 0;
+            Object.keys(state.activities.clasificacionScores).forEach(k => {
+                if (state.activities.clasificacionScores[k]) correctCount++;
+            });
+            document.getElementById('scoreClasificacion').textContent = `${correctCount} de 5`;
+        }
+
+        // MODULO 2: PRIVACIDAD BÓVEDA
+        function toggleVaultInfo(ruleId) {
+            const detail = document.getElementById(`${ruleId}-detail`);
+            if (detail) {
+                detail.classList.toggle('hidden');
+            }
+        }
+
+        // MODULO 3: COMITÉ DETALLE ROL
+        function selectCommitteeRole(role) {
+            const title = document.getElementById('committeeRoleTitle');
+            const desc = document.getElementById('committeeRoleDesc');
+
+            if (role === 'Dirección') {
+                title.textContent = 'Dirección General (Presidente)';
+                desc.textContent = 'Faculta la viabilidad institucional de las decisiones, asume la representación jurídica ante incidentes de privacidad de datos y lidera la firma del reglamento.';
+            } else if (role === 'Académica') {
+                title.textContent = 'Coordinación Académica';
+                desc.textContent = 'Garantiza la alineación con el currículo oficial nacional y coordina que el uso de IA no menoscabe el aprendizaje sustantivo de la currícula escolar.';
+            } else if (role === 'Legal') {
+                title.textContent = 'Asesoría Legal / Cumplimiento';
+                desc.textContent = 'Supervisa el marco normativo de licencias del software, convenios con proveedores externos y apego con regulaciones de protección de los derechos de menores.';
+            } else if (role === 'Tecnología') {
+                title.textContent = 'Dirección de Sistemas / TI';
+                desc.textContent = 'Audita la seguridad informática, resguarda el flujo técnico de los servidores de la escuela, evalúa encriptación y bloquea accesos no autorizados.';
+            } else if (role === 'Docentes') {
+                title.textContent = 'Representante de Docentes';
+                desc.textContent = 'Canaliza los desafíos prácticos en el aula, reporta incidentes de plagio o fallos de conexión y propone mejoras formativas necesarias para el claustro.';
+            } else if (role === 'Estudiantes') {
+                title.textContent = 'Representación Estudiantil';
+                desc.textContent = 'Garantiza la voz del alumnado frente a equidad en el acceso a herramientas recomendadas y devela situaciones de discriminación percibidas en las plataformas.';
+            } else if (role === 'Privacidad') {
+                title.textContent = 'Oficial de Protección de Datos';
+                desc.textContent = 'Encargado de vigilar el estricto cumplimiento de la Ley N° 29733, evalúa la minimización de información recopilada por la escuela y atiende quejas.';
+            } else if (role === 'Calidad') {
+                title.textContent = 'Responsable de Calidad Educativa';
+                desc.textContent = 'Monitorea los indicadores de efectividad, lidera las encuestas de satisfacción con el uso de software de IA y propone la actualización técnica bianual.';
+            }
+        }
+
+        function startCommitteeSimulation() {
+            document.getElementById('committeeSimWorkspace').classList.remove('hidden');
+        }
+
+        function checkCommitteeSimulation() {
+            const c1 = document.getElementById('simCheck1').checked;
+            const c2 = document.getElementById('simCheck2').checked;
+            const c3 = document.getElementById('simCheck3').checked;
+            const c4 = document.getElementById('simCheck4').checked;
+            const c5 = document.getElementById('simCheck5').checked;
+            const c6 = document.getElementById('simCheck6').checked;
+
+            const feedback = document.getElementById('committeeSimFeedback');
+            feedback.classList.remove('hidden');
+
+            if (c1 && c2 && c3 && c4 && c5 && c6) {
+                feedback.className = "text-xs p-3 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 mt-3 font-medium";
+                feedback.innerHTML = "<strong>¡Veredicto del Comité Correcto!</strong> Han auditado rigurosamente el sistema: resguardando la privacidad de navegación, mitigando sesgos discriminatorios, asegurando explicabilidad para el tutor escolar y manteniendo al ser humano en el bucle de control (Human-in-the-loop). <strong>Veredicto: Compra aprobada bajo condiciones específicas de supervisión semanal.</strong>";
+                state.activities.committeeSimCompleted = true;
+            } else {
+                feedback.className = "text-xs p-3 rounded bg-amber-50 text-amber-800 border border-amber-200 mt-3 font-medium";
+                feedback.innerHTML = "<strong>Simulación Incompleta:</strong> Han dejado sin auditar aspectos críticos de la gobernanza colegiada (como resguardar el control del tutor, auditar el sesgo del algoritmo o vigilar la seguridad del proveedor externo). Revisen la lista de verificación del simulador.";
+            }
+        }
+
+        // MODULO 3: MATRIZ DE RIESGOS
+        function evaluateRiskCard(riskKey) {
+            const title = document.getElementById('selectedRiskTitle');
+            const desc = document.getElementById('selectedRiskDesc');
+
+            if (riskKey === 'sesgo') {
+                title.textContent = 'Sesgo en Evaluaciones Automáticas';
+                desc.textContent = 'Acción de Auditoría: Se prohíbe que el algoritmo califique de forma única. Todo docente tiene la obligación de contrastar y rectificar la rúbrica sugerida si no se adecúa a los estándares institucionales o necesidades específicas.';
+            } else if (riskKey === 'exposicion') {
+                title.textContent = 'Subida Insegura de Expedientes Académicos';
+                desc.textContent = 'Acción de Auditoría: Protocolo de exclusión técnica. Se bloquean en los computadores del colegio las extensiones y plataformas gratuitas que no posean contrato comercial educativo firmado con el centro.';
+            } else if (riskKey === 'dependencia') {
+                title.textContent = 'Dependencia Excesiva / Pérdida del Sentido Crítico';
+                desc.textContent = 'Acción de Auditoría: Plan obligatorio de formación de 15 horas anuales en alfabetización informática crítica de contenidos educativos generados.';
+            }
+        }
+
+        // MODULO 3: SIMULACIÓN DE REPORTES INCIDENTE
+        function toggleIncidentForm() {
+            document.getElementById('incidentFormContainer').classList.toggle('hidden');
+        }
+
+        function submitIncidentSimulation() {
+            const type = document.getElementById('incType').value;
+            const urgency = document.getElementById('incUrgency').value;
+            const desc = document.getElementById('incDesc').value;
+            const feedback = document.getElementById('incidentFeedback');
+
+            feedback.classList.remove('hidden');
+
+            if (!desc.trim()) {
+                feedback.className = "text-xs p-3 rounded bg-red-50 text-red-800 border border-red-200 mt-3";
+                feedback.textContent = "Por favor, escribe una breve descripción de la evidencia del incidente para que el comité de IA actúe.";
+                return;
+            }
+
+            feedback.className = "text-xs p-3 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 mt-3 font-medium";
+            feedback.innerHTML = `<strong>¡Incidente Simulado Reportado con Éxito!</strong><br>
+      El sistema se activa bajo urgencia <strong>${urgency.toUpperCase()}</strong>. Se dispara la línea de tiempo corporativa: Detección → Notificación automática al Oficial de Datos → Alerta preventiva en servidores (Contención) → Citación extraordinaria del Comité de IA en menos de 24 horas para investigación de código.`;
+        }
+
+        // MODULO 3: PESTAÑAS DE FORMACIÓN
+        function selectTrainingTab(profile) {
+            const btnDoc = document.getElementById('tabBtnDocentes');
+            const btnEst = document.getElementById('tabBtnEstudiantes');
+            const btnAdm = document.getElementById('tabBtnAdministrativos');
+            const content = document.getElementById('trainingTabContent');
+
+            // Reset
+            btnDoc.className = "px-4 py-3 font-semibold text-secondary hover:text-primary";
+            btnEst.className = "px-4 py-3 font-semibold text-secondary hover:text-primary";
+            btnAdm.className = "px-4 py-3 font-semibold text-secondary hover:text-primary";
+
+            if (profile === 'docentes') {
+                btnDoc.className = "px-4 py-3 font-semibold border-b-2 border-copper text-copper";
+                content.innerHTML = `
+          <h4 class="font-bold text-sm text-copper">Ejes Formativos: Alfabetización IA y Evaluación Crítica</h4>
+          <p class="text-secondary leading-relaxed">
+            Formación en revisión crítica de material didáctico, ingeniería de instrucciones en lenguaje pedagógico escolar, resguardo de privacidad en el aula y detección de falsos positivos en el rendimiento estudiantil.
+          </p>
+          <div class="bg-gray-50 p-3 rounded border border-gray-100 mt-2">
+            <p class="font-bold text-primary">Mini-Caso Docente:</p>
+            <p class="text-secondary italic">Un docente genera una rúbrica en segundos. El taller le enseña que debe evaluar si el diseño responde a la realidad socio-contextual de su grupo y adaptar las preguntas antes de compartirlo.</p>
+          </div>
+        `;
+            } else if (profile === 'estudiantes') {
+                btnEst.className = "px-4 py-3 font-semibold border-b-2 border-copper text-copper";
+                content.innerHTML = `
+          <h4 class="font-bold text-sm text-copper">Ejes Formativos: Uso Ético, Propiedad Intelectual y Límites del Plagio</h4>
+          <p class="text-secondary leading-relaxed">
+            Talleres para la comprensión de que la IA es una herramienta de soporte y co-creación, pero no un sustituto del razonamiento individual ni del desarrollo de habilidades metacognitivas.
+          </p>
+          <div class="bg-gray-50 p-3 rounded border border-gray-100 mt-2">
+            <p class="font-bold text-primary">Mini-Caso Alumno:</p>
+            <p class="text-secondary italic">El estudiante aprende que copiar directamente una monografía generada por chatbot es una falta académica grave, pero que usarlo para organizar y estructurar sus fuentes bajo mención explícita es un uso ético válido.</p>
+          </div>
+        `;
+            } else if (profile === 'administrativos') {
+                btnAdm.className = "px-4 py-3 font-semibold border-b-2 border-copper text-copper";
+                content.innerHTML = `
+          <h4 class="font-bold text-sm text-copper">Ejes Formativos: Resguardo de la Información, Seguridad y Traspaso de Expedientes</h4>
+          <p class="text-secondary leading-relaxed">
+            Capacitación sobre el tratamiento legal de los registros de matrícula, almacenamiento y resguardo bajo la Ley N° 29733, y prohibición de subida de información sensible a servidores públicos.
+          </p>
+          <div class="bg-gray-50 p-3 rounded border border-gray-100 mt-2">
+            <p class="font-bold text-primary">Mini-Caso Administrativo:</p>
+            <p class="text-secondary italic">Secretaría recibe 500 solicitudes de matrícula. El taller le capacita para comprender que jamás debe subir estos legajos a plataformas web gratuitas en Internet con fines de ordenación estadística, usando en su lugar software certificado del centro escolar.</p>
+          </div>
+        `;
+            }
+        }
+
+        // MODULO 4: PIRÁMIDE CAPAS
+        function selectPyramidLayer(layerNum) {
+            const desc1 = document.getElementById('pyramid-layer1');
+            const desc2 = document.getElementById('pyramid-layer2');
+            const desc3 = document.getElementById('pyramid-layer3');
+
+            if (layerNum === 1) desc1.classList.toggle('hidden');
+            if (layerNum === 2) desc2.classList.toggle('hidden');
+            if (layerNum === 3) desc3.classList.toggle('hidden');
+        }
+
+        // MODULO 4: RECEPTOR CLICS A-FRAME
+        function showARDetail(concept) {
+            const el = document.getElementById('arDetailMessage');
+            el.classList.remove('hidden');
+
+            if (concept === 'privacidad') {
+                el.innerHTML = "<strong>Escudo de Privacidad:</strong> Simboliza la protección obligatoria de datos sensibles escolares. De acuerdo con la Ley N° 29733, los datos de los estudiantes jamás deben ser reutilizados por proveedores externos para entrenar herramientas o bases de datos comerciales.";
+            } else if (concept === 'etica') {
+                el.innerHTML = "<strong>Balanza Ética / Control Humano:</strong> Representa la prevalencia del criterio pedagógico del docente sobre cualquier decisión generada de forma automatizada por un sistema artificial en la institución.";
+            } else if (concept === 'incidente') {
+                el.innerHTML = "<strong>Canal de Incidentes:</strong> Representa la rapidez de reacción corporativa. Cuando un integrante de la comunidad detecta sesgos o filtraciones, el Comité de IA asume el reporte técnico para asegurar correcciones en menos de 48 horas.";
+            }
+        }
+
+        function requestCameraAR() {
+            // Intenta acceder para AR simulada o real
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        // Detener el stream inmediatamente para no bloquear la cámara
+                        stream.getTracks().forEach(track => track.stop());
+                        alert("Acceso a cámara validado para funcionalidad de Realidad Aumentada (AR). En este visor interactivo 3D embebido puedes explorar de forma inmersiva con el mouse/táctil la arquitectura.");
+                    })
+                    .catch(function (err) {
+                        alert("No se pudo acceder a la cámara o el navegador no soporta AR por hardware directo. Se prioriza el modo interactivo 3D por defecto, el cual funciona perfectamente en tu pantalla.");
+                    });
+            } else {
+                alert("Tu dispositivo actual o navegador no cuenta con soporte nativo de AR. Se activa el visor interactivo 3D adaptativo en pantalla.");
+            }
+        }
+
+        // MODULO 4: SIMULADOR DIRECTIVO (QUIZ EXAMEN)
+        const quizCorrect = {
+            1: 'no_permitido',
+            2: 'permitido',
+            3: 'no_permitido'
+        };
+
+        function answerQuiz(qNum, selected) {
+            const correct = quizCorrect[qNum];
+            const feedback = document.getElementById(`quizFeedback${qNum}`);
+
+            feedback.classList.remove('hidden');
+            state.activities.quizScores[qNum] = (selected === correct);
+
+            if (selected === correct) {
+                feedback.className = "text-[10px] p-2 rounded mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium";
+                if (qNum === 1) feedback.textContent = "¡Veredicto Correcto! El docente incumple el principio de supervisión humana (Human-in-the-loop). La calificación final colegiada no puede ser delegada a automatizaciones de forma absoluta.";
+                if (qNum === 2) feedback.textContent = "¡Veredicto Correcto! El acompañamiento y validación del tutor califica como un uso restringido operado con alta responsabilidad profesional.";
+                if (qNum === 3) feedback.textContent = "¡Veredicto Correcto! Subir expedientes personales a un sitio en línea público de Internet viola flagrantemente el principio de confidencialidad de la Ley de Datos Personales.";
+            } else {
+                feedback.className = "text-[10px] p-2 rounded mt-1 bg-red-50 text-red-800 border border-red-200 font-medium";
+                feedback.textContent = `Incorrecto. De acuerdo con las normas de gobernanza ética institucional, la respuesta correcta es ${correct === 'permitido' ? 'PERMITIDO CON CONTROLES' : 'PROHIBIDO POR ALTO RIESGO'}. Analiza el caso y rectifica tu decisión directiva.`;
+            }
+
+            // Calcular rendimiento y asignar insignia directiva
+            let correctCount = 0;
+            Object.keys(state.activities.quizScores).forEach(k => {
+                if (state.activities.quizScores[k]) correctCount++;
+            });
+            document.getElementById('scoreQuiz').textContent = `${correctCount} de 3 correctas`;
+
+            const badge = document.getElementById('badgeQuiz');
+            if (correctCount === 3) {
+                badge.textContent = "Líder de Gobernanza de IA";
+                badge.className = "bg-emerald-500 text-white px-2 py-0.5 rounded font-bold text-[10px] shadow-sm";
+            } else if (correctCount > 0) {
+                badge.textContent = "Gestor Escolar Responsable";
+                badge.className = "bg-copper text-white px-2 py-0.5 rounded font-bold text-[10px]";
+            } else {
+                badge.textContent = "Sin Insignia";
+                badge.className = "bg-gray-200 text-slate-800 px-2 py-0.5 rounded font-bold text-[10px]";
+            }
+        }
+
+        // EXPORTACIÓN DE DOCUMENTO BORRADOR
+        function copyDocumentToClipboard() {
+            // Construir el documento de texto plano para portapapeles
+            const textContent = getDocumentPlainText();
+
+            // Fallback robusto compatible con iFrame para copiado al portapapeles
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const toast = document.getElementById('copyToast');
+                    toast.classList.remove('hidden');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 2500);
+                } else {
+                    alert('No se pudo copiar el texto. Selecciona y copia manualmente desde la pantalla.');
+                }
+            } catch (err) {
+                alert('Dispositivo no compatible con copiado automático. Por favor, selecciona y copia el borrador de la pantalla.');
+            }
+
+            document.body.removeChild(tempTextArea);
+        }
+
+        function downloadDocumentAsTXT() {
+            const textContent = getDocumentPlainText();
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Borrador_Politica_Gobernanza_IA_Escolar.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function getDocumentPlainText() {
+            return `========================================================================
+PROPUESTA DE POLÍTICA Y GOBERNANZA INSTITUCIONAL DE INTELIGENCIA ARTIFICIAL
+========================================================================
+Ámbito: Institución Educativa
+Fecha de generación: ${new Date().toLocaleDateString('es-ES')}
+
+1. FINALIDAD DE LA POLÍTICA
+${state.policy.finalidad.trim() || 'Pendiente de formular en el Módulo 1'}
+
+2. ALCANCE INSTITUCIONAL
+${state.policy.alcance.trim() || 'Pendiente de formular en el Módulo 1'}
+
+3. PRINCIPIOS ÉTICOS RECTORES
+${state.policy.principios.length > 0 ? state.policy.principios.join(', ') : 'Pendiente de seleccionar en el Módulo 1'}
+
+4. USOS PERMITIDOS (BAJO RIESGO)
+${state.policy.permitidos.trim() || 'Pendiente de formular en el Módulo 2'}
+
+5. USOS RESTRINGIDOS Y MEDIDAS DE CONTROL
+${state.policy.restringidos.trim() || 'Pendiente de formular en el Módulo 2'}
+
+6. USOS PROHIBIDOS (ALTO RIESGO)
+${state.policy.prohibidos.trim() || 'Pendiente de formular en el Módulo 2'}
+
+7. TRATAMIENTO DE DATOS PERSONALES Y PRIVACIDAD (Conforme Ley N° 29733)
+${state.policy.privacidad.trim() || 'Pendiente de formular en el Módulo 2'}
+
+8. REVISIÓN HUMANA OBLIGATORIA (HUMAN-IN-THE-LOOP)
+${state.policy.revisionHumana.trim() || 'Pendiente de formular en el Módulo 3'}
+
+9. COMPOSICIÓN DEL COMITÉ INSTITUCIONAL DE GOBERNANZA DE IA
+${state.policy.comite.length > 0 ? state.policy.comite.join(', ') : 'Pendiente de seleccionar en el Módulo 3'}
+
+10. PROTOCOLO OPERATIVO ANTE INCIDENTES ÉTICOS Y TÉCNICOS
+${state.policy.protocolo.trim() || 'Pendiente de formular en el Módulo 3'}
+
+11. PLAN DE FORMACIÓN CONTINUA DE LA COMUNIDAD
+${state.policy.formacion.length > 0 ? state.policy.formacion.join(', ') : 'Pendiente de seleccionar en el Módulo 3'}
+
+12. INDICADORES DE SEGUIMIENTO Y MEJORA CONTINUA
+${state.policy.indicadores.trim() || 'Pendiente de formular en el Módulo 4'}
+
+========================================================================
+Documento base listo para revisión colegiada, debate interno y oficialización.
+Generado en el Taller Digital de Gobernanza de IA.
+========================================================================`;
+        }
+    </script>
+</body>
+
+</html>
