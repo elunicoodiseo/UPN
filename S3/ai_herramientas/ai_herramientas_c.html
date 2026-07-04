@@ -1,0 +1,3605 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herramientas de Apoyo Docente con IA</title>
+
+  <!--
+  =====================================================================
+  GUÍA PARA EL DOCENTE QUE QUIERA MODIFICAR ESTA WEB
+  =====================================================================
+  Esta web está organizada en bloques claramente comentados. Para editar:
+
+  1. TARJETAS DE HERRAMIENTA: cada herramienta vive directamente en el
+     HTML de su sección (por ejemplo la sección "planificacion"), dentro
+     de un bloque article.tarjeta-herramienta. Edita el texto ahí mismo.
+
+  2. PROMPTS LISTOS PARA COPIAR: busca cada bloque "pre" con id que
+     empieza con "prompt", dentro de su div.caja-prompt. El texto que
+     ahí escribas es exactamente lo que el botón "Copiar prompt" copiará.
+
+  3. DATOS DE LA EXPERIENCIA AR: al final del archivo, dentro del bloque
+     de JavaScript, busca el array GRUPOS_AR. Cada objeto representa una
+     tarjeta de la mesa AR (real y del modo sin cámara / fallback).
+
+  4. FLUJO AR (segunda escena): objeto FLUJO_AR en el mismo bloque JS.
+
+  5. ACTIVIDAD DE CLASE: tarjetas div.tarjeta-grupo dentro de la
+     sección "actividad".
+
+  6. CHECKLIST ÉTICO: array ETHICS_CHECKLIST en el bloque JS final.
+
+  7. CÁMARA AR: la cámara SOLO se activa cuando el usuario presiona
+     el botón "Iniciar experiencia AR" (función montarEscenaAR). Si no
+     hay cámara disponible o se deniega el permiso, se activa
+     automáticamente el modo sin cámara (función activarFallback).
+  =====================================================================
+-->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ============================================================
+   TOKENS DE DISEÑO
+   ============================================================ */
+    :root {
+      --azul-profundo: #1A2E44;
+      --azul-claro: #2C4A6B;
+      --fondo: #F7F5F0;
+      --tarjeta: #FFFFFF;
+      --naranja: #E8714A;
+      --naranja-suave: #FBE4D8;
+      --gris-texto: #5B6B7A;
+      --gris-borde: #E2DED4;
+      --verde: #2D7D6E;
+      --verde-suave: #DCEEE9;
+      --texto-principal: #1F2933;
+
+      --display: "Fraunces", serif;
+      --cuerpo: "Inter", sans-serif;
+      --mono: "JetBrains Mono", monospace;
+
+      --radio: 14px;
+      --radio-chico: 8px;
+      --sombra: 0 2px 14px rgba(26, 46, 68, 0.08);
+      --sombra-hover: 0 8px 28px rgba(26, 46, 68, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fondo);
+      color: var(--texto-principal);
+      font-family: var(--cuerpo);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+      display: block;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--display);
+      font-weight: 600;
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      font-family: var(--cuerpo);
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .contenedor {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Visualmente oculto pero accesible */
+    .solo-lectura-pantalla {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    /* Foco visible para accesibilidad */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--naranja);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+   NAVEGACIÓN SUPERIOR
+   ============================================================ */
+    .nav-superior {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      background: rgba(247, 245, 240, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gris-borde);
+    }
+
+    .nav-fila {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      gap: 20px;
+    }
+
+    .nav-marca {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--azul-profundo);
+      white-space: nowrap;
+    }
+
+    .nav-marca .icono-marca {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-links a {
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--gris-texto);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover {
+      background: var(--naranja-suave);
+      color: var(--azul-profundo);
+    }
+
+    .nav-toggle {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--fondo);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 16px 16px;
+        border-bottom: 1px solid var(--gris-borde);
+        box-shadow: var(--sombra);
+      }
+
+      .nav-links.abierto {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 14px;
+      }
+
+      .nav-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radio-chico);
+        background: var(--azul-profundo);
+        color: #fff;
+        font-size: 1.2rem;
+      }
+    }
+
+    /* ============================================================
+   HERO / PANTALLA INICIAL
+   ============================================================ */
+    .hero {
+      position: relative;
+      padding: 64px 0 56px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -160px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, var(--naranja-suave) 0%, rgba(251, 228, 216, 0) 70%);
+      z-index: 0;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--azul-profundo);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+      color: var(--azul-profundo);
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitulo {
+      font-size: 1.15rem;
+      color: var(--gris-texto);
+      font-weight: 500;
+      margin-bottom: 20px;
+      max-width: 46ch;
+    }
+
+    .hero-intro {
+      background: var(--tarjeta);
+      border-left: 4px solid var(--naranja);
+      border-radius: var(--radio-chico);
+      padding: 18px 20px;
+      font-size: 0.98rem;
+      color: var(--texto-principal);
+      box-shadow: var(--sombra);
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+
+    .hero-intro strong {
+      font-style: normal;
+    }
+
+    .hero-botones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .boton {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.94rem;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    .boton-primario {
+      background: var(--naranja);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(232, 113, 74, 0.35);
+    }
+
+    .boton-primario:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(232, 113, 74, 0.42);
+    }
+
+    .boton-secundario {
+      background: var(--tarjeta);
+      color: var(--azul-profundo);
+      border: 1.5px solid var(--gris-borde);
+    }
+
+    .boton-secundario:hover {
+      background: #fff;
+      border-color: var(--azul-profundo);
+      transform: translateY(-2px);
+    }
+
+    .boton-oscuro {
+      background: var(--azul-profundo);
+      color: #fff;
+    }
+
+    .boton-oscuro:hover {
+      background: var(--azul-claro);
+      transform: translateY(-2px);
+    }
+
+    .boton-chico {
+      padding: 9px 16px;
+      font-size: 0.85rem;
+    }
+
+    /* Mesa ilustrada del hero (sustituye al cliché de "stat grande") */
+    .hero-escena {
+      position: relative;
+      background: var(--tarjeta);
+      border-radius: 20px;
+      box-shadow: var(--sombra-hover);
+      padding: 28px;
+      border: 1px solid var(--gris-borde);
+    }
+
+    .hero-escena svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .hero-escena-caption {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--gris-texto);
+      margin-top: 14px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .hero {
+        padding: 40px 0 36px;
+      }
+    }
+
+    /* ============================================================
+   UTILIDADES DE SECCIÓN
+   ============================================================ */
+    .seccion {
+      padding: 72px 0;
+      border-top: 1px solid var(--gris-borde);
+    }
+
+    .seccion-cabecera {
+      max-width: 680px;
+      margin-bottom: 40px;
+    }
+
+    .seccion-numero {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--naranja);
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .seccion-cabecera h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--azul-profundo);
+      margin-bottom: 12px;
+    }
+
+    .seccion-cabecera p {
+      color: var(--gris-texto);
+      font-size: 1.02rem;
+    }
+
+    .fondo-alterno {
+      background: #FBFAF7;
+    }
+
+    .etiqueta-necesidad {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--azul-profundo);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: var(--radio-chico);
+      margin-bottom: 18px;
+    }
+
+    .etiqueta-necesidad::before {
+      content: "💬";
+      font-size: 0.9rem;
+    }
+
+    .mensaje-pedagogico {
+      background: var(--verde-suave);
+      border-left: 4px solid var(--verde);
+      border-radius: var(--radio-chico);
+      padding: 16px 20px;
+      font-size: 0.95rem;
+      color: #1B4A40;
+      margin-top: 24px;
+    }
+
+    .mensaje-pedagogico strong {
+      color: var(--verde);
+    }
+
+    .caja-cuidado {
+      background: #FFF4ED;
+      border-left: 4px solid var(--naranja);
+      border-radius: var(--radio-chico);
+      padding: 18px 20px;
+      margin-top: 18px;
+    }
+
+    .caja-cuidado h4 {
+      font-family: var(--cuerpo);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--naranja);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .caja-cuidado ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 0.92rem;
+      color: var(--texto-principal);
+    }
+
+    .caja-cuidado li {
+      margin-bottom: 6px;
+    }
+
+    /* ============================================================
+   TARJETAS DE HERRAMIENTA
+   ============================================================ */
+    .grid-herramientas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 22px;
+      margin-bottom: 8px;
+    }
+
+    .tarjeta-herramienta {
+      background: var(--tarjeta);
+      border: 1px solid var(--gris-borde);
+      border-radius: var(--radio);
+      padding: 24px;
+      box-shadow: var(--sombra);
+      transition: box-shadow 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tarjeta-herramienta:hover {
+      box-shadow: var(--sombra-hover);
+      transform: translateY(-3px);
+    }
+
+    .tarjeta-herramienta-cabecera {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tarjeta-herramienta h3 {
+      font-size: 1.15rem;
+      color: var(--azul-profundo);
+    }
+
+    .pildora {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pildora-azul {
+      background: #E5ECF3;
+      color: var(--azul-profundo);
+    }
+
+    .pildora-naranja {
+      background: var(--naranja-suave);
+      color: #A8431E;
+    }
+
+    .pildora-verde {
+      background: var(--verde-suave);
+      color: var(--verde);
+    }
+
+    .tarjeta-herramienta .necesidad-resuelve {
+      font-size: 0.88rem;
+      color: var(--gris-texto);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    .tarjeta-herramienta-cuerpo {
+      flex: 1;
+    }
+
+    .campo-herramienta {
+      margin-bottom: 12px;
+    }
+
+    .campo-herramienta dt {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--naranja);
+      margin-bottom: 4px;
+    }
+
+    .campo-herramienta dd {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--texto-principal);
+    }
+
+    .campo-herramienta dd ul {
+      padding-left: 18px;
+      margin: 4px 0 0;
+    }
+
+    .detalle-toggle {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--gris-borde);
+    }
+
+    .detalle-toggle summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.86rem;
+      color: var(--azul-profundo);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detalle-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .detalle-toggle summary::before {
+      content: "▸";
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+
+    .detalle-toggle[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .detalle-toggle-contenido {
+      padding-top: 12px;
+    }
+
+    .riesgo-linea,
+    .etica-linea {
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .riesgo-linea::before {
+      content: "⚠️";
+      position: absolute;
+      left: 0;
+    }
+
+    .etica-linea::before {
+      content: "🔒";
+      position: absolute;
+      left: 0;
+    }
+
+    /* ============================================================
+   PROMPTS COPIABLES
+   ============================================================ */
+    .caja-prompt {
+      background: var(--azul-profundo);
+      border-radius: var(--radio);
+      padding: 22px;
+      margin: 22px 0;
+      position: relative;
+    }
+
+    .caja-prompt-cabecera {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .caja-prompt-titulo {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9FB3C8;
+    }
+
+    .boton-copiar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      transition: background 0.15s;
+    }
+
+    .boton-copiar:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .boton-copiar.copiado {
+      background: var(--verde);
+    }
+
+    .caja-prompt pre {
+      margin: 0;
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 0.86rem;
+      line-height: 1.65;
+      color: #EAF0F6;
+    }
+
+    /* ============================================================
+   SIMULADOR PASO A PASO
+   ============================================================ */
+    .simulador {
+      background: var(--tarjeta);
+      border: 1px solid var(--gris-borde);
+      border-radius: var(--radio);
+      padding: 28px;
+      box-shadow: var(--sombra);
+      margin-top: 20px;
+    }
+
+    .simulador-opciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .boton-opcion {
+      background: #F1EFE9;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--texto-principal);
+      transition: all 0.15s;
+    }
+
+    .boton-opcion:hover {
+      border-color: var(--azul-profundo);
+    }
+
+    .boton-opcion.activo {
+      background: var(--azul-profundo);
+      color: #fff;
+      border-color: var(--azul-profundo);
+    }
+
+    .resultado-simulado {
+      background: #FBFAF7;
+      border: 1px dashed var(--gris-borde);
+      border-radius: var(--radio-chico);
+      padding: 18px 20px;
+      margin-top: 16px;
+      font-size: 0.92rem;
+      display: none;
+    }
+
+    .resultado-simulado.visible {
+      display: block;
+      animation: aparecer 0.25s ease;
+    }
+
+    .resultado-simulado h4 {
+      font-family: var(--cuerpo);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gris-texto);
+      margin-bottom: 10px;
+    }
+
+    .resultado-simulado ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .resultado-simulado li {
+      margin-bottom: 6px;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .flujo-pasos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 18px 0;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--azul-profundo);
+    }
+
+    .flujo-pasos span.paso {
+      background: #E5ECF3;
+      padding: 8px 14px;
+      border-radius: 999px;
+    }
+
+    .flujo-pasos span.flecha {
+      color: var(--naranja);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+   TABLAS
+   ============================================================ */
+    .tabla-envoltorio {
+      overflow-x: auto;
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      margin-top: 20px;
+    }
+
+    table.tabla-comparativa {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--tarjeta);
+      font-size: 0.88rem;
+      min-width: 680px;
+    }
+
+    table.tabla-comparativa th {
+      background: var(--azul-profundo);
+      color: #fff;
+      text-align: left;
+      padding: 14px 16px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      position: sticky;
+      top: 0;
+    }
+
+    table.tabla-comparativa td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--gris-borde);
+      vertical-align: top;
+    }
+
+    table.tabla-comparativa tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.tabla-comparativa tr:hover td {
+      background: #FBFAF7;
+    }
+
+    .tabla-filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* ============================================================
+   AR
+   ============================================================ */
+    .ar-zona {
+      background: var(--azul-profundo);
+      border-radius: 20px;
+      padding: 36px;
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ar-zona::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(232, 113, 74, 0.25), transparent 55%);
+    }
+
+    .ar-zona-contenido {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ar-zona h3 {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .ar-zona p {
+      color: #C9D4DF;
+      max-width: 50ch;
+      margin: 0 auto 22px;
+    }
+
+    .ar-aviso {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radio-chico);
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      color: #D8E0E8;
+      max-width: 54ch;
+      margin: 20px auto 0;
+    }
+
+    #contenedorAR {
+      margin-top: 24px;
+      border-radius: var(--radio);
+      overflow: hidden;
+      display: none;
+      background: #000;
+      position: relative;
+    }
+
+    #contenedorAR.activo {
+      display: block;
+    }
+
+    #contenedorAR a-scene {
+      width: 100%;
+      height: 60vh;
+      min-height: 380px;
+      display: block;
+    }
+
+    .ar-tarjeta-info {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      background: rgba(10, 20, 30, 0.92);
+      color: #fff;
+      border-radius: var(--radio-chico);
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      display: none;
+      z-index: 10;
+      max-width: 420px;
+    }
+
+    .ar-tarjeta-info.visible {
+      display: block;
+    }
+
+    .ar-tarjeta-info h4 {
+      font-family: var(--cuerpo);
+      color: var(--naranja);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .ar-fallback {
+      margin-top: 24px;
+      background: #0F2237;
+      border-radius: var(--radio);
+      padding: 30px;
+    }
+
+    .ar-fallback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ar-tarjeta-3d {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radio-chico);
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      color: #fff;
+    }
+
+    .ar-tarjeta-3d:hover {
+      transform: translateY(-4px) rotateX(4deg);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .ar-tarjeta-3d strong {
+      display: block;
+      color: var(--naranja);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+    }
+
+    .ar-tarjeta-3d ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.86rem;
+    }
+
+    .ar-tarjeta-3d li {
+      margin-bottom: 4px;
+    }
+
+    .ar-flujo-escena {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 22px;
+    }
+
+    .ar-flujo-nodo {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radio-chico);
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .ar-flujo-nodo:hover {
+      background: var(--naranja);
+      transform: scale(1.04);
+    }
+
+    .ar-flujo-nodo.activo {
+      background: var(--naranja);
+    }
+
+    /* ============================================================
+   ACTIVIDAD / GRUPOS
+   ============================================================ */
+    .grid-grupos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .tarjeta-grupo {
+      background: var(--tarjeta);
+      border: 1px solid var(--gris-borde);
+      border-left: 5px solid var(--azul-profundo);
+      border-radius: var(--radio-chico);
+      padding: 20px;
+      box-shadow: var(--sombra);
+    }
+
+    .tarjeta-grupo h4 {
+      font-size: 1.02rem;
+      color: var(--azul-profundo);
+      margin-bottom: 8px;
+    }
+
+    .tarjeta-grupo p {
+      font-size: 0.88rem;
+      color: var(--gris-texto);
+      margin-bottom: 12px;
+    }
+
+    .tarjeta-grupo .producto-esperado {
+      font-size: 0.84rem;
+      background: #FBFAF7;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .tarjeta-grupo .producto-esperado strong {
+      color: var(--naranja);
+    }
+
+    /* ============================================================
+   MATRIZ EDITABLE
+   ============================================================ */
+    .matriz-envoltorio {
+      overflow-x: auto;
+    }
+
+    table.matriz {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+      background: var(--tarjeta);
+      border-radius: var(--radio);
+      overflow: hidden;
+      box-shadow: var(--sombra);
+    }
+
+    table.matriz th {
+      background: #EDEAE2;
+      color: var(--azul-profundo);
+      text-align: left;
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    table.matriz td {
+      border-bottom: 1px solid var(--gris-borde);
+      padding: 6px;
+    }
+
+    table.matriz input,
+    table.matriz textarea {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.86rem;
+      font-family: var(--cuerpo);
+      color: var(--texto-principal);
+      resize: vertical;
+    }
+
+    table.matriz input:hover,
+    table.matriz textarea:hover {
+      background: #FBFAF7;
+    }
+
+    table.matriz input:focus,
+    table.matriz textarea:focus {
+      background: #fff;
+      border-color: var(--azul-profundo);
+    }
+
+    .matriz-botones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .matriz-aviso {
+      font-size: 0.84rem;
+      color: var(--gris-texto);
+      margin-top: 10px;
+    }
+
+    /* ============================================================
+   CHECKLIST ÉTICO
+   ============================================================ */
+    .checklist-etico {
+      background: var(--tarjeta);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: 8px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--gris-borde);
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--verde);
+      flex-shrink: 0;
+    }
+
+    .checklist-item label {
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .checklist-progreso {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .checklist-barra {
+      flex: 1;
+      height: 10px;
+      background: #EDEAE2;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .checklist-barra-relleno {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--naranja), var(--verde));
+      transition: width 0.3s ease;
+    }
+
+    .checklist-conteo {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gris-texto);
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+   CIERRE
+   ============================================================ */
+    .cierre {
+      background: var(--azul-profundo);
+      color: #fff;
+      padding: 72px 0;
+      text-align: center;
+    }
+
+    .cierre h2 {
+      color: #fff;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      max-width: 46ch;
+      margin: 0 auto 36px;
+    }
+
+    .cierre-ideas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 980px;
+      margin: 0 auto 40px;
+      text-align: left;
+    }
+
+    .cierre-idea {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radio-chico);
+      padding: 20px;
+      font-size: 0.92rem;
+      color: #D8E0E8;
+    }
+
+    .cierre-idea .num {
+      font-family: var(--mono);
+      color: var(--naranja);
+      font-weight: 700;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    footer {
+      background: #13233A;
+      color: #8FA1B3;
+      text-align: center;
+      padding: 24px;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <header class="nav-superior">
+    <div class="nav-fila">
+      <div class="nav-marca">
+        <svg class="icono-marca" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="2" y="6" width="28" height="20" rx="3" fill="#1A2E44" />
+          <path d="M8 13.5L16 9L24 13.5L16 18L8 13.5Z" fill="#E8714A" />
+          <path d="M11 16v4.2c0 .5 2.2 1.8 5 1.8s5-1.3 5-1.8V16" stroke="#F7F5F0" stroke-width="1.4" fill="none" />
+        </svg>
+        <span>Apoyo Docente IA</span>
+      </div>
+      <button class="nav-toggle" id="botonMenu" aria-expanded="false" aria-controls="navLinks"
+        aria-label="Abrir menú de navegación">☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#inicio">Inicio</a>
+        <a href="#planificacion">Planificación</a>
+        <a href="#rubricas">Rúbricas</a>
+        <a href="#materiales">Materiales</a>
+        <a href="#diapositivas">Diapositivas</a>
+        <a href="#fuentes">Fuentes</a>
+        <a href="#visuales">Visuales</a>
+        <a href="#gestion">Gestión</a>
+        <a href="#ar">AR</a>
+        <a href="#actividad">Actividad</a>
+        <a href="#etica">Ética</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===================== HERO / PANTALLA INICIAL ===================== -->
+    <section class="hero" id="inicio">
+      <div class="contenedor hero-grid">
+        <div>
+          <span class="hero-eyebrow">Experiencia
+            Interactiva. Fines educativos-©2026-Luis Torrejón Arias</span>
+          <h1>Herramientas de Apoyo Docente con IA</h1>
+          <p class="hero-subtitulo">Aprende qué herramienta usar según lo que necesita el profesor: planificar, crear,
+            adaptar, evaluar, buscar fuentes y acompañar.</p>
+          <p class="hero-intro">"La IA puede reducir tareas repetitivas y acelerar la creación de materiales, pero el
+            docente conserva el control pedagógico. <strong>La herramienta propone; el profesor revisa, adapta y
+              decide.</strong>"</p>
+          <div class="hero-botones">
+            <a href="#planificacion" class="boton boton-primario">Iniciar recorrido práctico</a>
+            <a href="#comparador" class="boton boton-secundario">Ver herramientas por necesidad</a>
+            <a href="#diapositivas" class="boton boton-secundario">Crear diapositivas</a>
+            <a href="#fuentes" class="boton boton-secundario">Buscar fuentes confiables</a>
+            <a href="#ar" class="boton boton-oscuro">Iniciar experiencia AR</a>
+            <a href="#actividad" class="boton boton-secundario">Actividad para clase</a>
+          </div>
+        </div>
+
+        <!-- Escena ilustrada: la "mesa" del docente, metáfora central de la web -->
+        <div class="hero-escena">
+          <svg viewBox="0 0 420 320" role="img" aria-labelledby="heroSvgTitulo">
+            <title id="heroSvgTitulo">Docente en el centro, con herramientas de IA organizadas alrededor como
+              instrumentos de trabajo</title>
+            <!-- mesa -->
+            <ellipse cx="210" cy="260" rx="170" ry="22" fill="#EDEAE2" />
+            <!-- docente (centro) -->
+            <circle cx="210" cy="150" r="46" fill="#1A2E44" />
+            <circle cx="210" cy="128" r="20" fill="#F7F5F0" />
+            <path d="M170 190c0-26 18-40 40-40s40 14 40 40" fill="#1A2E44" />
+            <!-- tarjetas-instrumento alrededor -->
+            <g>
+              <rect x="30" y="70" width="74" height="54" rx="8" fill="#fff" stroke="#E2DED4" />
+              <text x="67" y="92" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">Plan de</text>
+              <text x="67" y="104" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">sesión</text>
+              <path d="M55 80 l8 8 -8 8" stroke="#E8714A" stroke-width="2" fill="none" stroke-linecap="round" />
+            </g>
+            <g>
+              <rect x="316" y="70" width="74" height="54" rx="8" fill="#fff" stroke="#E2DED4" />
+              <text x="353" y="92" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">Rúbrica</text>
+              <text x="353" y="104" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">y criterios</text>
+              <rect x="335" y="78" width="36" height="4" rx="2" fill="#2D7D6E" />
+            </g>
+            <g>
+              <rect x="20" y="150" width="74" height="54" rx="8" fill="#fff" stroke="#E2DED4" />
+              <text x="57" y="172" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">Diapo-</text>
+              <text x="57" y="184" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">sitivas</text>
+              <rect x="40" y="160" width="34" height="22" rx="3" fill="#FBE4D8" />
+            </g>
+            <g>
+              <rect x="326" y="150" width="74" height="54" rx="8" fill="#fff" stroke="#E2DED4" />
+              <text x="363" y="172" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">Fuentes</text>
+              <text x="363" y="184" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600"
+                fill="#1A2E44">confiables</text>
+              <circle cx="363" cy="165" r="2.5" fill="#2D7D6E" />
+            </g>
+            <g>
+              <rect x="150" y="20" width="120" height="40" rx="20" fill="#1A2E44" />
+              <text x="210" y="44" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700"
+                fill="#fff">DOCENTE · decide</text>
+            </g>
+            <!-- estudiante participante -->
+            <circle cx="210" cy="290" r="2" fill="transparent" />
+            <g>
+              <circle cx="160" cy="258" r="13" fill="#E8714A" opacity="0.85" />
+              <circle cx="260" cy="258" r="13" fill="#2D7D6E" opacity="0.85" />
+            </g>
+            <text x="210" y="305" text-anchor="middle" font-family="Inter" font-size="9" fill="#5B6B7A">Estudiantes —
+              participantes activos</text>
+          </svg>
+          <p class="hero-escena-caption">El docente al centro: la IA organiza herramientas a su alrededor, no decide por
+            él.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 1. PLANIFICACIÓN DE SESIONES ===================== -->
+    <section class="seccion" id="planificacion">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">01 · Necesidad docente</span>
+          <h2>Para planificar sesiones y organizar clases</h2>
+          <p>Cuando el tiempo apremia y hace falta una estructura clara para la clase, estas herramientas ayudan a pasar
+            de una idea general a un plan de sesión completo.</p>
+        </div>
+
+        <div class="grid-herramientas">
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>MagicSchool AI</h3>
+              <span class="pildora pildora-azul">Planificación</span>
+            </div>
+            <p class="necesidad-resuelve">Ahorrar tiempo en tareas repetitivas de preparación de clase.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Plataforma de IA hecha para docentes: ayuda a planificar clases, crear recursos, generar rúbricas y
+                  diseñar actividades desde un solo lugar.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Describe el tema, el nivel y la duración de la sesión, y elige entre decenas de herramientas
+                  específicas (generador de planes, de actividades, de rúbricas) según lo que necesite ese día.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver ejemplo, producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Ejemplo práctico</dt>
+                  <dd>La docente de Gestión Educativa ingresa "sesión de 90 min, liderazgo institucional, maestría" y
+                    obtiene una estructura inicial de inicio-desarrollo-cierre.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>Un borrador de plan de clase editable, con actividad y posibles preguntas de discusión.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Alineación con el sílabo del curso, nivel de profundidad para maestría y pertinencia del ejemplo
+                    institucional usado.</dd>
+                </div>
+                <p class="riesgo-linea">Si se usa sin revisión, la sesión puede quedar genérica o desalineada del logro
+                  de aprendizaje real del curso.</p>
+                <p class="etica-linea">Verificar que los datos de estudiantes o instituciones reales nunca se ingresen
+                  en la plataforma.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Eduaide.AI</h3>
+              <span class="pildora pildora-azul">Planificación</span>
+            </div>
+            <p class="necesidad-resuelve">Convertir objetivos y materiales fuente en recursos de clase listos para
+              adaptar.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Ayuda a convertir objetivos, estándares y materiales fuente en planes de clase, evaluaciones,
+                  organizadores gráficos y actividades docentes.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Sube o describe el objetivo de aprendizaje y el material base (por ejemplo, una lectura sobre
+                  liderazgo), y elige el tipo de recurso que necesita generar.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver ejemplo, producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Ejemplo práctico</dt>
+                  <dd>A partir del logro de aprendizaje sobre liderazgo institucional, genera una secuencia didáctica
+                    con preguntas guía y un organizador gráfico de apoyo.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>Secuencia didáctica, organizador gráfico y banco de preguntas relacionadas con el objetivo.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Que el organizador gráfico refleje correctamente la relación entre conceptos y que las preguntas
+                    tengan el nivel cognitivo esperado en maestría.</dd>
+                </div>
+                <p class="riesgo-linea">Usar la secuencia tal cual, sin adaptarla al grupo específico de estudiantes.
+                </p>
+                <p class="etica-linea">Citar la herramienta como apoyo de diseño, no como autora del material final.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Brisk Teaching</h3>
+              <span class="pildora pildora-azul">Planificación</span>
+            </div>
+            <p class="necesidad-resuelve">Trabajar todo dentro de Google Docs y Slides sin cambiar de plataforma.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Trabaja directamente dentro de Google Docs y Google Slides para ayudar a construir clases, dar
+                  feedback, traducir y reescribir contenido según el nivel de lectura.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Abre la extensión desde un documento o presentación ya existente y le pide que complete, reescriba o
+                  ajuste el nivel de lectura del contenido seleccionado.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver ejemplo, producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Ejemplo práctico</dt>
+                  <dd>La docente tiene un Google Doc con apuntes sueltos sobre liderazgo institucional y le pide a Brisk
+                    que los organice en una secuencia de clase.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>El mismo documento, reorganizado y editable, sin salir de Google Workspace.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Que la reescritura no haya simplificado de más el contenido para nivel de maestría.</dd>
+                </div>
+                <p class="riesgo-linea">Aceptar cambios automáticos en lote sin leer cada sección reescrita.</p>
+                <p class="etica-linea">Mantener trazabilidad de qué partes del documento fueron generadas o reescritas
+                  con IA.</p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+
+        <!-- Simulación práctica -->
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Necesito preparar una sesión de 90 minutos sobre liderazgo institucional
+            para estudiantes de maestría."</span>
+          <p style="font-size:0.92rem; color:var(--gris-texto); margin-bottom:6px;">Elige una herramienta para ver el
+            flujo:</p>
+          <div class="simulador-opciones" id="opcionesPlanificacion" role="group"
+            aria-label="Elegir herramienta de planificación">
+            <button class="boton-opcion" data-resultado="resPlanMagic">MagicSchool AI</button>
+            <button class="boton-opcion" data-resultado="resPlanEduaide">Eduaide.AI</button>
+            <button class="boton-opcion" data-resultado="resPlanBrisk">Brisk Teaching</button>
+          </div>
+
+          <div class="caja-prompt">
+            <div class="caja-prompt-cabecera">
+              <span class="caja-prompt-titulo">Prompt listo para copiar</span>
+              <button class="boton-copiar" data-copiar="promptPlanificacion">📋 Copiar prompt</button>
+            </div>
+            <pre id="promptPlanificacion">Actúa como asistente de planificación docente. Diseña una sesión de 90 minutos sobre liderazgo institucional para estudiantes de maestría en educación.
+
+Incluye:
+1. Logro de aprendizaje.
+2. Secuencia de inicio, desarrollo y cierre.
+3. Actividad participativa.
+4. Preguntas de discusión.
+5. Producto esperado.
+6. Criterios de evaluación.
+7. Recomendaciones para adaptar la sesión a distintos niveles.</pre>
+          </div>
+
+          <div class="resultado-simulado" id="resPlanMagic">
+            <h4>Resultado simulado · vía MagicSchool AI</h4>
+            <ul>
+              <li><strong>Logro de aprendizaje:</strong> analiza modelos de liderazgo institucional y su impacto en la
+                gestión educativa.</li>
+              <li><strong>Estructura de la clase:</strong> inicio (10 min, pregunta detonadora), desarrollo (60 min,
+                exposición + caso), cierre (20 min, síntesis).</li>
+              <li><strong>Actividad grupal:</strong> análisis de un caso institucional con baja participación docente.
+              </li>
+              <li><strong>Preguntas para debate:</strong> ¿qué riesgos tiene un liderazgo excesivamente centralizado?
+              </li>
+              <li><strong>Evidencia de aprendizaje:</strong> propuesta breve de mejora institucional por grupo.</li>
+              <li><strong>Recomendaciones docentes:</strong> ajustar el caso institucional al contexto real de los
+                estudiantes.</li>
+            </ul>
+          </div>
+          <div class="resultado-simulado" id="resPlanEduaide">
+            <h4>Resultado simulado · vía Eduaide.AI</h4>
+            <ul>
+              <li><strong>Secuencia didáctica:</strong> activación de saberes previos, insumo conceptual, organizador
+                gráfico de tipos de liderazgo, aplicación a un caso.</li>
+              <li><strong>Organizador gráfico:</strong> comparación visual entre liderazgo directivo y liderazgo
+                distribuido.</li>
+              <li><strong>Banco de preguntas:</strong> 6 preguntas de comprensión y 4 de análisis crítico.</li>
+              <li><strong>Producto esperado:</strong> mapa conceptual grupal sobre los modelos de liderazgo discutidos.
+              </li>
+            </ul>
+          </div>
+          <div class="resultado-simulado" id="resPlanBrisk">
+            <h4>Resultado simulado · vía Brisk Teaching</h4>
+            <ul>
+              <li><strong>Documento reorganizado:</strong> los apuntes sueltos de la docente se transforman en una
+                secuencia con momentos claros dentro de Google Docs.</li>
+              <li><strong>Versión adaptada:</strong> Brisk ofrece una versión con lenguaje más accesible para repasar
+                antes de clase.</li>
+              <li><strong>Slides relacionadas:</strong> sugerencia de qué contenido pasar a una presentación de apoyo.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== 2. RÚBRICAS, CRITERIOS Y FEEDBACK ===================== -->
+    <section class="seccion fondo-alterno" id="rubricas">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">02 · Necesidad docente</span>
+          <h2>Para crear rúbricas, criterios y feedback docente</h2>
+          <p>Evaluar con criterios claros y dar retroalimentación oportuna son dos de las tareas que más tiempo
+            consumen. Aquí cada herramienta cubre una parte distinta del proceso.</p>
+        </div>
+
+        <div class="grid-herramientas">
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>MagicSchool AI</h3>
+              <span class="pildora pildora-verde">Crear rúbrica</span>
+            </div>
+            <p class="necesidad-resuelve">Partir de una descripción de la actividad y obtener una rúbrica inicial.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Describe la actividad ("propuesta de mejora institucional") y el número de niveles de desempeño que
+                  quiere, y la herramienta propone los criterios.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>Una rúbrica con criterios y niveles de logro, lista para editar.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Que los criterios sean justos, claros y realmente midan el logro de aprendizaje del curso.</dd>
+                </div>
+                <p class="riesgo-linea">Usar criterios ambiguos puede generar calificaciones inconsistentes entre
+                  estudiantes.</p>
+                <p class="etica-linea">Compartir la rúbrica con los estudiantes antes de la evaluación, no después.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Brisk Teaching</h3>
+              <span class="pildora pildora-verde">Feedback rápido</span>
+            </div>
+            <p class="necesidad-resuelve">Generar comentarios personalizados sin salir de Google Docs.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Selecciona el texto entregado por el estudiante dentro de Google Docs y pide retroalimentación
+                  formativa basada en criterios específicos.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>Comentarios formativos insertados directamente en el documento del estudiante.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>El tono del comentario y que sea coherente con lo que realmente se espera de esa entrega.</dd>
+                </div>
+                <p class="riesgo-linea">Enviar feedback genérico que no reconozca el esfuerzo o avance real del
+                  estudiante.</p>
+                <p class="etica-linea">El docente firma y respalda cada comentario enviado, aunque haya sido redactado
+                  con ayuda de IA.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>CoGrader</h3>
+              <span class="pildora pildora-verde">Corregir con rúbrica</span>
+            </div>
+            <p class="necesidad-resuelve">Aplicar una rúbrica ya existente a muchas entregas escritas con consistencia.
+            </p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Carga la rúbrica (propia o de plantilla) y el conjunto de entregas; la herramienta califica criterio
+                  por criterio manteniendo trazabilidad.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver producto y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Producto que genera</dt>
+                  <dd>Calificación y feedback por criterio para cada entrega, con consistencia entre estudiantes.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Revisar y aprobar cada calificación antes de publicarla; nunca enviar en automático sin lectura.
+                  </dd>
+                </div>
+                <p class="riesgo-linea">Delegar la decisión final de la nota sin verificación humana puede ser injusto
+                  en casos límite.</p>
+                <p class="etica-linea">El docente sigue siendo responsable legal y ético de cada calificación publicada.
+                </p>
+              </div>
+            </details>
+          </article>
+
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Los estudiantes entregarán una propuesta de mejora institucional. El docente
+            necesita una rúbrica clara."</span>
+          <div style="margin:14px 0;">
+            <button class="boton boton-primario boton-chico" id="botonCrearRubrica">✦ Crear rúbrica con IA</button>
+          </div>
+
+          <div class="resultado-simulado" id="resultadoRubrica">
+            <h4>Rúbrica simulada · propuesta de mejora institucional</h4>
+            <div class="tabla-envoltorio" style="box-shadow:none;">
+              <table class="tabla-comparativa">
+                <thead>
+                  <tr>
+                    <th>Criterio</th>
+                    <th>Inicial</th>
+                    <th>En proceso</th>
+                    <th>Logrado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Diagnóstico del problema</td>
+                    <td>Describe el problema de forma general.</td>
+                    <td>Identifica el problema con algunas evidencias.</td>
+                    <td>Define el problema con evidencias claras.</td>
+                  </tr>
+                  <tr>
+                    <td>Propuesta de mejora</td>
+                    <td>Presenta una solución poco viable.</td>
+                    <td>Propone una mejora viable, pero incompleta.</td>
+                    <td>Propone una mejora viable, contextualizada y evaluable.</td>
+                  </tr>
+                  <tr>
+                    <td>Uso de fuentes</td>
+                    <td>Usa pocas fuentes.</td>
+                    <td>Usa fuentes, pero las integra parcialmente.</td>
+                    <td>Usa fuentes pertinentes y bien integradas.</td>
+                  </tr>
+                  <tr>
+                    <td>Reflexión crítica</td>
+                    <td>Presenta ideas generales.</td>
+                    <td>Analiza parcialmente.</td>
+                    <td>Argumenta con profundidad.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top:20px;">
+              <button class="boton boton-secundario boton-chico" id="botonGenerarFeedback">💬 Generar feedback al
+                estudiante</button>
+            </div>
+            <div class="resultado-simulado" id="resultadoFeedback" style="margin-top:14px;">
+              <h4>Texto del estudiante</h4>
+              <p style="font-style:italic; margin-bottom:14px;">"Mi propuesta busca mejorar la comunicación
+                institucional usando tecnología, porque actualmente hay muchos problemas entre docentes, estudiantes y
+                directivos."</p>
+              <h4>Feedback simulado</h4>
+              <p>"La propuesta tiene una intención clara, pero el problema está formulado de manera general. Para
+                mejorar, agrega evidencias concretas, identifica a los actores involucrados y explica qué tecnología
+                usarás, cómo se implementará y cómo se evaluará su impacto."</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== 3. ADAPTAR MATERIALES A DISTINTOS NIVELES ===================== -->
+    <section class="seccion" id="materiales">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">03 · Necesidad docente</span>
+          <h2>Para adaptar materiales a distintos niveles</h2>
+          <p>Un mismo contenido puede llegar a estudiantes con niveles de comprensión distintos sin perder rigor
+            académico.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Diffit</h3>
+              <span class="pildora pildora-azul">Adaptación</span>
+            </div>
+            <p class="necesidad-resuelve">Adaptar el mismo contenido a varios niveles de comprensión sin perder rigor.
+            </p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Ayuda al docente a crear y adaptar materiales instruccionales para estudiantes con distintos niveles
+                  de comprensión, manteniendo el rigor del contenido.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cómo se usa y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Cómo la usaría un profesor</dt>
+                  <dd>Pega o sube el texto base y elige el nivel de lectura de salida (básico, intermedio, avanzado).
+                  </dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Que cada versión conserve la precisión conceptual del original, no solo frases más cortas.</dd>
+                </div>
+                <p class="riesgo-linea">Simplificar de más puede eliminar matices importantes del concepto académico.
+                </p>
+                <p class="etica-linea">No usar la versión "básica" para etiquetar o estigmatizar a un grupo de
+                  estudiantes.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>NotebookLM</h3>
+              <span class="pildora pildora-azul">Basado en fuentes</span>
+            </div>
+            <p class="necesidad-resuelve">Trabajar a partir de documentos propios, reduciendo el riesgo de información
+              inventada.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Herramienta de Google que analiza fuentes cargadas por el usuario y ayuda a convertir información
+                  compleja en contenido más claro, basándose siempre en las fuentes provistas.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cómo se usa y cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <div class="campo-herramienta">
+                  <dt>Cómo la usaría un profesor</dt>
+                  <dd>Sube el PDF académico sobre liderazgo educativo y le pide un resumen o explicación apoyada solo en
+                    ese documento.</dd>
+                </div>
+                <div class="campo-herramienta">
+                  <dt>Qué debe revisar el docente</dt>
+                  <dd>Contrastar el resumen contra el documento original para confirmar que no se perdió matices clave.
+                  </dd>
+                </div>
+                <p class="riesgo-linea">Confiar en el resumen sin volver a leer el documento original puede llevar a
+                  omitir ideas relevantes.</p>
+                <p class="etica-linea">Citar siempre la fuente original, no la herramienta, como autoría del contenido.
+                </p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Brisk Teaching</h3>
+              <span class="pildora pildora-azul">Niveles de lectura</span>
+            </div>
+            <p class="necesidad-resuelve">Generar versiones del mismo material para diferentes niveles de lectura.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Selecciona el texto dentro de Google Docs y pide una versión ajustada a determinado nivel de
+                  lectura.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Generar múltiples versiones sin revisar puede crear inconsistencias entre ellas.
+                </p>
+                <p class="etica-linea">Ofrecer las versiones como ruta de apoyo, no como evaluación diferenciada
+                  permanente.</p>
+              </div>
+            </details>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Tengo una lectura académica compleja sobre liderazgo educativo y necesito
+            adaptarla para estudiantes con distintos niveles."</span>
+          <div class="resultado-simulado visible" style="background:#fff;">
+            <h4>Texto base</h4>
+            <p>"Los modelos contemporáneos de liderazgo institucional enfatizan la distribución de responsabilidades, la
+              construcción de comunidades profesionales de aprendizaje y la toma de decisiones basada en evidencias."
+            </p>
+          </div>
+
+          <p style="font-size:0.92rem; color:var(--gris-texto); margin:18px 0 6px;">Elige el nivel de salida:</p>
+          <div class="simulador-opciones" id="opcionesNivel" role="group" aria-label="Elegir nivel de adaptación">
+            <button class="boton-opcion" data-resultado="nivelBasico">Básico</button>
+            <button class="boton-opcion" data-resultado="nivelIntermedio">Intermedio</button>
+            <button class="boton-opcion" data-resultado="nivelAvanzado">Avanzado</button>
+          </div>
+
+          <div class="resultado-simulado" id="nivelBasico">
+            <h4>Nivel básico</h4>
+            <p>"El liderazgo institucional actual no depende solo del director. También participan docentes y equipos de
+              trabajo. La institución mejora cuando las decisiones se toman con información y evidencias."</p>
+          </div>
+          <div class="resultado-simulado" id="nivelIntermedio">
+            <h4>Nivel intermedio</h4>
+            <p>"El liderazgo institucional se entiende como una práctica compartida. Involucra a directivos, docentes y
+              otros actores en la toma de decisiones basadas en evidencias para mejorar la gestión educativa."</p>
+          </div>
+          <div class="resultado-simulado" id="nivelAvanzado">
+            <h4>Nivel avanzado</h4>
+            <p>"El liderazgo institucional contemporáneo se basa en enfoques distribuidos, comunidades profesionales de
+              aprendizaje y sistemas de decisión apoyados en evidencias para orientar procesos de mejora sostenida."</p>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> adaptar no significa simplificar sin criterio. El docente debe verificar
+          que el contenido conserve precisión conceptual y no pierda profundidad académica.
+        </div>
+
+        <!-- ===== 4. Guías, resúmenes y recursos de estudio (integrado aquí por afinidad temática) ===== -->
+        <div style="margin-top:64px;">
+          <div class="seccion-cabecera">
+            <span class="seccion-numero">04 · Necesidad docente</span>
+            <h2>Para crear guías, resúmenes y recursos de estudio</h2>
+            <p>Herramientas: <strong>NotebookLM</strong>, <strong>Eduaide.AI</strong> y <strong>Diffit</strong> (ya
+              presentadas arriba) combinadas en un flujo de trabajo.</p>
+          </div>
+
+          <span class="etiqueta-necesidad">"Quiero convertir un PDF académico en una guía de estudio para mis
+            alumnos."</span>
+
+          <div class="flujo-pasos">
+            <span class="paso">Subir fuente</span><span class="flecha">→</span>
+            <span class="paso">Generar resumen</span><span class="flecha">→</span>
+            <span class="paso">Crear preguntas</span><span class="flecha">→</span>
+            <span class="paso">Crear glosario</span><span class="flecha">→</span>
+            <span class="paso">Diseñar guía de estudio</span>
+          </div>
+
+          <div class="resultado-simulado visible" style="background:#fff;">
+            <h4>Guía de estudio simulada · Liderazgo institucional</h4>
+            <ul>
+              <li>Idea central del texto.</li>
+              <li>Conceptos clave.</li>
+              <li>Glosario.</li>
+              <li>Preguntas de comprensión.</li>
+              <li>Preguntas de análisis.</li>
+              <li>Actividad de aplicación.</li>
+              <li>Pregunta para debate.</li>
+            </ul>
+            <p style="margin-top:14px;"><strong>Concepto clave:</strong> liderazgo distribuido.<br>
+              <strong>Definición:</strong> enfoque donde las responsabilidades de liderazgo se comparten entre distintos
+              actores de la institución.<br>
+              <strong>Pregunta de análisis:</strong> ¿qué riesgos puede tener distribuir responsabilidades sin una
+              estructura clara?
+            </p>
+          </div>
+
+          <div class="mensaje-pedagogico">
+            <strong>Mensaje pedagógico:</strong> las guías generadas por IA deben contrastarse con la fuente original.
+            El docente debe revisar precisión, citas, profundidad y pertinencia.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== 5. DIAPOSITIVAS Y MATERIALES VISUALES ===================== -->
+    <section class="seccion fondo-alterno" id="diapositivas">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">05 · Necesidad docente</span>
+          <h2>Para crear diapositivas, presentaciones y materiales visuales</h2>
+          <p>De una idea o un texto base a una presentación editable, sin pasar horas dando formato.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Gamma</h3>
+              <span class="pildora pildora-naranja">Desde un prompt</span>
+            </div>
+            <p class="necesidad-resuelve">Convertir una idea o texto en una presentación visual completa.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Herramienta de IA para crear presentaciones, documentos y sitios web a partir de un prompt o un
+                  texto base. Permite convertir una idea en una presentación y exportarla en formatos como PPT o PDF.
+                </dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">El diseño automático puede priorizar estética sobre precisión del contenido
+                  académico.</p>
+                <p class="etica-linea">Verificar derechos de uso de cualquier imagen incluida automáticamente antes de
+                  proyectarla en clase.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Canva</h3>
+              <span class="pildora pildora-naranja">Magic Design</span>
+            </div>
+            <p class="necesidad-resuelve">Partir de un borrador visual editable con amplia biblioteca de plantillas.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Crea presentaciones con IA mediante Magic Design, generando un primer borrador visual que luego el
+                  docente puede editar y adaptar, con acceso a una amplia biblioteca de plantillas e imágenes.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Las plantillas genéricas pueden no encajar con el nivel de un público de
+                  maestría.</p>
+                <p class="etica-linea">Revisar la procedencia de imágenes de la biblioteca antes de usarlas con fines
+                  educativos.</p>
+              </div>
+            </details>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Microsoft Copilot en PowerPoint</h3>
+              <span class="pildora pildora-naranja">Dentro de M365</span>
+            </div>
+            <p class="necesidad-resuelve">Generar o reestructurar diapositivas sin salir de PowerPoint.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Asistente de IA integrado directamente en PowerPoint, útil para el docente que ya trabaja dentro del
+                  ecosistema Microsoft 365 de su institución.</dd>
+              </div>
+            </dl>
+            <details class="detalle-toggle">
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Reestructurar diapositivas existentes en automático puede alterar el orden
+                  lógico planeado por el docente.</p>
+                <p class="etica-linea">Confirmar que la institución autoriza el uso de Copilot con materiales de curso.
+                </p>
+              </div>
+            </details>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Necesito crear una presentación de 8 diapositivas sobre liderazgo
+            institucional para una clase de maestría."</span>
+
+          <p style="font-size:0.92rem; color:var(--gris-texto); margin:14px 0 6px;">Elige el punto de partida:</p>
+          <div class="simulador-opciones" id="opcionesSlides" role="group"
+            aria-label="Elegir punto de partida para la presentación">
+            <button class="boton-opcion activo" data-resultado="resSlides">Crear desde cero</button>
+            <button class="boton-opcion" data-resultado="resSlides">Desde un texto base</button>
+            <button class="boton-opcion" data-resultado="resSlides">Mejorar una existente</button>
+          </div>
+
+          <div class="caja-prompt">
+            <div class="caja-prompt-cabecera">
+              <span class="caja-prompt-titulo">Prompt listo para copiar</span>
+              <button class="boton-copiar" data-copiar="promptSlides">📋 Copiar prompt</button>
+            </div>
+            <pre id="promptSlides">Crea una presentación educativa de 8 diapositivas sobre liderazgo institucional para estudiantes de maestría en educación.
+
+Objetivo: explicar el concepto de liderazgo institucional, liderazgo distribuido y toma de decisiones basada en evidencias.
+
+Estructura:
+1. Título e idea central.
+2. ¿Qué es el liderazgo institucional?
+3. Diferencia entre liderazgo directivo y liderazgo distribuido.
+4. Importancia de la toma de decisiones basada en evidencias.
+5. Caso breve de una institución con baja participación docente.
+6. Actividad grupal para analizar el caso.
+7. Preguntas de discusión.
+8. Cierre con ideas clave.
+
+Estilo: académico, visual, limpio, con poco texto por diapositiva, íconos educativos y diseño profesional.</pre>
+          </div>
+
+          <div class="resultado-simulado visible" id="resSlides">
+            <h4>Resultado simulado · 8 diapositivas</h4>
+            <ul>
+              <li>Diapositiva 1: Título e idea central.</li>
+              <li>Diapositiva 2: Definición de liderazgo institucional.</li>
+              <li>Diapositiva 3: Comparación entre liderazgo directivo y liderazgo distribuido.</li>
+              <li>Diapositiva 4: Decisiones basadas en evidencias.</li>
+              <li>Diapositiva 5: Caso institucional.</li>
+              <li>Diapositiva 6: Actividad grupal.</li>
+              <li>Diapositiva 7: Preguntas de discusión.</li>
+              <li>Diapositiva 8: Cierre e ideas clave.</li>
+            </ul>
+          </div>
+
+          <div class="mensaje-pedagogico">
+            <strong>Mensaje pedagógico:</strong> la IA puede crear un primer borrador de diapositivas, pero el docente
+            debe revisar contenido, ejemplos, profundidad, diseño, fuentes y alineación con el logro de aprendizaje.
+          </div>
+
+          <div class="caja-cuidado">
+            <h4>Cuidado ético</h4>
+            <ul>
+              <li>No colocar información no verificada.</li>
+              <li>No copiar imágenes sin revisar derechos de uso.</li>
+              <li>No usar diapositivas generadas sin adaptación docente.</li>
+              <li>Revisar que el nivel sea adecuado para estudiantes de maestría.</li>
+              <li>Evitar textos largos o contenido superficial.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== 6. BUSCAR INFORMACIÓN CON FUENTES CONFIABLES ===================== -->
+    <section class="seccion" id="fuentes">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">06 · Necesidad docente</span>
+          <h2>Para buscar información con fuentes confiables</h2>
+          <p>Buscar con IA no significa aceptar respuestas sin verificar. Estas herramientas ayudan a encontrar
+            evidencia, no a reemplazar la lectura crítica.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Consensus</h3>
+              <span class="pildora pildora-verde">Evidencia científica</span>
+            </div>
+            <p class="necesidad-resuelve">Encontrar y resumir evidencia académica con citas.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Buscador académico con IA orientado a literatura científica: ayuda a encontrar, organizar y analizar
+                  evidencia académica. Sus respuestas deben verificarse revisando las fuentes originales.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Escribe una pregunta de investigación en lenguaje natural y revisa la síntesis con sus referencias.
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Google Scholar</h3>
+              <span class="pildora pildora-azul">Fuente académica</span>
+            </div>
+            <p class="necesidad-resuelve">Localizar artículos, libros, tesis y documentos científicos.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Buscador académico para localizar artículos, libros, tesis y documentos científicos. No es IA
+                  generativa, sino una fuente académica complementaria.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Busca por palabras clave específicas, idealmente combinando términos en inglés y español.</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Elicit</h3>
+              <span class="pildora pildora-verde">Organiza evidencia</span>
+            </div>
+            <p class="necesidad-resuelve">Comparar varios estudios y extraer información clave de cada uno.</p>
+            <dl class="tarjeta-herramienta-cuerpo">
+              <div class="campo-herramienta">
+                <dt>Para qué sirve</dt>
+                <dd>Asistente de investigación académica para encontrar papers, extraer información y organizar
+                  evidencia. No reemplaza la lectura crítica del docente.</dd>
+              </div>
+              <div class="campo-herramienta">
+                <dt>Cómo la usaría un profesor</dt>
+                <dd>Plantea una pregunta de investigación en inglés o español y compara los estudios que la herramienta
+                  organiza en tabla.</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Necesito encontrar fuentes confiables sobre el uso de IA en educación para
+            preparar mi clase."</span>
+
+          <div class="flujo-pasos">
+            <span class="paso">Pregunta académica</span><span class="flecha">→</span>
+            <span class="paso">Búsqueda en Consensus / Scholar / Elicit</span><span class="flecha">→</span>
+            <span class="paso">Selección de fuentes</span><span class="flecha">→</span>
+            <span class="paso">Lectura crítica</span><span class="flecha">→</span>
+            <span class="paso">Síntesis docente</span><span class="flecha">→</span>
+            <span class="paso">Uso en clase</span>
+          </div>
+
+          <p style="font-size:0.9rem; color:var(--gris-texto); margin:18px 0 6px;"><strong>Ejemplo de pregunta
+              académica:</strong></p>
+          <p style="margin-bottom:18px;">¿Qué evidencia existe sobre el impacto de la inteligencia artificial en la
+            retroalimentación formativa de estudiantes universitarios?</p>
+
+          <div class="tabla-envoltorio">
+            <table class="tabla-comparativa">
+              <thead>
+                <tr>
+                  <th>Herramienta</th>
+                  <th>Qué hace</th>
+                  <th>Cómo la usa el docente</th>
+                  <th>Producto esperado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Consensus</td>
+                  <td>Busca evidencia científica y resume hallazgos con citas.</td>
+                  <td>Escribe una pregunta de investigación.</td>
+                  <td>Lista de papers y síntesis con referencias.</td>
+                </tr>
+                <tr>
+                  <td>Google Scholar</td>
+                  <td>Encuentra artículos, tesis y libros académicos.</td>
+                  <td>Busca por palabras clave.</td>
+                  <td>Fuentes académicas para revisar.</td>
+                </tr>
+                <tr>
+                  <td>Elicit</td>
+                  <td>Ayuda a organizar papers y extraer datos clave.</td>
+                  <td>Compara estudios.</td>
+                  <td>Tabla de evidencia y hallazgos.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            style="margin-top:24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;">
+            <div class="caja-prompt" style="margin:0;">
+              <div class="caja-prompt-cabecera"><span class="caja-prompt-titulo">Búsqueda en Consensus</span><button
+                  class="boton-copiar" data-copiar="promptConsensus">📋 Copiar</button></div>
+              <pre
+                id="promptConsensus">Busca evidencia científica sobre herramientas de inteligencia artificial para apoyar la planificación docente, la creación de materiales educativos y la personalización del aprendizaje en educación superior.</pre>
+            </div>
+            <div class="caja-prompt" style="margin:0;">
+              <div class="caja-prompt-cabecera"><span class="caja-prompt-titulo">Búsqueda en Google
+                  Scholar</span><button class="boton-copiar" data-copiar="promptScholar">📋 Copiar</button></div>
+              <pre
+                id="promptScholar">"artificial intelligence" "teacher support" "higher education" "instructional design"</pre>
+            </div>
+            <div class="caja-prompt" style="margin:0;">
+              <div class="caja-prompt-cabecera"><span class="caja-prompt-titulo">Pregunta para Elicit</span><button
+                  class="boton-copiar" data-copiar="promptElicit">📋 Copiar</button></div>
+              <pre
+                id="promptElicit">What are the effects of AI-based teacher support tools on instructional planning and student feedback in higher education?</pre>
+            </div>
+          </div>
+
+          <p style="font-size:0.92rem; color:var(--gris-texto); margin:24px 0 10px;">El docente no debe quedarse solo
+            con el resumen automático. Debe revisar:</p>
+          <div class="caja-cuidado" style="background:#F1F4F8; border-left-color:var(--azul-profundo);">
+            <ul style="columns:2; column-gap:24px;">
+              <li>Autor.</li>
+              <li>Año.</li>
+              <li>Revista o conferencia.</li>
+              <li>Metodología.</li>
+              <li>Muestra.</li>
+              <li>Resultados.</li>
+              <li>Limitaciones.</li>
+              <li>Relación con su clase.</li>
+              <li>Pertinencia para su contexto.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> buscar con IA no significa aceptar respuestas sin verificar. El docente
+          debe contrastar fuentes, revisar la evidencia y adaptar la información al contexto educativo.
+        </div>
+
+        <div class="caja-cuidado">
+          <h4>Cuidado ético</h4>
+          <ul>
+            <li>No citar una fuente que no se haya leído.</li>
+            <li>No usar referencias inventadas.</li>
+            <li>Confirmar que el artículo existe.</li>
+            <li>Revisar fecha, autores y revista.</li>
+            <li>Distinguir evidencia científica de opinión.</li>
+            <li>Usar citas y referencias correctamente.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 7. IMÁGENES EDUCATIVAS Y RECURSOS VISUALES ===================== -->
+    <section class="seccion fondo-alterno" id="visuales">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">07 · Necesidad docente</span>
+          <h2>Para crear imágenes educativas y recursos visuales</h2>
+          <p>Una imagen bien pensada puede explicar en segundos lo que un párrafo tarda en transmitir.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Canva</h3><span class="pildora pildora-naranja">Infografías</span>
+            </div>
+            <p class="necesidad-resuelve">Crear infografías, fichas visuales, pósters y materiales de clase.</p>
+            <details class="detalle-toggle" open>
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Sobrecargar la infografía de texto puede confundir más que clarificar.</p>
+                <p class="etica-linea">Revisar licencias de los elementos gráficos usados antes de imprimir o publicar.
+                </p>
+              </div>
+            </details>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Adobe Firefly</h3><span class="pildora pildora-naranja">Imágenes con IA</span>
+            </div>
+            <p class="necesidad-resuelve">Generar imágenes educativas con IA entrenada para cuidar derechos de uso y
+              coherencia visual.</p>
+            <details class="detalle-toggle" open>
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Las imágenes generadas pueden reflejar sesgos visuales (por ejemplo, en roles o
+                  géneros representados).</p>
+                <p class="etica-linea">Revisar que la imagen no perpetúe estereotipos antes de mostrarla en clase.</p>
+              </div>
+            </details>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Microsoft Designer</h3><span class="pildora pildora-naranja">Diseño rápido</span>
+            </div>
+            <p class="necesidad-resuelve">Crear diseños visuales rápidos a partir de una descripción.</p>
+            <details class="detalle-toggle" open>
+              <summary>Ver cuidados</summary>
+              <div class="detalle-toggle-contenido">
+                <p class="riesgo-linea">Un diseño "rápido" puede no estar alineado con la identidad visual de la
+                  institución.</p>
+                <p class="etica-linea">Confirmar que el recurso final sea adecuado para el contexto académico, no solo
+                  decorativo.</p>
+              </div>
+            </details>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Necesito explicar visualmente el modelo docente + IA + estudiante."</span>
+          <div class="simulador-opciones" role="group" aria-label="Elegir tipo de recurso visual">
+            <button class="boton-opcion activo">Crear una infografía</button>
+            <button class="boton-opcion">Crear una imagen explicativa</button>
+            <button class="boton-opcion">Crear un póster de clase</button>
+          </div>
+          <div class="caja-prompt">
+            <div class="caja-prompt-cabecera"><span class="caja-prompt-titulo">Prompt para imagen
+                educativa</span><button class="boton-copiar" data-copiar="promptImagen">📋 Copiar prompt</button></div>
+            <pre
+              id="promptImagen">Crea una imagen educativa donde aparezca un docente al centro, apoyado por herramientas de IA alrededor: planificación, rúbricas, materiales, analítica, búsqueda de fuentes y accesibilidad. Debe verse también al estudiante como participante activo. Estilo moderno, claro, profesional, con colores educativos y sin texto pequeño.</pre>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> la IA puede acelerar el diseño visual, pero el docente debe revisar
+          exactitud, pertinencia, derechos de uso, sesgos visuales y claridad didáctica.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 8. ACTIVIDADES ACTIVAS, ABP Y CLASE INVERTIDA ===================== -->
+    <section class="seccion" id="abp">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">08 · Necesidad docente</span>
+          <h2>Para crear actividades activas, ABP y clase invertida</h2>
+          <p>Transformar una clase expositiva en una experiencia donde el estudiante resuelve, debate y construye.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>ChatGPT</h3><span class="pildora pildora-azul">Diseño instruccional</span>
+            </div>
+            <p class="necesidad-resuelve">Convertir un tema expositivo en un caso, debate o problema para resolver en
+              grupo.</p>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Claude</h3><span class="pildora pildora-azul">Diseño instruccional</span>
+            </div>
+            <p class="necesidad-resuelve">Apoyar la redacción de casos, preguntas guía y criterios de evaluación para
+              metodologías activas.</p>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Eduaide.AI</h3><span class="pildora pildora-azul">Actividades docentes</span>
+            </div>
+            <p class="necesidad-resuelve">Generar organizadores y bancos de preguntas que sostienen la actividad activa.
+            </p>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Quiero transformar una clase expositiva sobre liderazgo educativo en una
+            actividad de Aprendizaje Basado en Problemas."</span>
+
+          <div class="caja-prompt">
+            <div class="caja-prompt-cabecera"><span class="caja-prompt-titulo">Prompt listo para copiar</span><button
+                class="boton-copiar" data-copiar="promptABP">📋 Copiar prompt</button></div>
+            <pre id="promptABP">Actúa como diseñador instruccional. Convierte una clase expositiva sobre liderazgo educativo en una actividad de Aprendizaje Basado en Problemas para estudiantes de maestría en educación.
+
+Incluye:
+1. Caso breve.
+2. Problema central.
+3. Roles para grupos.
+4. Preguntas guía.
+5. Producto final.
+6. Criterios de evaluación.
+7. Cierre reflexivo.</pre>
+          </div>
+
+          <div class="resultado-simulado visible">
+            <h4>Resultado simulado</h4>
+            <p><strong>Caso:</strong> una institución presenta baja participación docente en decisiones de mejora.</p>
+            <p style="margin-top:8px;"><strong>Problema:</strong> ¿cómo rediseñar el liderazgo institucional para
+              involucrar a los docentes?</p>
+            <p style="margin-top:8px;"><strong>Producto:</strong> propuesta de intervención con responsables, acciones e
+              indicadores.</p>
+            <p style="margin-top:8px;"><strong>Cierre:</strong> debate sobre el equilibrio entre liderazgo directivo y
+              liderazgo distribuido.</p>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> la IA puede crear escenarios, preguntas y casos, pero el docente debe
+          contextualizar la actividad y asegurar que promueva pensamiento crítico.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 9. ACCESIBILIDAD, INCLUSIÓN Y PERSONALIZACIÓN ===================== -->
+    <section class="seccion fondo-alterno" id="accesibilidad">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">09 · Necesidad docente</span>
+          <h2>Para accesibilidad, inclusión y personalización</h2>
+          <p>Mismo logro de aprendizaje, distintas rutas para llegar a él. Herramientas: <strong>Diffit</strong>,
+            <strong>Canva</strong> y <strong>NotebookLM</strong> (ya presentadas) aplicadas a inclusión.
+          </p>
+        </div>
+
+        <span class="etiqueta-necesidad">"Tengo estudiantes con distintos niveles de lectura y necesito que todos puedan
+          trabajar el mismo contenido."</span>
+
+        <div class="simulador">
+          <p style="font-size:0.92rem; color:var(--gris-texto); margin-bottom:10px;">Selecciona los apoyos que necesitas
+            activar:</p>
+          <div class="simulador-opciones" id="opcionesApoyo">
+            <button class="boton-opcion" data-apoyo="texto">Texto simplificado</button>
+            <button class="boton-opcion" data-apoyo="glosario">Glosario</button>
+            <button class="boton-opcion" data-apoyo="preguntas">Preguntas por nivel</button>
+            <button class="boton-opcion" data-apoyo="infografia">Infografía</button>
+            <button class="boton-opcion" data-apoyo="audio">Audio-resumen</button>
+            <button class="boton-opcion" data-apoyo="aplicacion">Actividad de aplicación</button>
+          </div>
+
+          <div class="resultado-simulado visible">
+            <h4>Resultado simulado por ruta de apoyo</h4>
+            <ul>
+              <li><strong>Para estudiantes que necesitan apoyo:</strong> texto breve, glosario y preguntas de
+                comprensión.</li>
+              <li><strong>Para nivel intermedio:</strong> lectura resumida y preguntas de análisis.</li>
+              <li><strong>Para nivel avanzado:</strong> lectura original y pregunta crítica.</li>
+              <li><strong>Para accesibilidad:</strong> infografía, audio o versión visual.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> la personalización no debe bajar expectativas académicas. Debe ofrecer
+          rutas distintas para alcanzar el mismo logro.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 10. GESTIÓN DOCENTE Y SEGUIMIENTO ===================== -->
+    <section class="seccion" id="gestion">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">10 · Necesidad docente</span>
+          <h2>Para gestión docente, seguimiento y carga operativa</h2>
+          <p>Ordenar quién entregó, quién necesita feedback y quién requiere apoyo, sin perder el criterio humano detrás
+            de cada alerta.</p>
+        </div>
+
+        <div class="grid-herramientas">
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Moodle</h3><span class="pildora pildora-azul">LMS</span>
+            </div>
+            <p class="necesidad-resuelve">Centralizar entregas, calificaciones y seguimiento del curso completo.</p>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Google Classroom</h3><span class="pildora pildora-azul">LMS</span>
+            </div>
+            <p class="necesidad-resuelve">Organizar tareas, avisos y entregas dentro del ecosistema Google.</p>
+          </article>
+          <article class="tarjeta-herramienta">
+            <div class="tarjeta-herramienta-cabecera">
+              <h3>Brisk Teaching</h3><span class="pildora pildora-azul">Apoyo de seguimiento</span>
+            </div>
+            <p class="necesidad-resuelve">Apoyar el seguimiento de avances y feedback desde Google Workspace.</p>
+          </article>
+        </div>
+
+        <div class="simulador">
+          <span class="etiqueta-necesidad">"Quiero hacer seguimiento de quién entregó, quién necesita retroalimentación
+            y quién requiere apoyo."</span>
+          <div class="tabla-envoltorio">
+            <table class="tabla-comparativa">
+              <thead>
+                <tr>
+                  <th>Estudiante</th>
+                  <th>Entrega</th>
+                  <th>Feedback</th>
+                  <th>Riesgo</th>
+                  <th>Acción docente</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ana</td>
+                  <td>Entregó</td>
+                  <td>Pendiente</td>
+                  <td>Bajo</td>
+                  <td>Enviar comentario</td>
+                </tr>
+                <tr>
+                  <td>Luis</td>
+                  <td>No entregó</td>
+                  <td>No aplica</td>
+                  <td>Alto</td>
+                  <td>Contactar</td>
+                </tr>
+                <tr>
+                  <td>María</td>
+                  <td>Entregó incompleto</td>
+                  <td>Pendiente</td>
+                  <td>Medio</td>
+                  <td>Solicitar segunda versión</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mensaje-pedagogico">
+          <strong>Mensaje pedagógico:</strong> la automatización ayuda a ordenar la gestión, pero el docente debe
+          interpretar las razones detrás de cada alerta.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== COMPARADOR DE HERRAMIENTAS POR NECESIDAD ===================== -->
+    <section class="seccion fondo-alterno" id="comparador">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">Comparador</span>
+          <h2>Herramientas por necesidad docente</h2>
+          <p>Filtra por tipo de necesidad para encontrar rápido qué herramienta usar, qué genera y qué revisar antes de
+            aplicarla en clase.</p>
+        </div>
+
+        <div class="tabla-filtros" id="filtrosComparador" role="group" aria-label="Filtrar comparador por categoría">
+          <button class="boton-opcion activo" data-filtro="todos">Todos</button>
+          <button class="boton-opcion" data-filtro="planificar">Planificar</button>
+          <button class="boton-opcion" data-filtro="evaluar">Evaluar</button>
+          <button class="boton-opcion" data-filtro="materiales">Materiales</button>
+          <button class="boton-opcion" data-filtro="fuentes">Fuentes</button>
+          <button class="boton-opcion" data-filtro="visual">Visual</button>
+          <button class="boton-opcion" data-filtro="gestion">Gestión</button>
+        </div>
+
+        <div class="tabla-envoltorio">
+          <table class="tabla-comparativa" id="tablaComparador">
+            <thead>
+              <tr>
+                <th>Necesidad del profesor</th>
+                <th>Herramienta sugerida</th>
+                <th>Producto que genera</th>
+                <th>Revisión docente necesaria</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-cat="planificar">
+                <td>Planificar una sesión</td>
+                <td>MagicSchool AI / Eduaide.AI</td>
+                <td>Plan de clase</td>
+                <td>Alinear con sílabo y nivel</td>
+              </tr>
+              <tr data-cat="planificar">
+                <td>Crear una actividad activa</td>
+                <td>ChatGPT / Claude</td>
+                <td>Caso ABP o debate</td>
+                <td>Contextualizar y validar</td>
+              </tr>
+              <tr data-cat="evaluar">
+                <td>Crear rúbrica</td>
+                <td>MagicSchool AI</td>
+                <td>Criterios y niveles</td>
+                <td>Ajustar criterios</td>
+              </tr>
+              <tr data-cat="evaluar">
+                <td>Corregir según rúbrica</td>
+                <td>CoGrader</td>
+                <td>Calificación y feedback por criterio</td>
+                <td>Revisar y aprobar antes de enviar</td>
+              </tr>
+              <tr data-cat="evaluar">
+                <td>Dar feedback</td>
+                <td>Brisk Teaching</td>
+                <td>Comentarios al estudiante</td>
+                <td>Revisar justicia y tono</td>
+              </tr>
+              <tr data-cat="materiales">
+                <td>Adaptar lectura</td>
+                <td>Diffit</td>
+                <td>Texto por niveles</td>
+                <td>Verificar precisión</td>
+              </tr>
+              <tr data-cat="materiales">
+                <td>Resumir fuentes</td>
+                <td>NotebookLM</td>
+                <td>Guía de estudio</td>
+                <td>Contrastar con fuente</td>
+              </tr>
+              <tr data-cat="fuentes">
+                <td>Buscar evidencia confiable</td>
+                <td>Consensus / Google Scholar / Elicit</td>
+                <td>Papers, síntesis y fuentes</td>
+                <td>Verificar artículos y metodología</td>
+              </tr>
+              <tr data-cat="visual">
+                <td>Crear presentación</td>
+                <td>Gamma / Canva / Microsoft Copilot</td>
+                <td>Diapositivas</td>
+                <td>Revisar contenido, diseño y fuentes</td>
+              </tr>
+              <tr data-cat="visual">
+                <td>Crear imagen educativa</td>
+                <td>Adobe Firefly / Canva / Microsoft Designer</td>
+                <td>Recurso visual</td>
+                <td>Revisar sesgos y derechos</td>
+              </tr>
+              <tr data-cat="gestion">
+                <td>Gestionar entregas</td>
+                <td>Moodle / Google Classroom</td>
+                <td>Seguimiento</td>
+                <td>Interpretar alertas</td>
+              </tr>
+              <tr data-cat="materiales">
+                <td>Apoyar inclusión</td>
+                <td>Diffit / Canva</td>
+                <td>Material accesible</td>
+                <td>Mantener exigencia académica</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== REALIDAD AUMENTADA: MESA DE APOYO DOCENTE CON IA ===================== -->
+    <section class="seccion" id="ar">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">Experiencia AR</span>
+          <h2>Mesa de Apoyo Docente con IA</h2>
+          <p>Una mesa virtual con tarjetas agrupadas por necesidad docente. Toca cada tarjeta para ver qué resuelve,
+            cómo se usa y qué debe revisar el profesor.</p>
+        </div>
+
+        <div class="ar-zona">
+          <div class="ar-zona-contenido">
+            <h3>"Automatiza lo rutinario, agiliza lo creativo y humaniza lo esencial."</h3>
+            <p>"Crear rápido no basta: el docente debe verificar, adaptar y citar correctamente."</p>
+            <button class="boton boton-primario" id="botonIniciarAR">📷 Iniciar experiencia AR</button>
+            <p class="ar-aviso">La cámara solo se activa cuando presionas este botón. Si tu navegador o dispositivo no
+              tiene cámara disponible, se mostrará automáticamente una mesa 3D interactiva sin necesidad de cámara.</p>
+          </div>
+        </div>
+
+        <!-- Contenedor AR real (A-Frame + AR.js). Se monta dinámicamente solo tras el clic. -->
+        <div id="contenedorAR">
+          <div class="ar-tarjeta-info" id="arTarjetaInfo"></div>
+        </div>
+
+        <!-- Fallback 3D / sin cámara: mesa con tarjetas agrupadas por subtítulo -->
+        <div class="ar-fallback" id="arFallback" style="display:none;">
+          <h3 style="color:#fff; font-size:1.2rem; margin-bottom:6px;">Mesa de herramientas (modo sin cámara)</h3>
+          <p style="color:#9FB3C8; font-size:0.88rem;">Toca cada tarjeta para ver el detalle. Este modo se activa si la
+            cámara no está disponible o el permiso fue denegado.</p>
+          <div class="ar-fallback-grid" id="gridFallbackAR">
+            <!-- Las tarjetas se generan por JavaScript desde TOOL_GROUPS_AR -->
+          </div>
+          <div class="ar-tarjeta-info" id="arTarjetaInfoFallback"
+            style="position:static; margin-top:18px; max-width:none;"></div>
+        </div>
+
+        <!-- ===== Segunda escena AR: flujo completo ===== -->
+        <div class="ar-fallback" style="margin-top:28px;">
+          <h3 style="color:#fff; font-size:1.2rem; margin-bottom:6px;">Escena 2 · Flujo completo</h3>
+          <p style="color:#9FB3C8; font-size:0.88rem;">Toca cada paso del flujo para ver su explicación.</p>
+          <div class="ar-flujo-escena" id="flujoEscenaAR">
+            <div class="ar-flujo-nodo" data-flujo="Necesidad docente">Necesidad docente</div>
+            <div class="ar-flujo-nodo" data-flujo="Selección de herramienta">Selección de herramienta</div>
+            <div class="ar-flujo-nodo" data-flujo="Prompt o entrada">Prompt o entrada</div>
+            <div class="ar-flujo-nodo" data-flujo="Producto generado">Producto generado</div>
+            <div class="ar-flujo-nodo" data-flujo="Revisión docente">Revisión docente</div>
+            <div class="ar-flujo-nodo" data-flujo="Uso en clase">Uso en clase</div>
+          </div>
+          <div class="ar-tarjeta-info" id="arTarjetaInfoFlujo"
+            style="position:static; margin-top:18px; max-width:none;"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== ACTIVIDAD FINAL PARA CLASE ===================== -->
+    <section class="seccion fondo-alterno" id="actividad">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">Actividad para clase · 25 minutos</span>
+          <h2>Elige la herramienta correcta según la necesidad docente</h2>
+          <p>Trabajo en grupos. Cada grupo recibe una necesidad docente y debe seleccionar una o dos herramientas,
+            explicar cómo las usaría y qué cuidado ético aplicaría.</p>
+        </div>
+
+        <div class="grid-grupos">
+          <div class="tarjeta-grupo">
+            <h4>Grupo 1 · Planificación rápida</h4>
+            <p>El docente debe preparar una sesión de 90 minutos y no tiene una secuencia didáctica clara.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> MagicSchool AI,
+              Eduaide.AI, Brisk Teaching</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> plan de sesión con logro, momentos,
+              actividad y cierre.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 2 · Material diferenciado</h4>
+            <p>El docente tiene una lectura compleja y estudiantes con diferentes niveles de comprensión.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> Diffit,
+              NotebookLM, Brisk Teaching</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> lectura adaptada, glosario y preguntas por
+              nivel.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 3 · Rúbrica y feedback</h4>
+            <p>El docente necesita evaluar una propuesta de mejora institucional y entregar retroalimentación.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> MagicSchool AI,
+              Brisk Teaching, CoGrader</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> rúbrica y comentario formativo.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 4 · Clase activa</h4>
+            <p>El docente quiere transformar una exposición en una actividad ABP.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> ChatGPT, Claude,
+              Eduaide.AI</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> caso, roles, preguntas guía y producto
+              final.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 5 · Diapositivas</h4>
+            <p>El docente necesita crear una presentación clara y visual para explicar liderazgo institucional.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> Gamma, Canva,
+              Microsoft Copilot</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> estructura de 8 diapositivas y prompt de
+              generación.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 6 · Fuentes confiables</h4>
+            <p>El docente necesita encontrar evidencia científica para sustentar una clase sobre IA en educación.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> Consensus, Google
+              Scholar, Elicit</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> pregunta de búsqueda, criterios de
+              selección y síntesis de fuentes confiables.</p>
+          </div>
+          <div class="tarjeta-grupo">
+            <h4>Grupo 7 · Recurso visual</h4>
+            <p>El docente necesita explicar un concepto complejo mediante una imagen o infografía.</p>
+            <p style="font-size:0.84rem; margin-bottom:8px;"><strong>Herramientas sugeridas:</strong> Canva, Adobe
+              Firefly, Microsoft Designer</p>
+            <p class="producto-esperado"><strong>Producto esperado:</strong> prompt visual y criterio de revisión del
+              recurso.</p>
+          </div>
+        </div>
+
+        <!-- ===== Matriz editable ===== -->
+        <div style="margin-top:56px;">
+          <div class="seccion-cabecera">
+            <span class="seccion-numero">Matriz de trabajo</span>
+            <h2>Completa tu propia matriz</h2>
+            <p>Usa esta matriz durante la actividad de grupo o para planificar tu propia clase. Los datos se guardan
+              solo en tu navegador.</p>
+          </div>
+
+          <div class="matriz-envoltorio">
+            <table class="matriz" id="tablaMatriz">
+              <thead>
+                <tr>
+                  <th>Necesidad docente</th>
+                  <th>Herramienta elegida</th>
+                  <th>Cómo se usaría</th>
+                  <th>Producto generado</th>
+                  <th>Revisión del docente</th>
+                  <th>Cuidado ético</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoMatriz">
+                <!-- 4 filas generadas por JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="matriz-botones">
+            <button class="boton boton-secundario boton-chico" id="botonVerEjemploMatriz">👁️ Ver ejemplo</button>
+            <button class="boton boton-primario boton-chico" id="botonGuardarMatriz">💾 Guardar respuesta</button>
+            <button class="boton boton-oscuro boton-chico" id="botonExportarMatriz">⬇️ Exportar como PDF</button>
+            <button class="boton boton-secundario boton-chico" id="botonLimpiarMatriz">🗑️ Limpiar matriz</button>
+          </div>
+          <p class="matriz-aviso" id="avisoMatriz"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== MÓDULO DE CONTROL ÉTICO ===================== -->
+    <section class="seccion" id="etica">
+      <div class="contenedor">
+        <div class="seccion-cabecera">
+          <span class="seccion-numero">Antes de usar el recurso generado por IA</span>
+          <h2>Lista de verificación ética</h2>
+          <p>Ningún recurso generado por IA debe llegar a los estudiantes sin pasar por esta revisión.</p>
+        </div>
+
+        <div class="checklist-progreso">
+          <div class="checklist-barra">
+            <div class="checklist-barra-relleno" id="checklistRelleno"></div>
+          </div>
+          <span class="checklist-conteo" id="checklistConteo">0 / 12 revisados</span>
+        </div>
+
+        <div class="checklist-etico" id="checklistEtico">
+          <!-- 12 ítems generados por JS desde ETHICS_CHECKLIST -->
+        </div>
+
+        <div class="mensaje-pedagogico" style="margin-top:28px;">
+          <strong>Mensaje final:</strong> la IA puede producir rápido, pero el docente debe validar con criterio,
+          responsabilidad y sentido pedagógico.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CIERRE ===================== -->
+    <section class="cierre">
+      <div class="contenedor">
+        <h2>"La IA apoya al docente cuando reduce carga operativa, acelera la creación de recursos y permite dedicar más
+          tiempo al acompañamiento humano."</h2>
+
+        <div class="cierre-ideas">
+          <div class="cierre-idea"><span class="num">01</span>La IA automatiza tareas, no reemplaza el juicio
+            pedagógico.</div>
+          <div class="cierre-idea"><span class="num">02</span>Todo material generado debe revisarse, adaptarse y
+            contextualizarse.</div>
+          <div class="cierre-idea"><span class="num">03</span>El docente sigue siendo curador, mediador y responsable
+            ético del aprendizaje.</div>
+        </div>
+
+        <button class="boton boton-primario" id="botonDescargarGuia">📄 Descargar guía de uso docente</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Herramientas de Apoyo Docente con IA · Recurso práctico para maestría en educación · Todo el contenido generado por
+    IA debe ser revisado por el docente antes de su uso en clase.
+  </footer>
+
+  <!-- ============================================================
+     LIBRERÍAS PARA REALIDAD AUMENTADA (cargadas pero NO activan
+     la cámara hasta que el usuario presiona "Iniciar experiencia AR")
+     ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
+
+  <script>
+    /* ================================================================
+       1. NAVEGACIÓN MÓVIL
+       ================================================================ */
+    document.getElementById('botonMenu').addEventListener('click', function () {
+      var links = document.getElementById('navLinks');
+      var abierto = links.classList.toggle('abierto');
+      this.setAttribute('aria-expanded', abierto);
+    });
+    document.querySelectorAll('#navLinks a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        document.getElementById('navLinks').classList.remove('abierto');
+        document.getElementById('botonMenu').setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* ================================================================
+       2. COPIAR PROMPTS AL PORTAPAPELES
+       Cada botón [data-copiar="ID"] copia el contenido del elemento #ID
+       ================================================================ */
+    document.querySelectorAll('.boton-copiar').forEach(function (boton) {
+      boton.addEventListener('click', function () {
+        var idObjetivo = this.getAttribute('data-copiar');
+        var elemento = document.getElementById(idObjetivo);
+        if (!elemento) return;
+        var texto = elemento.textContent;
+
+        var marcarCopiado = function (btn) {
+          var textoOriginal = btn.textContent;
+          btn.textContent = '✓ Copiado';
+          btn.classList.add('copiado');
+          setTimeout(function () {
+            btn.textContent = textoOriginal;
+            btn.classList.remove('copiado');
+          }, 1800);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(texto).then(function () {
+            marcarCopiado(boton);
+          }).catch(function () {
+            copiarConFallback(texto);
+            marcarCopiado(boton);
+          });
+        } else {
+          copiarConFallback(texto);
+          marcarCopiado(boton);
+        }
+      });
+    });
+
+    function copiarConFallback(texto) {
+      var areaTemporal = document.createElement('textarea');
+      areaTemporal.value = texto;
+      areaTemporal.style.position = 'fixed';
+      areaTemporal.style.opacity = '0';
+      document.body.appendChild(areaTemporal);
+      areaTemporal.select();
+      try { document.execCommand('copy'); } catch (e) { }
+      document.body.removeChild(areaTemporal);
+    }
+
+    /* ================================================================
+       3. SIMULADORES "ELEGIR OPCIÓN → MOSTRAR RESULTADO"
+       Cualquier grupo de .boton-opcion con data-resultado="idDelResultado"
+       activa/desactiva el resultado correspondiente y marca el botón activo
+       dentro de su mismo contenedor .simulador-opciones
+       ================================================================ */
+    document.querySelectorAll('.simulador-opciones').forEach(function (grupo) {
+      var botones = grupo.querySelectorAll('.boton-opcion[data-resultado]');
+      if (botones.length === 0) return;
+      botones.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          // desactivar resultados previos del mismo grupo
+          botones.forEach(function (b) {
+            b.classList.remove('activo');
+            var resPrevio = document.getElementById(b.getAttribute('data-resultado'));
+            if (resPrevio) resPrevio.classList.remove('visible');
+          });
+          this.classList.add('activo');
+          var resultado = document.getElementById(this.getAttribute('data-resultado'));
+          if (resultado) {
+            resultado.classList.add('visible');
+            resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      });
+    });
+
+    /* Selección simple de pastillas (sin resultado asociado, ej. visuales/slides) */
+    document.querySelectorAll('.simulador-opciones').forEach(function (grupo) {
+      var botones = grupo.querySelectorAll('.boton-opcion:not([data-resultado])');
+      botones.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          botones.forEach(function (b) { b.classList.remove('activo'); });
+          this.classList.add('activo');
+        });
+      });
+    });
+
+    /* ================================================================
+       4. RÚBRICA Y FEEDBACK SIMULADOS (sección 2)
+       ================================================================ */
+    var botonCrearRubrica = document.getElementById('botonCrearRubrica');
+    if (botonCrearRubrica) {
+      botonCrearRubrica.addEventListener('click', function () {
+        document.getElementById('resultadoRubrica').classList.add('visible');
+        this.style.display = 'none';
+      });
+    }
+    var botonGenerarFeedback = document.getElementById('botonGenerarFeedback');
+    if (botonGenerarFeedback) {
+      botonGenerarFeedback.addEventListener('click', function () {
+        document.getElementById('resultadoFeedback').classList.add('visible');
+        this.style.display = 'none';
+      });
+    }
+
+    /* ================================================================
+       5. APOYOS DE ACCESIBILIDAD (sección 9): solo marca selección visual,
+       el resultado simulado ya está visible de forma permanente como ejemplo
+       ================================================================ */
+    var opcionesApoyo = document.getElementById('opcionesApoyo');
+    if (opcionesApoyo) {
+      opcionesApoyo.querySelectorAll('.boton-opcion').forEach(function (b) {
+        b.addEventListener('click', function () { this.classList.toggle('activo'); });
+      });
+    }
+
+    /* ================================================================
+       6. COMPARADOR DE HERRAMIENTAS: filtro por categoría
+       ================================================================ */
+    var filtrosComparador = document.getElementById('filtrosComparador');
+    if (filtrosComparador) {
+      var botonesFiltro = filtrosComparador.querySelectorAll('.boton-opcion');
+      var filas = document.querySelectorAll('#tablaComparador tbody tr');
+      botonesFiltro.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          botonesFiltro.forEach(function (b) { b.classList.remove('activo'); });
+          this.classList.add('activo');
+          var filtro = this.getAttribute('data-filtro');
+          filas.forEach(function (fila) {
+            if (filtro === 'todos' || fila.getAttribute('data-cat') === filtro) {
+              fila.style.display = '';
+            } else {
+              fila.style.display = 'none';
+            }
+          });
+        });
+      });
+    }
+
+    /* ================================================================
+       7. DATOS PARA LA EXPERIENCIA AR (editable por el docente)
+       ================================================================ */
+    var GRUPOS_AR = [
+      {
+        titulo: '1. Planificación',
+        herramientas: ['MagicSchool AI', 'Eduaide.AI', 'Brisk Teaching'],
+        necesidad: 'Diseñar sesiones de clase completas a partir de un objetivo de aprendizaje.',
+        comoSeUsa: 'El docente describe tema, duración y nivel; la herramienta propone una estructura inicial.',
+        producto: 'Plan de sesión con momentos de inicio, desarrollo y cierre.',
+        revisar: 'Alineación con el sílabo, nivel del curso y contexto institucional.',
+        riesgo: 'Aplicar el plan sin adaptarlo al grupo real de estudiantes.'
+      },
+      {
+        titulo: '2. Rúbricas y feedback',
+        herramientas: ['MagicSchool AI', 'Brisk Teaching', 'CoGrader'],
+        necesidad: 'Evaluar con criterios claros y dar retroalimentación a tiempo.',
+        comoSeUsa: 'Se describe la actividad o se carga una rúbrica existente para calificar entregas.',
+        producto: 'Rúbrica con niveles de logro y comentarios formativos por estudiante.',
+        revisar: 'Justicia y claridad de los criterios; tono de los comentarios.',
+        riesgo: 'Publicar calificaciones o comentarios sin revisión humana previa.'
+      },
+      {
+        titulo: '3. Materiales y lectura',
+        herramientas: ['Diffit', 'NotebookLM', 'Eduaide.AI'],
+        necesidad: 'Adaptar un mismo contenido a distintos niveles de comprensión.',
+        comoSeUsa: 'Se sube el texto base y se elige el nivel de salida o el tipo de recurso a generar.',
+        producto: 'Versiones del texto por nivel, glosarios y guías de estudio.',
+        revisar: 'Que cada versión conserve precisión conceptual del original.',
+        riesgo: 'Simplificar de más y perder profundidad académica.'
+      },
+      {
+        titulo: '4. Presentaciones',
+        herramientas: ['Gamma', 'Canva', 'Microsoft Copilot'],
+        necesidad: 'Crear diapositivas claras y visuales sin invertir horas en diseño.',
+        comoSeUsa: 'Se describe el tema y la estructura deseada, o se parte de un texto/presentación existente.',
+        producto: 'Borrador de diapositivas exportable y editable.',
+        revisar: 'Contenido, ejemplos, diseño, fuentes y alineación con el logro de aprendizaje.',
+        riesgo: 'Proyectar diapositivas con información no verificada o imágenes sin derechos claros.'
+      },
+      {
+        titulo: '5. Fuentes confiables',
+        herramientas: ['Consensus', 'Google Scholar', 'Elicit'],
+        necesidad: 'Sustentar una clase con evidencia académica verificable.',
+        comoSeUsa: 'Se plantea una pregunta de investigación y se revisan los papers o síntesis sugeridos.',
+        producto: 'Lista de fuentes, síntesis con referencias o tabla comparativa de estudios.',
+        revisar: 'Autor, año, revista, metodología y pertinencia para el contexto del curso.',
+        riesgo: 'Citar una fuente que no se ha leído o usar referencias inventadas.'
+      },
+      {
+        titulo: '6. Visuales e imágenes',
+        herramientas: ['Canva', 'Adobe Firefly', 'Microsoft Designer'],
+        necesidad: 'Explicar un concepto complejo mediante una imagen o infografía.',
+        comoSeUsa: 'Se describe la escena o el concepto a representar visualmente.',
+        producto: 'Infografía, imagen explicativa o póster de clase.',
+        revisar: 'Exactitud, derechos de uso y posibles sesgos visuales.',
+        riesgo: 'Reforzar estereotipos visuales sin notarlo.'
+      },
+      {
+        titulo: '7. Gestión y seguimiento',
+        herramientas: ['Moodle', 'Google Classroom', 'Brisk Teaching'],
+        necesidad: 'Ordenar entregas, alertas de riesgo y necesidades de feedback.',
+        comoSeUsa: 'El panel muestra el estado de cada estudiante; el docente decide la acción.',
+        producto: 'Panel de seguimiento con estado de entregas y nivel de riesgo.',
+        revisar: 'Interpretar las razones reales detrás de cada alerta antes de actuar.',
+        riesgo: 'Tratar una alerta automática como diagnóstico definitivo del estudiante.'
+      }
+    ];
+
+    var FLUJO_AR = {
+      'Necesidad docente': 'El profesor parte de una necesidad real: planificar, crear, adaptar, evaluar o buscar fuentes.',
+      'Selección de herramienta': 'La herramienta se elige según el problema, no por moda.',
+      'Prompt o entrada': 'Mientras más claro sea el pedido, mejor será el resultado inicial.',
+      'Producto generado': 'La IA entrega un borrador, no una versión final.',
+      'Revisión docente': 'El docente revisa precisión, profundidad, sesgos, derechos de autor y alineación pedagógica.',
+      'Uso en clase': 'El recurso solo debe usarse después de ser validado y contextualizado.'
+    };
+
+    /* ================================================================
+       8. CONSTRUCCIÓN DEL FALLBACK 3D (mesa sin cámara)
+       ================================================================ */
+    function construirFallbackAR() {
+      var grid = document.getElementById('gridFallbackAR');
+      if (!grid || grid.children.length > 0) return; // ya construido
+      GRUPOS_AR.forEach(function (grupo, indice) {
+        var tarjeta = document.createElement('div');
+        tarjeta.className = 'ar-tarjeta-3d';
+        tarjeta.setAttribute('tabindex', '0');
+        tarjeta.setAttribute('role', 'button');
+        tarjeta.setAttribute('aria-label', 'Ver detalle de ' + grupo.titulo);
+
+        var listaHerramientas = grupo.herramientas.map(function (h) { return '<li>' + h + '</li>'; }).join('');
+        tarjeta.innerHTML = '<strong>' + grupo.titulo + '</strong><ul>' + listaHerramientas + '</ul>';
+
+        var mostrarDetalle = function () {
+          var caja = document.getElementById('arTarjetaInfoFallback');
+          caja.innerHTML =
+            '<h4>' + grupo.titulo + '</h4>' +
+            '<p><strong>Qué necesidad resuelve:</strong> ' + grupo.necesidad + '</p>' +
+            '<p style="margin-top:8px;"><strong>Cómo se usa:</strong> ' + grupo.comoSeUsa + '</p>' +
+            '<p style="margin-top:8px;"><strong>Producto generado:</strong> ' + grupo.producto + '</p>' +
+            '<p style="margin-top:8px;"><strong>Qué debe revisar el docente:</strong> ' + grupo.revisar + '</p>' +
+            '<p style="margin-top:8px;"><strong>Riesgo si se usa sin criterio:</strong> ' + grupo.riesgo + '</p>';
+          caja.classList.add('visible');
+        };
+
+        tarjeta.addEventListener('click', mostrarDetalle);
+        tarjeta.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') mostrarDetalle();
+        });
+
+        grid.appendChild(tarjeta);
+      });
+    }
+
+    /* Flujo completo (siempre visible, no depende de cámara) */
+    var flujoEscenaAR = document.getElementById('flujoEscenaAR');
+    if (flujoEscenaAR) {
+      flujoEscenaAR.querySelectorAll('.ar-flujo-nodo').forEach(function (nodo) {
+        nodo.addEventListener('click', function () {
+          flujoEscenaAR.querySelectorAll('.ar-flujo-nodo').forEach(function (n) { n.classList.remove('activo'); });
+          this.classList.add('activo');
+          var clave = this.getAttribute('data-flujo');
+          var caja = document.getElementById('arTarjetaInfoFlujo');
+          caja.innerHTML = '<h4>' + clave + '</h4><p>' + FLUJO_AR[clave] + '</p>';
+          caja.classList.add('visible');
+        });
+      });
+    }
+
+    /* ================================================================
+       9. ACTIVACIÓN DE LA CÁMARA AR — SOLO AL PRESIONAR EL BOTÓN
+       No se solicitan permisos de cámara al cargar la página.
+       Si la cámara no está disponible o el permiso es denegado,
+       se muestra el fallback 3D sin cámara.
+       ================================================================ */
+    var arYaIniciada = false;
+
+    document.getElementById('botonIniciarAR').addEventListener('click', function () {
+      if (arYaIniciada) return;
+      arYaIniciada = true;
+      var boton = this;
+      boton.textContent = 'Activando cámara…';
+      boton.disabled = true;
+
+      var sinCamaraDisponible = !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+      if (sinCamaraDisponible) {
+        activarFallback();
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function (stream) {
+          // Liberamos este stream de prueba; AR.js gestionará su propio acceso a la cámara.
+          stream.getTracks().forEach(function (track) { track.stop(); });
+          montarEscenaAR();
+        })
+        .catch(function () {
+          // Permiso denegado o sin cámara: usar fallback 3D sin cámara
+          activarFallback();
+        });
+    });
+
+    function activarFallback() {
+      document.getElementById('botonIniciarAR').style.display = 'none';
+      var fallback = document.getElementById('arFallback');
+      fallback.style.display = 'block';
+      construirFallbackAR();
+      fallback.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function montarEscenaAR() {
+      var contenedor = document.getElementById('contenedorAR');
+      contenedor.classList.add('activo');
+      document.getElementById('botonIniciarAR').style.display = 'none';
+
+      // Cargar AR.js dinámicamente solo en este momento (tras permiso concedido)
+      var script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.1/aframe-ar.min.js';
+      script.onload = function () { construirEscenaAFrame(contenedor); };
+      script.onerror = function () {
+        // Si la librería no carga (por ejemplo, sin red), usar el fallback 3D
+        contenedor.classList.remove('activo');
+        activarFallback();
+      };
+      document.head.appendChild(script);
+    }
+
+    function construirEscenaAFrame(contenedor) {
+      var escena = document.createElement('a-scene');
+      escena.setAttribute('embedded', '');
+      escena.setAttribute('vr-mode-ui', 'enabled: false');
+      escena.setAttribute('arjs', 'sourceType: webcam; debugUIEnabled: false; detectionMode: mono;');
+      escena.setAttribute('renderer', 'logarithmicDepthBuffer: true;');
+
+      // Cámara AR
+      var camara = document.createElement('a-entity');
+      camara.setAttribute('camera', '');
+      escena.appendChild(camara);
+
+      // Marcador genérico "hiro" como anclaje (estándar y ampliamente probado en AR.js)
+      var marcador = document.createElement('a-marker');
+      marcador.setAttribute('preset', 'hiro');
+
+      // Construir tarjetas 3D dentro del marcador, distribuidas en mesa
+      var columnas = 4;
+      var espacio = 0.9;
+      GRUPOS_AR.forEach(function (grupo, indice) {
+        var fila = Math.floor(indice / columnas);
+        var col = indice % columnas;
+        var x = (col - 1.5) * espacio;
+        var z = fila * espacio - 0.4;
+
+        var tarjeta = document.createElement('a-plane');
+        tarjeta.setAttribute('position', x + ' 0.05 ' + z);
+        tarjeta.setAttribute('rotation', '-90 0 0');
+        tarjeta.setAttribute('width', '0.75');
+        tarjeta.setAttribute('height', '0.5');
+        tarjeta.setAttribute('color', '#FFFFFF');
+        tarjeta.setAttribute('class', 'clicable');
+        tarjeta.dataset.indiceGrupo = indice;
+
+        var texto = document.createElement('a-text');
+        texto.setAttribute('value', grupo.titulo + '\n' + grupo.herramientas.join('\n'));
+        texto.setAttribute('align', 'center');
+        texto.setAttribute('color', '#1A2E44');
+        texto.setAttribute('width', '1.4');
+        texto.setAttribute('position', '0 0.01 0');
+        texto.setAttribute('rotation', '0 0 0');
+
+        tarjeta.appendChild(texto);
+
+        tarjeta.addEventListener('click', function () {
+          mostrarInfoARReal(grupo);
+        });
+
+        marcador.appendChild(tarjeta);
+      });
+
+      escena.appendChild(marcador);
+      contenedor.appendChild(escena);
+
+      // Botón flotante para detener cámara y volver
+      var botonDetener = document.createElement('button');
+      botonDetener.textContent = '✕ Salir de AR';
+      botonDetener.className = 'boton boton-secundario boton-chico';
+      botonDetener.style.position = 'absolute';
+      botonDetener.style.top = '14px';
+      botonDetener.style.right = '14px';
+      botonDetener.style.zIndex = '20';
+      botonDetener.addEventListener('click', detenerAR);
+      contenedor.appendChild(botonDetener);
+    }
+
+    function mostrarInfoARReal(grupo) {
+      var caja = document.getElementById('arTarjetaInfo');
+      caja.innerHTML =
+        '<h4>' + grupo.titulo + '</h4>' +
+        '<p><strong>Qué necesidad resuelve:</strong> ' + grupo.necesidad + '</p>' +
+        '<p style="margin-top:6px;"><strong>Cómo se usa:</strong> ' + grupo.comoSeUsa + '</p>' +
+        '<p style="margin-top:6px;"><strong>Producto generado:</strong> ' + grupo.producto + '</p>' +
+        '<p style="margin-top:6px;"><strong>Qué debe revisar el docente:</strong> ' + grupo.revisar + '</p>';
+      caja.classList.add('visible');
+    }
+
+    function detenerAR() {
+      var contenedor = document.getElementById('contenedorAR');
+      // Detener cualquier stream de video activo dentro de la escena
+      var videos = contenedor.querySelectorAll('video');
+      videos.forEach(function (v) {
+        if (v.srcObject) {
+          v.srcObject.getTracks().forEach(function (t) { t.stop(); });
+        }
+      });
+      contenedor.innerHTML = '<div class="ar-tarjeta-info" id="arTarjetaInfo"></div>';
+      contenedor.classList.remove('activo');
+      document.getElementById('botonIniciarAR').style.display = 'inline-flex';
+      document.getElementById('botonIniciarAR').disabled = false;
+      document.getElementById('botonIniciarAR').textContent = '📷 Iniciar experiencia AR';
+      arYaIniciada = false;
+    }
+
+    /* ================================================================
+       10. MATRIZ EDITABLE
+       ================================================================ */
+    var CAMPOS_MATRIZ = ['necesidad', 'herramienta', 'uso', 'producto', 'revision', 'etica'];
+    var EJEMPLO_MATRIZ = [
+      'Preparar una sesión de 90 min sobre liderazgo institucional',
+      'MagicSchool AI',
+      'Describir el tema y la duración para obtener un plan inicial',
+      'Plan de sesión con actividad y cierre',
+      'Verificar alineación con el sílabo y el nivel del grupo',
+      'No usar datos reales de estudiantes en la plataforma'
+    ];
+
+    function crearFilaMatriz(valores) {
+      var fila = document.createElement('tr');
+      CAMPOS_MATRIZ.forEach(function (campo, i) {
+        var celda = document.createElement('td');
+        var input = document.createElement('textarea');
+        input.rows = 2;
+        input.className = 'campo-matriz';
+        input.dataset.campo = campo;
+        if (valores && valores[i]) input.value = valores[i];
+        celda.appendChild(input);
+        fila.appendChild(celda);
+      });
+      return fila;
+    }
+
+    var cuerpoMatriz = document.getElementById('cuerpoMatriz');
+    if (cuerpoMatriz) {
+      for (var f = 0; f < 4; f++) {
+        cuerpoMatriz.appendChild(crearFilaMatriz());
+      }
+    }
+
+    var avisoMatriz = document.getElementById('avisoMatriz');
+    function mostrarAvisoMatriz(texto) {
+      if (!avisoMatriz) return;
+      avisoMatriz.textContent = texto;
+      setTimeout(function () { avisoMatriz.textContent = ''; }, 3000);
+    }
+
+    var botonVerEjemploMatriz = document.getElementById('botonVerEjemploMatriz');
+    if (botonVerEjemploMatriz) {
+      botonVerEjemploMatriz.addEventListener('click', function () {
+        var primeraFila = cuerpoMatriz.querySelector('tr');
+        if (!primeraFila) return;
+        var campos = primeraFila.querySelectorAll('textarea');
+        campos.forEach(function (campo, i) { campo.value = EJEMPLO_MATRIZ[i]; });
+        mostrarAvisoMatriz('Ejemplo cargado en la primera fila.');
+      });
+    }
+
+    var botonGuardarMatriz = document.getElementById('botonGuardarMatriz');
+    if (botonGuardarMatriz) {
+      botonGuardarMatriz.addEventListener('click', function () {
+        var filas = [];
+        cuerpoMatriz.querySelectorAll('tr').forEach(function (fila) {
+          var datosFila = {};
+          fila.querySelectorAll('textarea').forEach(function (campo) {
+            datosFila[campo.dataset.campo] = campo.value;
+          });
+          filas.push(datosFila);
+        });
+        try {
+          localStorage.setItem('matrizApoyoDocenteIA', JSON.stringify(filas));
+          mostrarAvisoMatriz('Respuesta guardada en este navegador.');
+        } catch (e) {
+          mostrarAvisoMatriz('No se pudo guardar (almacenamiento no disponible).');
+        }
+      });
+    }
+
+    // Restaurar matriz guardada anteriormente, si existe
+    try {
+      var matrizGuardada = localStorage.getItem('matrizApoyoDocenteIA');
+      if (matrizGuardada && cuerpoMatriz) {
+        var filasGuardadas = JSON.parse(matrizGuardada);
+        cuerpoMatriz.innerHTML = '';
+        filasGuardadas.forEach(function (datosFila) {
+          var valores = CAMPOS_MATRIZ.map(function (campo) { return datosFila[campo] || ''; });
+          cuerpoMatriz.appendChild(crearFilaMatriz(valores));
+        });
+      }
+    } catch (e) { /* localStorage no disponible: se ignora silenciosamente */ }
+
+    var botonLimpiarMatriz = document.getElementById('botonLimpiarMatriz');
+    if (botonLimpiarMatriz) {
+      botonLimpiarMatriz.addEventListener('click', function () {
+        cuerpoMatriz.innerHTML = '';
+        for (var f = 0; f < 4; f++) {
+          cuerpoMatriz.appendChild(crearFilaMatriz());
+        }
+        try { localStorage.removeItem('matrizApoyoDocenteIA'); } catch (e) { }
+        mostrarAvisoMatriz('Matriz limpiada.');
+      });
+    }
+
+    var botonExportarMatriz = document.getElementById('botonExportarMatriz');
+    if (botonExportarMatriz) {
+      botonExportarMatriz.addEventListener('click', function () {
+        var filas = [];
+        cuerpoMatriz.querySelectorAll('tr').forEach(function (fila) {
+          var datosFila = {};
+          fila.querySelectorAll('textarea').forEach(function (campo) {
+            datosFila[campo.dataset.campo] = campo.value || '—';
+          });
+          filas.push(datosFila);
+        });
+
+        var ventana = window.open('', '_blank');
+        var filasHTML = filas.map(function (d) {
+          return '<tr>' +
+            '<td>' + escaparHTML(d.necesidad) + '</td>' +
+            '<td>' + escaparHTML(d.herramienta) + '</td>' +
+            '<td>' + escaparHTML(d.uso) + '</td>' +
+            '<td>' + escaparHTML(d.producto) + '</td>' +
+            '<td>' + escaparHTML(d.revision) + '</td>' +
+            '<td>' + escaparHTML(d.etica) + '</td>' +
+            '</tr>';
+        }).join('');
+
+        ventana.document.write(
+          '<html><head><meta charset="UTF-8"><title>Matriz de Apoyo Docente con IA</title>' +
+          '<style>' +
+          'body{font-family:Arial,sans-serif;padding:24px;color:#1F2933;}' +
+          'h1{color:#1A2E44;font-size:18px;margin-bottom:4px;}' +
+          'p{color:#5B6B7A;font-size:12px;margin-bottom:18px;}' +
+          'table{width:100%;border-collapse:collapse;font-size:11px;}' +
+          'th{background:#1A2E44;color:#fff;text-align:left;padding:8px;}' +
+          'td{border:1px solid #ddd;padding:8px;vertical-align:top;}' +
+          '</style></head><body>' +
+          '<h1>Matriz · Herramientas de Apoyo Docente con IA</h1>' +
+          '<p>Necesidad docente, herramienta elegida y revisión aplicada.</p>' +
+          '<table><thead><tr><th>Necesidad docente</th><th>Herramienta</th><th>Cómo se usaría</th><th>Producto generado</th><th>Revisión del docente</th><th>Cuidado ético</th></tr></thead>' +
+          '<tbody>' + filasHTML + '</tbody></table>' +
+          '</body></html>'
+        );
+        ventana.document.close();
+        setTimeout(function () { ventana.print(); }, 400);
+      });
+    }
+
+    function escaparHTML(texto) {
+      var div = document.createElement('div');
+      div.textContent = texto || '';
+      return div.innerHTML;
+    }
+
+    /* ================================================================
+       11. CHECKLIST ÉTICO
+       ================================================================ */
+    var ETHICS_CHECKLIST = [
+      '¿Está alineado con el logro de aprendizaje?',
+      '¿Respeta el nivel del curso?',
+      '¿Tiene información correcta?',
+      '¿Incluye fuentes verificables cuando corresponde?',
+      '¿Evita referencias inventadas?',
+      '¿Evita sesgos o estereotipos?',
+      '¿Protege datos personales?',
+      '¿Respeta derechos de autor?',
+      '¿Fue revisado por el docente?',
+      '¿El uso de IA fue documentado?',
+      '¿El recurso realmente ayuda al aprendizaje?',
+      '¿El estudiante seguirá teniendo un rol activo?'
+    ];
+
+    var checklistContenedor = document.getElementById('checklistEtico');
+    if (checklistContenedor) {
+      ETHICS_CHECKLIST.forEach(function (pregunta, i) {
+        var item = document.createElement('div');
+        item.className = 'checklist-item';
+        var idCheck = 'checklistItem' + i;
+        item.innerHTML =
+          '<input type="checkbox" id="' + idCheck + '">' +
+          '<label for="' + idCheck + '">' + pregunta + '</label>';
+        checklistContenedor.appendChild(item);
+      });
+
+      var checkboxes = checklistContenedor.querySelectorAll('input[type="checkbox"]');
+      var relleno = document.getElementById('checklistRelleno');
+      var conteo = document.getElementById('checklistConteo');
+
+      function actualizarChecklist() {
+        var marcados = Array.prototype.filter.call(checkboxes, function (c) { return c.checked; }).length;
+        var porcentaje = Math.round((marcados / checkboxes.length) * 100);
+        relleno.style.width = porcentaje + '%';
+        conteo.textContent = marcados + ' / ' + checkboxes.length + ' revisados';
+      }
+      checkboxes.forEach(function (c) { c.addEventListener('change', actualizarChecklist); });
+      actualizarChecklist();
+    }
+
+    /* ================================================================
+       12. DESCARGAR GUÍA DE USO DOCENTE (resumen imprimible)
+       ================================================================ */
+    document.getElementById('botonDescargarGuia').addEventListener('click', function () {
+      var filas = GRUPOS_AR.map(function (g) {
+        return '<tr>' +
+          '<td>' + g.titulo + '</td>' +
+          '<td>' + g.herramientas.join(', ') + '</td>' +
+          '<td>' + g.comoSeUsa + '</td>' +
+          '<td>' + g.producto + '</td>' +
+          '<td>' + g.revisar + '</td>' +
+          '<td>' + g.riesgo + '</td>' +
+          '</tr>';
+      }).join('');
+
+      var ventana = window.open('', '_blank');
+      ventana.document.write(
+        '<html><head><meta charset="UTF-8"><title>Guía de uso docente · IA</title>' +
+        '<style>' +
+        'body{font-family:Arial,sans-serif;padding:28px;color:#1F2933;}' +
+        'h1{color:#1A2E44;font-size:20px;margin-bottom:6px;}' +
+        'p.subtitulo{color:#5B6B7A;font-size:13px;margin-bottom:20px;}' +
+        'table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:24px;}' +
+        'th{background:#1A2E44;color:#fff;text-align:left;padding:8px;}' +
+        'td{border:1px solid #ddd;padding:8px;vertical-align:top;}' +
+        '.cierre{background:#1A2E44;color:#fff;padding:16px;border-radius:8px;font-size:13px;}' +
+        '</style></head><body>' +
+        '<h1>Guía de uso docente · Herramientas de Apoyo Docente con IA</h1>' +
+        '<p class="subtitulo">Qué herramienta usar, en qué momento, qué producto genera y qué debe revisar el docente.</p>' +
+        '<table><thead><tr><th>Necesidad</th><th>Herramientas</th><th>Cómo se usa</th><th>Producto generado</th><th>Qué revisar</th><th>Riesgo si se usa sin criterio</th></tr></thead>' +
+        '<tbody>' + filas + '</tbody></table>' +
+        '<div class="cierre">"La IA apoya al docente cuando reduce carga operativa, acelera la creación de recursos y permite dedicar más tiempo al acompañamiento humano."</div>' +
+        '</body></html>'
+      );
+      ventana.document.close();
+      setTimeout(function () { ventana.print(); }, 400);
+    });
+  </script>
+
+</body>
+
+</html>

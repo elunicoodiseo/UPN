@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA, Dashboards y BI para Toma de Decisiones Estratégicas en Educación</title>
+    <!-- Tailwind CSS para un diseño responsivo táctico de alta gama -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#020617', // Azul pizarra oscuro
+                            navy: '#0f172a', // Azul oscuro profundo
+                            primary: '#0ea5e9', // cian eléctrico
+                            secondary: '#f59e0b', // dorado/ámbar
+                            orange: '#f97316', // naranja advertencia
+                            card: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons para una iconografía de mando intuitiva -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- A-Frame para un renderizado 3D óptimo y compatibilidad WebGL -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Configuración personalizada de barras de scroll premium */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9;
+        }
+
+        /* Garantizar transparencia y adaptabilidad WebGL en el visor */
+        a-scene {
+            background-color: transparent !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 10;
+        }
+
+        .a-canvas {
+            background-color: transparent !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-dark text-slate-100 min-h-screen selection:bg-brand-primary selection:text-brand-dark">
+
+    <!-- Header / Barra de Navegación -->
+    <header
+        class="border-b border-slate-800 bg-brand-dark/90 backdrop-blur sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-brand-primary/10 rounded-lg border border-brand-primary/30">
+                    <i data-lucide="brain-circuit" class="w-6 h-6 text-brand-primary"></i>
+                </div>
+                <div>
+                    <span
+                        class="font-bold text-lg tracking-tight bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">EDUMANDOS-IA</span>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Inteligencia de Datos
+                    </p>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#arquitectura"
+                    class="text-slate-300 hover:text-brand-primary transition-colors">Arquitectura</a>
+                <a href="#analitica" class="text-slate-300 hover:text-brand-primary transition-colors">Analítica</a>
+                <a href="#dashboard" class="text-slate-300 hover:text-brand-primary transition-colors">Dashboard</a>
+                <a href="#simulador" class="text-slate-300 hover:text-brand-primary transition-colors">Simulador</a>
+                <a href="#casos" class="text-slate-300 hover:text-brand-primary transition-colors">Casos Reales</a>
+                <a href="#herramientas"
+                    class="text-slate-300 hover:text-brand-primary transition-colors">Herramientas</a>
+                <a href="#etica" class="text-slate-300 hover:text-brand-primary transition-colors">Ética</a>
+            </nav>
+            <div>
+                <a href="#simulador"
+                    class="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-blue-600 hover:from-brand-primary hover:to-blue-700 text-slate-950 font-bold rounded-lg transition-all duration-300 shadow-lg shadow-brand-primary/20 text-xs sm:text-sm">
+                    <span>Simular What-If</span>
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Héroe / Inicio -->
+    <section
+        class="relative overflow-hidden pt-12 pb-20 md:py-28 border-b border-slate-800 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-brand-dark to-brand-dark">
+        <!-- Efecto Grid de fondo -->
+        <div
+            class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <!-- Etiqueta Logro -->
+            <div
+                class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-brand-primary/20 bg-brand-primary/5 text-xs text-brand-primary font-semibold mb-6 mx-auto">
+                <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
+                <span>Logro de Aprendizaje: Gestión Institucional y Calidad Educativa</span>
+            </div>
+
+            <!-- Título Principal -->
+            <h1
+                class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-5xl mx-auto">
+                IA, Dashboards y Business Intelligence para la <span
+                    class="bg-gradient-to-r from-brand-primary via-cyan-300 to-brand-secondary bg-clip-text text-transparent">Toma
+                    de Decisiones Estratégicas</span> en Educación
+            </h1>
+
+            <!-- Subtítulo -->
+            <p class="text-base sm:text-xl text-slate-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Transformando datos educativos en decisiones inteligentes, predictivas y éticas para optimizar la
+                gestión académica, la asignación de recursos y la retención estudiantil.
+            </p>
+
+            <!-- Botones Principales -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="toggleARScene(true)"
+                    class="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 bg-gradient-to-r from-brand-secondary to-brand-orange hover:from-brand-secondary hover:to-brand-orange/90 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 shadow-xl shadow-brand-secondary/20 hover:scale-105 active:scale-95 group">
+                    <i data-lucide="layers" class="w-6 h-6 animate-bounce"></i>
+                    <span>Activar experiencia en Realidad Aumentada</span>
+                </button>
+                <a href="#arquitectura"
+                    class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-8 py-4 border border-slate-700 hover:border-slate-500 hover:bg-slate-800/30 text-slate-300 rounded-xl transition-all duration-300 text-lg">
+                    <span>Explorar Contenido</span>
+                    <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                </a>
+            </div>
+
+            <!-- Meta pedagógica desplegada -->
+            <div
+                class="mt-12 p-6 rounded-2xl border border-slate-800 bg-brand-navy/60 backdrop-blur-md max-w-4xl mx-auto text-left relative">
+                <div
+                    class="absolute -top-3 -left-3 bg-brand-primary text-brand-dark p-1.5 rounded-lg font-bold text-xs flex items-center gap-1">
+                    <i data-lucide="award" class="w-3.5 h-3.5"></i> META PEDAGÓGICA
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 italic leading-relaxed pt-2">
+                    “Aplica soluciones basadas en Inteligencia Artificial para optimizar la gestión institucional, la
+                    toma de decisiones estratégicas y la mejora de la calidad educativa, integrando el análisis de datos
+                    y la automatización de procesos administrativos.”
+                </p>
+                <p>&nbsp;</p>
+                <p class="text-xs sm:text-sm text-slate-300 italic leading-relaxed pt-2 text-center">
+                    Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenedor de la Experiencia de Realidad Aumentada Flotante (Controlado por Estado de Opacidad) -->
+    <div id="ar-overlay-container"
+        class="fixed inset-0 z-50 bg-brand-dark opacity-0 pointer-events-none transition-all duration-500 flex flex-col">
+        <!-- Cabecera de la ventana AR -->
+        <div class="h-16 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between z-20 relative">
+            <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                <span class="font-bold text-brand-secondary tracking-wide text-sm sm:text-base">CENTRO DE MANDO EN
+                    REALIDAD AUMENTADA</span>
+            </div>
+            <!-- Indicador de navegación por gestos -->
+            <div class="hidden lg:flex items-center space-x-4 text-xs text-slate-400">
+                <span class="flex items-center gap-1"><i data-lucide="mouse-pointer"
+                        class="w-3.5 h-3.5 text-brand-primary"></i> Clic Izq + Arrastrar: Rotar</span>
+                <span class="flex items-center gap-1"><i data-lucide="move" class="w-3.5 h-3.5 text-brand-primary"></i>
+                    Clic Der + Arrastrar: Desplazar</span>
+                <span class="flex items-center gap-1"><i data-lucide="maximize"
+                        class="w-3.5 h-3.5 text-brand-primary"></i> Scroll: Zoom</span>
+            </div>
+            <button onclick="toggleARScene(false)"
+                class="p-2 bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors border border-slate-700">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Cuerpo del visor de AR -->
+        <div class="flex-1 relative flex flex-col md:flex-row overflow-hidden bg-black">
+            <!-- Feed de la cámara en vivo como fondo interactivo de AR -->
+            <video id="webcam" class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none z-0"
+                autoplay playsinline muted></video>
+
+            <!-- Lienzo 3D / A-Frame Scene -->
+            <div class="absolute inset-0 w-full h-full z-10" id="canvas-3d-container">
+                <a-scene embedded vr-mode-ui="enabled: false" class="w-full h-full"
+                    renderer="alpha: true; colorManagement: true;">
+                    <!-- Luces -->
+                    <a-light type="ambient" color="#ffffff" intensity="0.7"></a-light>
+                    <a-light type="directional" color="#0ea5e9" intensity="0.9" position="-1 2 1"></a-light>
+                    <a-light type="directional" color="#f97316" intensity="0.6" position="1 2 -1"></a-light>
+
+                    <!-- Cámara con id para manipulación y controles manuales -->
+                    <a-entity id="ar-camera" camera look-controls="enabled: false" wasd-controls="enabled: false"
+                        position="0 1.5 2.8">
+                        <a-cursor color="#0ea5e9" raycaster="objects: .clickable" visible="false"></a-cursor>
+                    </a-entity>
+
+                    <!-- CONTENEDOR ANIDADO PARA ROTACIÓN Y DESPLAZAMIENTO MANUAL CON RATÓN/TACTIL -->
+                    <a-entity id="ar-orbit-pivot" position="0 0.5 0" rotation="10 0 0">
+
+                        <!-- ELEMENTO CENTRAL: Consola Holográfica del Dashboard -->
+                        <a-entity id="holo-dashboard" position="0 0.6 -1.8">
+                            <!-- Soporte Grid Base del Dashboard de Gestión -->
+                            <a-grid position="0 -0.8 0" rotation="-90 0 0" width="3" height="3" color="#0ea5e9"
+                                opacity="0.15"></a-grid>
+
+                            <!-- Panel de Cristal de Fondo Principal -->
+                            <a-box position="0 0.05 -0.1" width="2.8" height="1.7" depth="0.05" color="#0f172a"
+                                opacity="0.8" roughness="0.5" metalness="0.8">
+                                <a-box position="0 0 0" width="2.84" height="1.74" depth="0.02" color="#0ea5e9"
+                                    opacity="0.4" wireframe="true"></a-box>
+                            </a-box>
+
+                            <!-- Título del Dashboard holográfico -->
+                            <a-text id="ar-dashboard-title" value="SISTEMA DE RETENCION IA" align="center"
+                                position="0 1.5 0.05" width="3.5" color="#0ea5e9" font="kelsonsans"></a-text>
+
+                            <!-- COLUMNAS DE KPI EN 3D (Reactivos al Simulador y Controles) -->
+
+                            <!-- Barra 1: Matrícula -->
+                            <a-entity id="ar-group-matricula" position="-0.9 -0.2 0.1">
+                                <a-cylinder id="ar-bar-matricula" radius="0.1" height="0.6" color="#3b82f6"
+                                    material="opacity: 0.85; roughness: 0.3; metalness: 0.5"></a-cylinder>
+                                <a-text id="ar-val-matricula" value="96%" align="center" position="0 0.45 0" width="2.0"
+                                    color="#ffffff" font="kelsonsans"></a-text>
+                                <a-text value="MATRICULA" align="center" position="0 -0.5 0" width="1.6"
+                                    color="#94a3b8"></a-text>
+                            </a-entity>
+
+                            <!-- Barra 2: Retención -->
+                            <a-entity id="ar-group-retencion" position="-0.3 -0.2 0.1">
+                                <a-cylinder id="ar-bar-retencion" radius="0.1" height="0.7" color="#10b981"
+                                    material="opacity: 0.85; roughness: 0.3; metalness: 0.5"></a-cylinder>
+                                <a-text id="ar-val-retencion" value="94.8%" align="center" position="0 0.5 0"
+                                    width="2.0" color="#ffffff" font="kelsonsans"></a-text>
+                                <a-text value="RETENCION" align="center" position="0 -0.5 0" width="1.6"
+                                    color="#94a3b8"></a-text>
+                            </a-entity>
+
+                            <!-- Barra 3: Riesgo Deserción -->
+                            <a-entity id="ar-group-riesgo" position="0.3 -0.2 0.1">
+                                <a-cylinder id="ar-bar-riesgo" radius="0.1" height="0.3" color="#f97316"
+                                    material="opacity: 0.85; roughness: 0.3; metalness: 0.5"></a-cylinder>
+                                <a-text id="ar-val-riesgo" value="3.1%" align="center" position="0 0.3 0" width="2.0"
+                                    color="#ffffff" font="kelsonsans"></a-text>
+                                <a-text value="RIESGO" align="center" position="0 -0.5 0" width="1.6"
+                                    color="#94a3b8"></a-text>
+                            </a-entity>
+
+                            <!-- Barra 4: Becas -->
+                            <a-entity id="ar-group-becas" position="0.9 -0.2 0.1">
+                                <a-cylinder id="ar-bar-becas" radius="0.1" height="0.45" color="#8b5cf6"
+                                    material="opacity: 0.85; roughness: 0.3; metalness: 0.5"></a-cylinder>
+                                <a-text id="ar-val-becas" value="42%" align="center" position="0 0.38 0" width="2.0"
+                                    color="#ffffff" font="kelsonsans"></a-text>
+                                <a-text value="BECAS" align="center" position="0 -0.5 0" width="1.6"
+                                    color="#94a3b8"></a-text>
+                            </a-entity>
+
+                            <!-- Semáforo de Riesgo Estudiantil Predictivo Derecho -->
+                            <a-entity position="1.6 0 0">
+                                <a-cylinder radius="0.06" height="1.0" color="#334155" opacity="0.9"></a-cylinder>
+                                <a-box position="0 0.2 0" width="0.22" height="0.7" depth="0.12" color="#1e293b"
+                                    wireframe="false">
+                                    <a-sphere id="ar-light-red" position="0 0.22 0.07" radius="0.06" color="#ef4444"
+                                        material="emissive: #ef4444; emissiveIntensity: 0.2"></a-sphere>
+                                    <a-sphere id="ar-light-orange" position="0 0 0.07" radius="0.06" color="#f97316"
+                                        material="emissive: #f97316; emissiveIntensity: 0.2"></a-sphere>
+                                    <a-sphere id="ar-light-green" position="0 -0.22 0.07" radius="0.06" color="#10b981"
+                                        material="emissive: #10b981; emissiveIntensity: 1.2"></a-sphere>
+                                </a-box>
+                            </a-entity>
+
+                            <!-- Red Neuronal Conectada Izquierda -->
+                            <a-entity position="-1.7 0.1 0" scale="0.6 0.6 0.6">
+                                <a-ring color="#0ea5e9" radius-inner="0.45" radius-outer="0.5" rotation="0 45 0"
+                                    animation="property: rotation; to: 360 405 360; loop: true; dur: 8000; easing: linear"></a-ring>
+                                <a-sphere position="0 0.5 0" radius="0.09" color="#0ea5e9"
+                                    material="emissive: #0ea5e9; emissiveIntensity: 0.6"></a-sphere>
+                                <a-sphere position="-0.4 -0.1 0" radius="0.08" color="#f59e0b"
+                                    material="emissive: #f59e0b; emissiveIntensity: 0.6"></a-sphere>
+                                <a-sphere position="0.4 -0.1 0" radius="0.08" color="#0ea5e9"
+                                    material="emissive: #0ea5e9; emissiveIntensity: 0.6"></a-sphere>
+                                <a-sphere position="0 -0.6 0" radius="0.09" color="#10b981"
+                                    material="emissive: #10b981; emissiveIntensity: 0.6"></a-sphere>
+                            </a-entity>
+
+                            <!-- Panel flotante: Humano en el Bucle -->
+                            <a-entity position="0 -0.95 0.1">
+                                <a-plane width="1.8" height="0.25" color="#f59e0b" opacity="0.95">
+                                    <a-text value="DECISION FINAL: VALIDACION HUMANA ETICA" align="center"
+                                        position="0 0 0.02" width="1.7" color="#020617" font="kelsonsans"></a-text>
+                                </a-plane>
+                            </a-entity>
+
+                            <!-- CARTEL ADICIONAL FLOTANTE DE NOTIFICACIÓN DE ALERTAS EN 3D (Reactivo) -->
+                            <a-entity id="ar-3d-popup" position="0 1.9 0.2" visible="false">
+                                <a-plane width="2.8" height="0.5" color="#0ea5e9" opacity="0.95">
+                                    <a-text id="ar-3d-popup-text" value="ALERTA: SIN ALERTAS ACTIVAS" align="center"
+                                        position="0 0 0.02" width="2.8" color="#ffffff" font="kelsonsans"></a-text>
+                                </a-plane>
+                            </a-entity>
+                        </a-entity>
+
+                    </a-entity>
+                </a-scene>
+            </div>
+
+            <!-- Panel de Control de la RA Lateral (Overlay HTML interactivo) -->
+            <div
+                class="relative w-full md:w-96 bg-slate-900/95 border-t md:border-t-0 md:border-l border-slate-800 p-4 z-20 flex flex-col justify-between overflow-y-auto max-h-64 md:max-h-full">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4 text-brand-primary"></i> Controladores AR
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4 leading-normal">
+                        Presiona los botones para explorar variables.
+                    </p>
+
+                    <!-- Botones de exploración pedagógica AR -->
+                    <div class="space-y-2.5">
+                        <button id="btn-ar-acad" onclick="triggerARAction('acad')"
+                            class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-700 bg-slate-850 hover:bg-slate-800 transition-all text-xs flex items-center justify-between">
+                            <span class="font-medium text-slate-200">1. Ver Datos Académicos</span>
+                            <span
+                                class="px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[10px] rounded border border-brand-primary/20">SIS
+                                + LMS</span>
+                        </button>
+                        <button id="btn-ar-riesgo" onclick="triggerARAction('riesgo')"
+                            class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-700 bg-slate-850 hover:bg-slate-800 transition-all text-xs flex items-center justify-between">
+                            <span class="font-medium text-slate-200">2. Ver Predicción de Riesgo</span>
+                            <span
+                                class="px-2 py-0.5 bg-brand-orange/10 text-brand-orange text-[10px] rounded border border-brand-orange/20">Modelo
+                                IA</span>
+                        </button>
+                        <button id="btn-ar-reco" onclick="triggerARAction('reco')"
+                            class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-700 bg-slate-850 hover:bg-slate-800 transition-all text-xs flex items-center justify-between">
+                            <span class="font-medium text-slate-200">3. Ver Recomendación IA</span>
+                            <span
+                                class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] rounded border border-purple-500/20">Prescriptiva</span>
+                        </button>
+                        <button id="btn-ar-humano" onclick="triggerARAction('humano')"
+                            class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-700 bg-slate-850 hover:bg-slate-800 transition-all text-xs flex items-center justify-between">
+                            <span class="font-medium text-slate-200">4. Decisión Humana Final</span>
+                            <span
+                                class="px-2 py-0.5 bg-brand-secondary/10 text-brand-secondary text-[10px] rounded border border-brand-secondary/20">Gobernanza</span>
+                        </button>
+                        <button id="btn-ar-comparar" onclick="triggerARAction('comparar')"
+                            class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-700 bg-slate-850 hover:bg-slate-800 transition-all text-xs flex items-center justify-between">
+                            <span class="font-medium text-slate-200">5. BI Tradicional vs BI Predictivo</span>
+                            <span
+                                class="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-[10px] rounded border border-cyan-500/20">Comparativa</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Caja de Alerta Dinámica de los Botones -->
+                <div class="mt-4 p-4 rounded-xl border border-slate-800 bg-slate-950/80">
+                    <div class="flex items-center space-x-2 text-xs font-bold text-brand-primary uppercase tracking-wide mb-1"
+                        id="ar-status-title">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                        <span>Estado del Sistema</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-normal" id="ar-status-desc">
+                        Interactúa con los controles superiores para cargar proyecciones holográficas en el espacio
+                        tridimensional de decisión.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 1: Del dato fragmentado a la inteligencia institucional -->
+    <section id="arquitectura" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Integración de Datos
+                y Estructura</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Del dato fragmentado a la inteligencia
+                institucional</h2>
+            <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                Los sistemas tradicionales de educación almacenan los datos en silos aislados. La verdadera optimización
+                de recursos e intervención temprana comienza al unificar la arquitectura del dato en un almacén de datos
+                único institucional.
+            </p>
+        </div>
+
+        <!-- Flujo Visual de Datos Interactivo -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 relative">
+
+            <!-- Nodo 1 -->
+            <div onclick="selectPipelineNode(1)"
+                class="group cursor-pointer p-6 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 transition-all duration-300 transform hover:-translate-y-1 relative"
+                id="node-card-1">
+                <div
+                    class="p-3 bg-slate-800 text-slate-400 group-hover:text-brand-primary group-hover:bg-slate-700/50 rounded-xl w-fit transition-colors">
+                    <i data-lucide="database" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-bold text-lg text-white mt-4 flex items-center justify-between">
+                    <span>1. Sistemas Transaccionales</span>
+                    <span class="text-xs text-slate-500 font-normal">Fase Entrada</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-2">
+                    Silos de datos: LMS (notas, accesos), SIS (matrículas), ERP (finanzas, becas), Recursos Humanos.
+                </p>
+                <div
+                    class="absolute right-4 bottom-4 text-xs font-bold text-slate-700 group-hover:text-brand-primary/20 transition-colors">
+                    ENTRADA</div>
+            </div>
+
+            <!-- Nodo 2 -->
+            <div onclick="selectPipelineNode(2)"
+                class="group cursor-pointer p-6 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 transition-all duration-300 transform hover:-translate-y-1 relative"
+                id="node-card-2">
+                <div
+                    class="p-3 bg-slate-800 text-slate-400 group-hover:text-brand-primary group-hover:bg-slate-700/50 rounded-xl w-fit transition-colors">
+                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-bold text-lg text-white mt-4 flex items-center justify-between">
+                    <span>2. Almacén de Datos (DW)</span>
+                    <span class="text-xs text-slate-500 font-normal">Fase ETL</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-2">
+                    Extracción, Transformación y Carga. Limpieza de duplicados, estandarización de formatos and
+                    gobernanza.
+                </p>
+                <div
+                    class="absolute right-4 bottom-4 text-xs font-bold text-slate-700 group-hover:text-brand-primary/20 transition-colors">
+                    PROCESO</div>
+            </div>
+
+            <!-- Nodo 3 -->
+            <div onclick="selectPipelineNode(3)"
+                class="group cursor-pointer p-6 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 transition-all duration-300 transform hover:-translate-y-1 relative"
+                id="node-card-3">
+                <div
+                    class="p-3 bg-slate-800 text-slate-400 group-hover:text-brand-primary group-hover:bg-slate-700/50 rounded-xl w-fit transition-colors">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-bold text-lg text-white mt-4 flex items-center justify-between">
+                    <span>3. Dashboard Directivo</span>
+                    <span class="text-xs text-slate-500 font-normal">Fase Visual</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-2">
+                    Visualización inteligente y cruzada. Indicadores de morosidad, retención y aprovechamiento docente.
+                </p>
+                <div
+                    class="absolute right-4 bottom-4 text-xs font-bold text-slate-700 group-hover:text-brand-primary/20 transition-colors">
+                    VISUAL</div>
+            </div>
+
+            <!-- Nodo 4 -->
+            <div onclick="selectPipelineNode(4)"
+                class="group cursor-pointer p-6 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 transition-all duration-300 transform hover:-translate-y-1 relative"
+                id="node-card-4">
+                <div
+                    class="p-3 bg-slate-800 text-slate-400 group-hover:text-brand-primary group-hover:bg-slate-700/50 rounded-xl w-fit transition-colors">
+                    <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-bold text-lg text-white mt-4 flex items-center justify-between">
+                    <span>4. Decisión Estratégica</span>
+                    <span class="text-xs text-slate-500 font-normal">Fase Acción</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-2">
+                    Acción humana potenciada por IA. Prevención del abandono, redistribución presupuestal y tutoría
+                    automatizada.
+                </p>
+                <div
+                    class="absolute right-4 bottom-4 text-xs font-bold text-slate-700 group-hover:text-brand-primary/20 transition-colors">
+                    IMPACTO</div>
+            </div>
+
+        </div>
+
+        <!-- Panel de Detalle del Flujo de Datos -->
+        <div class="mt-8 p-6 rounded-2xl border border-slate-800 bg-brand-navy/60 backdrop-blur-md transition-all duration-300"
+            id="pipeline-details-panel">
+            <h4 class="font-bold text-brand-primary flex items-center gap-2 mb-2">
+                <i data-lucide="info" class="w-5 h-5"></i>
+                <span id="pipeline-detail-title">Presiona cualquier paso del flujo de datos</span>
+            </h4>
+            <p class="text-sm text-slate-300 leading-relaxed" id="pipeline-detail-desc">
+                Explora cómo viajan los datos en una universidad o colegio de alta tecnología. Al hacer clic en las
+                fases superiores, podrás leer cómo interactúan los sistemas para lograr una toma de decisión integral.
+            </p>
+        </div>
+    </section>
+
+    <!-- Sección 2: Tipos de analítica -->
+    <section id="analitica" class="py-20 bg-slate-950/30 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Metodología de
+                    Análisis</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Evolución de la Analítica Educativa</h2>
+                <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                    Las instituciones inteligentes estructuran su análisis bajo tres pilares fundamentales para escalar
+                    de la simple revisión histórica a la acción preventiva en tiempo real.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Tarjeta 1: Descriptiva -->
+                <div
+                    class="p-8 rounded-2xl border border-slate-800 bg-brand-navy relative overflow-hidden group hover:border-brand-primary/30 transition-all duration-300">
+                    <div
+                        class="absolute top-0 right-0 p-4 font-bold text-5xl text-slate-800/20 group-hover:text-brand-primary/10 transition-colors">
+                        01</div>
+                    <div class="p-3 bg-brand-primary/10 text-brand-primary rounded-xl w-fit mb-6">
+                        <i data-lucide="line-chart" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-white mb-3">Analítica descriptiva: ¿Qué pasó?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Consolida datos del pasado para crear informes agregados e históricos. Identifica tendencias de
+                        matrícula de los últimos años y tasas brutas de reprobación por facultad.
+                    </p>
+                    <div class="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80">
+                        <span
+                            class="text-[10px] uppercase font-bold text-brand-primary tracking-wider block mb-1">Ejemplo
+                            Educativo Real</span>
+                        <p class="text-xs text-slate-300 italic">
+                            "Descubrir que el 18% de los alumnos del primer año del ciclo académico anterior reprobaron
+                            Matemáticas Básicas en el campus norte."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2: Predictiva -->
+                <div
+                    class="p-8 rounded-2xl border border-brand-primary/20 bg-brand-navy relative overflow-hidden group hover:border-brand-primary/40 transition-all duration-300 shadow-lg shadow-brand-primary/5">
+                    <div
+                        class="absolute top-0 right-0 p-4 font-bold text-5xl text-slate-800/20 group-hover:text-brand-primary/10 transition-colors">
+                        02</div>
+                    <div class="p-3 bg-brand-secondary/10 text-brand-secondary rounded-xl w-fit mb-6">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-white mb-3">Analítica predictiva: ¿Qué podría pasar?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Utiliza algoritmos de Machine Learning e Inteligencia Artificial para anticipar eventos de
+                        riesgo antes de que ocurran, calculando probabilidades individuales de deserción.
+                    </p>
+                    <div class="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80">
+                        <span
+                            class="text-[10px] uppercase font-bold text-brand-secondary tracking-wider block mb-1">Ejemplo
+                            Educativo Real</span>
+                        <p class="text-xs text-slate-300 italic">
+                            "Un modelo de Machine Learning proyecta que los estudiantes con menos de 2 horas de
+                            interacción en LMS en la semana 3 tienen 74% de probabilidad de abandonar el curso."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3: Prescriptiva -->
+                <div
+                    class="p-8 rounded-2xl border border-slate-800 bg-brand-navy relative overflow-hidden group hover:border-brand-primary/30 transition-all duration-300">
+                    <div
+                        class="absolute top-0 right-0 p-4 font-bold text-5xl text-slate-800/20 group-hover:text-brand-primary/10 transition-colors">
+                        03</div>
+                    <div class="p-3 bg-brand-orange/10 text-brand-orange rounded-xl w-fit mb-6">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-white mb-3">Analítica prescriptiva: ¿Qué acción tomar?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Recomienda planes específicos de intervención y simula el impacto de cada curso de acción.
+                        Automatiza la generación de órdenes de tutoría personalizados.
+                    </p>
+                    <div class="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80">
+                        <span
+                            class="text-[10px] uppercase font-bold text-brand-orange tracking-wider block mb-1">Ejemplo
+                            Educativo Real</span>
+                        <p class="text-xs text-slate-300 italic">
+                            "El sistema genera una orden de asignación automática de mentoría virtual y un subsidio
+                            temporal del 15% para el estudiante vulnerable antes del primer examen parcial."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 3: Dashboard institucional inteligente -->
+    <section id="dashboard" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Centro de Mandos en
+                Tiempo Real</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Dashboard Institucional Inteligente</h2>
+            <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                Interactúa con los principales indicadores de rendimiento y gestión de nuestra simulación institucional.
+                Haz clic en cada KPI para obtener el desglose táctico y la automatización asociada.
+            </p>
+        </div>
+
+        <!-- Contenedor del Dashboard Simulado -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6">
+            <!-- KPI 1: Matrícula -->
+            <div onclick="selectDashboardKPI('mat')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Matrícula</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">12,450</p>
+                <div class="flex items-center space-x-1 text-xs text-emerald-400 mt-2 font-bold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>+4.2%</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="users" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 2: Retención -->
+            <div onclick="selectDashboardKPI('ret')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Retención</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">94.8%</p>
+                <div class="flex items-center space-x-1 text-xs text-emerald-400 mt-2 font-bold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>+1.5%</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="heart" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 3: Riesgo Deserción -->
+            <div onclick="selectDashboardKPI('des')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Riesgo
+                    Deserción</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-brand-orange mt-1">3.1%</p>
+                <div class="flex items-center space-x-1 text-xs text-emerald-400 mt-2 font-bold">
+                    <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                    <span>-0.8%</span>
+                </div>
+                <div class="absolute right-3 top-3 text-brand-orange/30"><i data-lucide="alert-triangle"
+                        class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 4: Rendimiento -->
+            <div onclick="selectDashboardKPI('ren')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Rendimiento
+                    Acad.</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">8.2<span
+                        class="text-xs text-slate-400">/10</span></p>
+                <div class="flex items-center space-x-1 text-xs text-slate-400 mt-2 font-bold">
+                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                    <span>Estable</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- KPI 5: Morosidad -->
+            <div onclick="selectDashboardKPI('mor')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Morosidad</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-red-500 mt-1">8.4%</p>
+                <div class="flex items-center space-x-1 text-xs text-red-400 mt-2 font-bold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>+1.2%</span>
+                </div>
+                <div class="absolute right-3 top-3 text-red-500/30"><i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- KPI 6: Uso de Aulas -->
+            <div onclick="selectDashboardKPI('aul')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Uso
+                    de Aulas</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">78%</p>
+                <div class="flex items-center space-x-1 text-xs text-red-400 mt-2 font-bold">
+                    <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                    <span>Suboptimo</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="home" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 7: Asignación Docente -->
+            <div onclick="selectDashboardKPI('doc')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Asignación
+                    Doc.</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">98.2%</p>
+                <div class="flex items-center space-x-1 text-xs text-emerald-400 mt-2 font-bold">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Estructurado</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="users-2" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 8: Becas -->
+            <div onclick="selectDashboardKPI('bec')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Alumnos
+                    con Beca</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">42%</p>
+                <div class="flex items-center space-x-1 text-xs text-slate-400 mt-2 font-bold">
+                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                    <span>Fijo</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="award" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 9: Cursos Críticos -->
+            <div onclick="selectDashboardKPI('cri')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">Cursos
+                    Críticos</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-red-400 mt-1">4 materias</p>
+                <div class="flex items-center space-x-1 text-xs text-red-400 mt-2 font-bold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>Focos rojos</span>
+                </div>
+                <div class="absolute right-3 top-3 text-red-500/30"><i data-lucide="flame" class="w-4 h-4"></i></div>
+            </div>
+
+            <!-- KPI 10: Satisfacción -->
+            <div onclick="selectDashboardKPI('sat')"
+                class="cursor-pointer p-5 rounded-2xl border border-slate-800 bg-brand-navy hover:border-brand-primary/40 hover:bg-slate-900 transition-all duration-300 relative group">
+                <span
+                    class="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-brand-primary transition-colors">NPS
+                    / Satisfacc.</span>
+                <p class="text-2xl sm:text-3xl font-extrabold text-white mt-1">86.4%</p>
+                <div class="flex items-center space-x-1 text-xs text-emerald-400 mt-2 font-bold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                    <span>+2.4%</span>
+                </div>
+                <div class="absolute right-3 top-3 text-slate-700"><i data-lucide="smile" class="w-4 h-4"></i></div>
+            </div>
+        </div>
+
+        <!-- Panel Desplegable de Información Táctica KPI -->
+        <div class="mt-8 p-6 rounded-2xl border border-slate-800 bg-brand-navy/60 backdrop-blur-md transition-all duration-300"
+            id="kpi-details-panel">
+            <h4 class="font-bold text-brand-secondary flex items-center gap-2 mb-2">
+                <i data-lucide="help-circle" class="w-5 h-5"></i>
+                <span id="kpi-title">Selecciona un indicador de arriba</span>
+            </h4>
+            <p class="text-sm text-slate-300 leading-relaxed" id="kpi-desc">
+                Al hacer clic en cualquier tarjeta del dashboard simulado, podrás explorar el origen detallado de la
+                métrica (académico, administrativo o financiero), el flujo de recopilación de datos y las
+                recomendaciones que la Inteligencia Artificial genera automáticamente para optimizarla.
+            </p>
+        </div>
+    </section>
+
+    <!-- Sección 4: Simulación estratégica (What-If) -->
+    <section id="simulador" class="py-20 bg-slate-950/30 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Modelado de
+                    Escenarios</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Simulador de Estrategias Educativas "What-If"
+                </h2>
+                <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                    Ajusta los parámetros operativos y presupuestales de la institución para evaluar el impacto
+                    inmediato en el riesgo de deserción y el presupuesto, calculado por nuestro modelo de IA predictivo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Panel de Controles Sliders (5 cols) -->
+                <div class="lg:col-span-5 p-6 rounded-2xl border border-slate-800 bg-brand-navy space-y-6">
+                    <h3 class="font-bold text-lg text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+                        <i data-lucide="sliders-horizontal" class="text-brand-primary w-5 h-5"></i> Parámetros del
+                        Sistema
+                    </h3>
+
+                    <!-- Slider 1: Matrícula -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Aumento de Matrícula</span>
+                            <span class="text-brand-primary font-bold" id="slider-mat-val">+10%</span>
+                        </div>
+                        <input type="range" id="slider-mat" min="0" max="50" value="10" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+
+                    <!-- Slider 2: Presupuesto -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Variación Presupuestal</span>
+                            <span class="text-red-400 font-bold" id="slider-pres-val">-10%</span>
+                        </div>
+                        <input type="range" id="slider-pres" min="-30" max="10" value="-10" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+
+                    <!-- Slider 3: Ausentismo -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Mayor Ausentismo Alumnos</span>
+                            <span class="text-brand-orange font-bold" id="slider-aus-val">5%</span>
+                        </div>
+                        <input type="range" id="slider-aus" min="0" max="30" value="5" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+
+                    <!-- Slider 4: Nuevas Secciones -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Apertura Nuevas Secciones</span>
+                            <span class="text-slate-300 font-bold" id="slider-sec-val">2</span>
+                        </div>
+                        <input type="range" id="slider-sec" min="0" max="10" value="2" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+
+                    <!-- Slider 5: Becas -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Asignación de Becas</span>
+                            <span class="text-brand-secondary font-bold" id="slider-becas-val">30%</span>
+                        </div>
+                        <input type="range" id="slider-becas" min="10" max="100" value="30" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+
+                    <!-- Slider 6: Tutores -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-medium">
+                            <span class="text-slate-300">Tutores Activos</span>
+                            <span class="text-emerald-400 font-bold" id="slider-tut-val">12</span>
+                        </div>
+                        <input type="range" id="slider-tut" min="1" max="50" value="12" oninput="runWhatIf()"
+                            class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    </div>
+                </div>
+
+                <!-- Panel de Resultados IA (7 cols) -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div
+                        class="p-6 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between h-full min-h-[440px]">
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                                    <i data-lucide="brain" class="text-brand-secondary w-5 h-5"></i> Copiloto de IA
+                                    Educativa
+                                </h3>
+                                <span
+                                    class="px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest bg-brand-primary/10 text-brand-primary border border-brand-primary/20 animate-pulse">Algoritmo
+                                    Activo</span>
+                            </div>
+
+                            <!-- Riesgos Simulados -->
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/50">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Riesgo de
+                                        Deserción</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-3.5 h-3.5 rounded-full" id="sim-riesgo-color"></div>
+                                        <span class="text-lg font-bold text-white" id="sim-riesgo-txt">Bajo</span>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/50">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Carga
+                                        Presupuestaria</span>
+                                    <p class="text-lg font-bold text-white" id="sim-costo-txt">Optima</p>
+                                </div>
+                            </div>
+
+                            <!-- Recomendación Dinámica -->
+                            <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/80">
+                                <span
+                                    class="text-[10px] uppercase font-bold text-brand-secondary tracking-wider block mb-1.5 flex items-center gap-1">
+                                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> RECOMENDACIÓN PRESCRIPTIVA IA
+                                </span>
+                                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed" id="sim-reco-txt">
+                                    Cargando simulación inicial...
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Panel Humano-en-el-Bucle Nota Ética -->
+                        <div
+                            class="mt-6 p-4 rounded-xl border border-brand-secondary/20 bg-brand-secondary/5 flex items-start space-x-3">
+                            <i data-lucide="eye" class="w-5 h-5 text-brand-secondary shrink-0 mt-0.5"></i>
+                            <div>
+                                <span class="text-xs font-bold text-brand-secondary block uppercase">Gobernanza y
+                                    Validación Ética</span>
+                                <p class="text-[11px] text-slate-400 mt-1 leading-normal">
+                                    Esta recomendación es generada algorítmicamente y debe ser revisada obligatoriamente
+                                    por el comité escolar para evitar la estigmatización algorítmica antes de aplicar
+                                    intervenciones académicas directas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 5: Casos Reales -->
+    <section id="casos" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Impacto en el Mundo
+                Real</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Casos de Éxito en Gestión Escolar</h2>
+            <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                Cómo las universidades líderes del mundo resuelven desafíos de deserción y administración mediante
+                analítica avanzada y automatización en tiempo real.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Caso 1 -->
+            <div
+                class="p-6 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between group hover:border-brand-primary/30 transition-all duration-300">
+                <div>
+                    <span
+                        class="px-2.5 py-1 rounded bg-brand-primary/10 text-brand-primary text-[10px] font-bold uppercase tracking-wider">ALERTAS
+                        TEMPRANAS</span>
+                    <h3 class="font-bold text-xl text-white mt-4 mb-2">Georgia State University (GSU)</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        <strong>Problema:</strong> Tasas de graduación bajas en estudiantes vulnerables debido a la
+                        falta de apoyo oportuno en materias clave de primer año.
+                    </p>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        <strong>Solución:</strong> Implementó modelos predictivos que analizan más de 140,000 registros
+                        para disparar alertas automáticas de tutorías presenciales en menos de 24 horas.
+                    </p>
+                </div>
+                <div class="border-t border-slate-800 pt-4 mt-4 flex justify-between items-center text-xs">
+                    <span class="text-emerald-400 font-bold">+12% Tasa de Graduación</span>
+                    <span class="text-slate-500 italic">Fuente: GSU Reports</span>
+                </div>
+            </div>
+
+            <!-- Caso 2 -->
+            <div
+                class="p-6 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between group hover:border-brand-primary/30 transition-all duration-300">
+                <div>
+                    <span
+                        class="px-2.5 py-1 rounded bg-brand-secondary/10 text-brand-secondary text-[10px] font-bold uppercase tracking-wider">BI
+                        & AUTOMATIZACIÓN</span>
+                    <h3 class="font-bold text-xl text-white mt-4 mb-2">Southern New Hampshire Univ.</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        <strong>Problema:</strong> Cuellos de botella en la administración de becas e ingreso manual de
+                        registros académicos para matrícula masiva.
+                    </p>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        <strong>Solución:</strong> Integración de Tableau con APIs de Azure Cognitive Services y flujos
+                        robóticos de UiPath para filtrado de ayuda financiera.
+                    </p>
+                </div>
+                <div class="border-t border-slate-800 pt-4 mt-4 flex justify-between items-center text-xs">
+                    <span class="text-emerald-400 font-bold">-8% Deserción Inicial</span>
+                    <span class="text-slate-500 italic">Fuente: SNHU Analytics</span>
+                </div>
+            </div>
+
+            <!-- Caso 3 -->
+            <div
+                class="p-6 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between group hover:border-brand-primary/30 transition-all duration-300">
+                <div>
+                    <span
+                        class="px-2.5 py-1 rounded bg-brand-orange/10 text-brand-orange text-[10px] font-bold uppercase tracking-wider">RETENCIÓN
+                        ESTUDIANTIL</span>
+                    <h3 class="font-bold text-xl text-white mt-4 mb-2">Tecnológico de Monterrey</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        <strong>Problema:</strong> Dificultad para coordinar la consejería académica en múltiples campus
+                        de manera unificada y en fases tempranas.
+                    </p>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        <strong>Solución:</strong> "Modelo de Alerta Temprana" centralizado que combina Power BI y
+                        Python para detectar ausentismo y bajo compromiso en Canvas LMS.
+                    </p>
+                </div>
+                <div class="border-t border-slate-800 pt-4 mt-4 flex justify-between items-center text-xs">
+                    <span class="text-emerald-400 font-bold">94.5% Retención Primer Año</span>
+                    <span class="text-slate-500 italic">Fuente: Tec de Monterrey</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 6: Teoría vs Aplicación Real -->
+    <section class="py-20 bg-slate-950/30 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Vinculación
+                    Teórico-Práctica</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Teoría de Datos vs. Aplicación Educativa Real
+                </h2>
+                <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                    Estructura pedagógica detallada que vincula los conceptos de ciencia de datos con soluciones
+                    concretas para líderes escolares.
+                </p>
+            </div>
+
+            <!-- Tabla responsiva -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-brand-navy">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-slate-900 border-b border-slate-800 text-xs sm:text-sm font-bold uppercase text-slate-400 tracking-wider">
+                            <th class="p-5">Concepto Teórico</th>
+                            <th class="p-5">Aplicación Real Educativa</th>
+                            <th class="p-5">Datos Requeridos</th>
+                            <th class="p-5">Herramienta Posible</th>
+                            <th class="p-5">Decisión Estratégica Habilitada</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-xs sm:text-sm text-slate-300 divide-y divide-slate-800">
+                        <tr>
+                            <td class="p-5 font-bold text-white">Analítica Predictiva</td>
+                            <td class="p-5">Detectar estudiantes en riesgo inminente de deserción o reprobación.</td>
+                            <td class="p-5 text-xs text-slate-400">Asistencia, entregas en LMS, calificaciones de tareas
+                                y uso de recursos del campus.</td>
+                            <td class="p-5"><span
+                                    class="px-2 py-1 bg-slate-800 text-slate-300 rounded border border-slate-700 text-xs">Python
+                                    + Power BI</span></td>
+                            <td class="p-5 text-emerald-400">Asignar tutorías preventivas y consejería socioemocional
+                                oportuna en la semana 4.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-5 font-bold text-white">Analítica Prescriptiva</td>
+                            <td class="p-5">Optimizar el plan escolar y la asignación automática de aulas físicas.</td>
+                            <td class="p-5 text-xs text-slate-400">Capacidad de aulas, matrículas históricas por
+                                materia, preferencias de profesores.</td>
+                            <td class="p-5"><span
+                                    class="px-2 py-1 bg-slate-800 text-slate-300 rounded border border-slate-700 text-xs">Azure
+                                    ML + Tableau</span></td>
+                            <td class="p-5 text-emerald-400">Redistribuir secciones para recortar subutilización y
+                                costos operativos de servicios un 15%.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-5 font-bold text-white">Automatización de Procesos (RPA)</td>
+                            <td class="p-5">Inscripción rápida de estudiantes a becas directas tras corte presupuestal.
+                            </td>
+                            <td class="p-5 text-xs text-slate-400">Rango socioeconómico, registros de postulación,
+                                presupuestos autorizados.</td>
+                            <td class="p-5"><span
+                                    class="px-2 py-1 bg-slate-800 text-slate-300 rounded border border-slate-700 text-xs">UiPath
+                                    o Make</span></td>
+                            <td class="p-5 text-emerald-400">Acelerar un 90% la adjudicación de ayuda financiera directa
+                                reduciendo la carga administrativa.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-5 font-bold text-white">NLP (Procesamiento del Lenguaje)</td>
+                            <td class="p-5">Asistentes inteligentes para directores sobre dudas de calidad de matrícula.
+                            </td>
+                            <td class="p-5 text-xs text-slate-400">Comentarios de encuestas académicas, dudas
+                                recurrentes de alumnos de nuevo ingreso.</td>
+                            <td class="p-5"><span
+                                    class="px-2 py-1 bg-slate-800 text-slate-300 rounded border border-slate-700 text-xs">OpenAI
+                                    API</span></td>
+                            <td class="p-5 text-emerald-400">Rediseñar de inmediato el plan de estudio de materias con
+                                altos reportes de confusión.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 7: Herramientas más utilizadas -->
+    <section id="herramientas" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-brand-primary text-xs font-bold tracking-widest uppercase block mb-3">Ecosistema de
+                Software</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Herramientas Más Utilizadas</h2>
+            <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                El conjunto de software estándar del mercado para recolectar, transformar, analizar, modelar y presentar
+                la información institucional.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Power BI -->
+            <div class="p-5 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between">
+                <div>
+                    <h4 class="font-bold text-white text-lg flex items-center justify-between">
+                        <span>Power BI (+ Copilot)</span>
+                        <span
+                            class="text-xs bg-brand-primary/10 text-brand-primary px-2.5 py-0.5 rounded border border-brand-primary/20">Freemium</span>
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Uso en la institución:</strong> Conecta Excel y sistemas académicos/financieros para
+                        crear un tablero único y consolidado. Su IA (Copilot) permite al directivo generar gráficos o
+                        tablas automáticamente haciendo preguntas en lenguaje natural, facilitando la toma de decisiones
+                        sin necesidad de conocimientos técnicos.
+                    </p>
+                    <p class="text-[11px] text-slate-300 italic mt-2">
+                        "Tablero de matrícula y deserción por facultad, actualizado en tiempo real para el comité
+                        directivo."
+                    </p>
+                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4 block">Usuario:
+                    Directivo / Analista Institucional</span>
+            </div>
+
+            <!-- Tableau -->
+            <div class="p-5 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between">
+                <div>
+                    <h4 class="font-bold text-white text-lg flex items-center justify-between">
+                        <span>Tableau (+ Tableau Pulse / Einstein)</span>
+                        <span
+                            class="text-xs bg-red-400/10 text-red-400 px-2.5 py-0.5 rounded border border-red-400/20">De
+                            Pago</span>
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Uso en la institución:</strong> Ideal para visualizar relaciones complejas al comparar
+                        el desempeño entre múltiples sedes o programas educativos. Su IA (Tableau Pulse) envía alertas
+                        automáticas ante desviaciones en métricas clave, pasando de un análisis reactivo a uno
+                        proactivo.
+                    </p>
+                    <p class="text-[11px] text-slate-300 italic mt-2">
+                        "Alerta automática si la tasa de retención de primer año cae más de 5 puntos respecto al periodo
+                        anterior."
+                    </p>
+                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4 block">Usuario:
+                    Dirección Académica / Planeación Institucional</span>
+            </div>
+
+            <!-- Microsoft Azure AI -->
+            <div class="p-5 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between">
+                <div>
+                    <h4 class="font-bold text-white text-lg flex items-center justify-between gap-2">
+                        <span>Microsoft Azure AI (Machine Learning / Cognitive Services)</span>
+                        <span
+                            class="text-xs bg-yellow-400/10 text-yellow-400 px-2.5 py-0.5 rounded border border-yellow-400/20 text-center">Por
+                            Consumo</span>
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Uso en la institución:</strong> Permite construir modelos predictivos a medida, como
+                        calcular el riesgo de abandono escolar basándose en el historial del estudiante. Facilita
+                        decisiones estratégicas anticipadas (tutorías, becas) antes de que ocurra la deserción, aunque
+                        requiere de un equipo de datos especializado.
+                    </p>
+                    <p class="text-[11px] text-slate-300 italic mt-2">
+                        "Modelo de alerta temprana que prioriza a los 50 estudiantes con mayor riesgo de abandono para
+                        intervención dirigida."
+                    </p>
+                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4 block">Usuario:
+                    Ingeniero de Datos / Dirección Académica</span>
+            </div>
+
+            <!-- OpenAI API -->
+            <div class="p-5 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between">
+                <div>
+                    <h4 class="font-bold text-white text-lg flex items-center justify-between">
+                        <span>OpenAI API (GPT) integrado a BI</span>
+                        <span
+                            class="text-xs bg-yellow-400/10 text-yellow-400 px-2.5 py-0.5 rounded border border-yellow-400/20">Por
+                            Consumo</span>
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Uso en la institución:</strong> Actúa como una capa conversacional sobre los datos
+                        existentes. Permite a los directivos realizar consultas en lenguaje natural y recibir respuestas
+                        inmediatas, acelerando radicalmente la toma de decisiones al evitar las demoras de solicitar
+                        reportes al área de TI.
+                    </p>
+                    <p class="text-[11px] text-slate-300 italic mt-2">
+                        "¿Cuál fue el promedio de deserción en ingeniería este semestre comparado con el anterior?"
+                    </p>
+                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4 block">Usuario:
+                    Directivo / Equipo de TI</span>
+            </div>
+
+            <!-- Looker / Google Cloud -->
+            <div class="p-5 rounded-2xl border border-slate-800 bg-brand-navy flex flex-col justify-between">
+                <div>
+                    <h4 class="font-bold text-white text-lg flex items-center justify-between gap-2">
+                        <span>Looker / Google Cloud (BigQuery + Gemini)</span>
+                        <span
+                            class="text-xs bg-yellow-400/10 text-yellow-400 px-2.5 py-0.5 rounded border border-yellow-400/20 text-center">Por
+                            Consumo</span>
+                    </h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Uso en la institución:</strong> Diseñado para instituciones de gran escala con altos
+                        volúmenes de datos consolidados. Su IA integrada (Gemini) genera resúmenes ejecutivos
+                        automáticos de los hallazgos, ideal para presentar información a consejos directivos o
+                        reguladores sin redacción manual.
+                    </p>
+                    <p class="text-[11px] text-slate-300 italic mt-2">
+                        "Resumen ejecutivo automático de indicadores de calidad educativa para el consejo directivo,
+                        generado a partir de los datos consolidados de todas las sedes."
+                    </p>
+                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4 block">Usuario:
+                    Dirección General / Sistemas</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 8: Ética, sesgos y gobernanza del dato -->
+    <section id="etica" class="py-20 bg-slate-950/30 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-orange text-xs font-bold tracking-widest uppercase block mb-3">Gobernanza y
+                    Transparencia</span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Gobernanza del Dato, Sesgos y Ética</h2>
+                <p class="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+                    La analítica de datos es una herramienta sumamente poderosa, pero si se ejecuta sin principios
+                    éticos puede amplificar sesgos y perpetuar desigualdades.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Tarjeta 1: Sesgos heredados -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-brand-navy">
+                    <div class="p-2 bg-red-500/10 text-red-400 rounded-lg w-fit mb-4">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">Sesgos Heredados</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Entrenar modelos predictivos utilizando datos históricos de becas otorgadas puede provocar que
+                        el algoritmo replique sesgos geográficos o socioeconómicos antiguos.
+                    </p>
+                </div>
+
+                <!-- Tarjeta 2: Falacia del promedio -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-brand-navy">
+                    <div class="p-2 bg-red-500/10 text-red-400 rounded-lg w-fit mb-4">
+                        <i data-lucide="percent" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">La Falacia del Promedio</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Un promedio general de rendimiento escolar de "8/10" a nivel carrera puede ocultar que el 25% de
+                        los alumnos de escasos recursos están reprobando por falta de internet.
+                    </p>
+                </div>
+
+                <!-- Tarjeta 3: Correlación vs Causalidad -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-brand-navy">
+                    <div class="p-2 bg-red-500/10 text-red-400 rounded-lg w-fit mb-4">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">Correlación vs. Causalidad</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Que los alumnos que no asistan a la biblioteca física reprueben más materias no implica que la
+                        biblioteca cause la aprobación. Podría haber un problema de horarios laborales.
+                    </p>
+                </div>
+
+                <!-- Tarjeta 4: Transparencia -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-brand-navy">
+                    <div class="p-2 bg-red-500/10 text-red-400 rounded-lg w-fit mb-4">
+                        <i data-lucide="eye-off" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">Falta de Transparencia</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Utilizar modelos de IA propietarios de "caja negra" que no explican por qué catalogan a un
+                        estudiante como "riesgo alto de deserción", vulnera sus derechos fundamentales.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gran Principio Ético -->
+            <div
+                class="mt-12 p-8 rounded-2xl border border-brand-secondary bg-brand-navy/60 backdrop-blur-md relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 text-brand-secondary/5"><i data-lucide="award"
+                        class="w-48 h-48"></i></div>
+                <div class="max-w-3xl relative z-10">
+                    <h3 class="text-brand-secondary text-xs font-bold tracking-widest uppercase mb-2">PRINCIPIO
+                        FUNDAMENTAL DE GESTIÓN EDUCATIVA</h3>
+                    <p class="text-lg sm:text-2xl font-extrabold text-white leading-snug">
+                        "La Inteligencia Artificial recomienda, pero la decisión final debe ser humana, ética y
+                        contextualizada para cada estudiante."
+                    </p>
+                    <p class="text-xs text-slate-400 mt-4">
+                        Los algoritmos automatizan flujos analíticos de alto costo de horas/persona, pero el toque final
+                        de empatía, comprensión y acompañamiento es insustituible por una máquina.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Final: Actividad de Reflexión y Reporte de Decisiones -->
+    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- Formulario de Reflexión -->
+            <div class="lg:col-span-7 p-6 sm:p-8 rounded-2xl border border-slate-800 bg-brand-navy space-y-6">
+                <h3 class="font-bold text-xl text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+                    <i data-lucide="check-square" class="text-brand-primary w-5 h-5"></i> Evaluación de Competencias
+                </h3>
+
+                <p class="text-xs text-slate-400">
+                    Responde estas preguntas basadas en los escenarios simulados para confeccionar tu Plan de Gestión
+                    Estratégica Institucional. Al finalizar, podrás generar y exportar el informe para su posterior
+                    entrega.
+                </p>
+
+                <!-- Pregunta 1 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">1. ¿Qué indicador
+                        institucional debería monitorearse primero en un modelo de Alertas Tempranas?</label>
+                    <select id="ref-q1"
+                        class="w-full p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-primary">
+                        <option value="">Selecciona una respuesta...</option>
+                        <option
+                            value="La Tasa de Asistencia y participación en el LMS (Moodle/Canvas) en las primeras 3 semanas.">
+                            La Tasa de Asistencia y participación en el LMS (Moodle/Canvas) en las primeras 3 semanas.
+                        </option>
+                        <option value="La morosidad de pago en el cierre de ciclo financiero.">La morosidad de pago en
+                            el cierre de ciclo financiero.</option>
+                        <option value="El rendimiento escolar acumulado del examen final de carrera.">El rendimiento
+                            escolar acumulado del examen final de carrera.</option>
+                    </select>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">2. ¿Qué decisión
+                        estratégica escolar podría mejorar significativamente al aplicar IA?</label>
+                    <select id="ref-q2"
+                        class="w-full p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-primary">
+                        <option value="">Selecciona una respuesta...</option>
+                        <option
+                            value="La reasignación inmediata de tutores de apoyo a los cursos identificados como críticos.">
+                            La reasignación inmediata de tutores de apoyo a los cursos identificados como críticos.
+                        </option>
+                        <option value="El aumento indiscriminado del número total de vacantes de matrícula.">El aumento
+                            indiscriminado del número total de vacantes de matrícula.</option>
+                        <option value="La suspensión directa de becas a alumnos rezagados.">La suspensión directa de
+                            becas a alumnos rezagados.</option>
+                    </select>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">3. ¿Qué riesgo ético
+                        clave se debe evitar en la toma de decisiones automatizada?</label>
+                    <select id="ref-q3"
+                        class="w-full p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-primary">
+                        <option value="">Selecciona una respuesta...</option>
+                        <option value="Perpetuar sesgos históricos que estigmaticen a alumnos de bajo rendimiento.">
+                            Perpetuar sesgos históricos que estigmaticen a alumnos de bajo rendimiento.</option>
+                        <option value="El cobro tardío de las pensiones de matrícula.">El cobro tardío de las pensiones
+                            de matrícula.</option>
+                        <option value="El uso excesivo de servidores locales para bases de datos de alumnos.">El uso
+                            excesivo de servidores locales para bases de datos de alumnos.</option>
+                    </select>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">4. ¿Qué proceso
+                        administrativo escolar podría automatizarse eficientemente con RPA?</label>
+                    <select id="ref-q4"
+                        class="w-full p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-brand-primary">
+                        <option value="">Selecciona una respuesta...</option>
+                        <option
+                            value="El traspaso de notas físicas del personal administrativo al SIS (Banner/PeopleSoft).">
+                            El traspaso de notas físicas del personal administrativo al SIS (Banner/PeopleSoft).
+                        </option>
+                        <option value="La impartición presencial de las clases magistrales de Matemáticas.">La
+                            impartición presencial de las clases magistrales de Matemáticas.</option>
+                        <option value="La consejería emocional de alumnos con crisis de rendimiento.">La consejería
+                            emocional de alumnos con crisis de rendimiento.</option>
+                    </select>
+                </div>
+
+                <!-- Botón de Generar Reporte -->
+                <button onclick="generateStrategicReport()"
+                    class="w-full inline-flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-brand-primary to-blue-600 hover:from-brand-primary hover:to-blue-700 text-slate-950 font-bold rounded-lg transition-all duration-300 shadow-md">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Compilar Plan Estratégico</span>
+                </button>
+            </div>
+
+            <!-- Panel de Reporte Resultante -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="p-6 rounded-2xl border border-slate-800 bg-brand-navy min-h-[480px] flex flex-col justify-between"
+                    id="report-output-panel">
+                    <div>
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                            <h4 class="font-bold text-white flex items-center gap-2">
+                                <i data-lucide="folder-output" class="text-brand-secondary w-5 h-5"></i> Plan de Gestión
+                                de Datos
+                            </h4>
+                            <span class="text-[10px] uppercase font-bold text-slate-500">Resultado Generado</span>
+                        </div>
+
+                        <div id="report-content" class="text-xs text-slate-400 leading-relaxed space-y-4">
+                            <p class="italic text-center py-12">
+                                Completa el cuestionario de la izquierda y haz clic en "Compilar Plan Estratégico" para
+                                generar tu propuesta formal de toma de decisiones educativas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="report-action-buttons" class="hidden pt-4 border-t border-slate-800 flex gap-2">
+                        <button onclick="copyToClipboard()"
+                            class="flex-1 inline-flex items-center justify-center space-x-2 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700 transition-colors">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            <span>Copiar Plan</span>
+                        </button>
+                        <button onclick="window.print()"
+                            class="flex-1 inline-flex items-center justify-center space-x-2 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700 transition-colors">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Imprimir</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Lógica de Control de la Web (JavaScript) -->
+    <script>
+        // Inicializar Lucide Icons
+        lucide.createIcons();
+
+        // 1. Lógica para el Flujo de Datos Interactiva (Sección 1)
+        const pipelineNodes = {
+            1: {
+                title: "1. Ingesta de Datos Transaccionales (Silos)",
+                desc: "Los datos brutos residen de manera independiente. Por ejemplo, Moodle (LMS) almacena logs de acceso e interacciones de alumnos, mientras que el SIS (Banner) guarda historiales de matrícula. La IA requiere la interconexión de estas dos dimensiones para entrenar algoritmos eficaces."
+            },
+            2: {
+                title: "2. Almacén de Datos (DW / Data Lake)",
+                desc: "Los procesos ETL unifican y limpian la información para crear variables consolidadas. En esta etapa se eliminan registros huérfanos y se configuran políticas de gobernanza para cumplir con las normativas internacionales de privacidad de datos estudiantiles."
+            },
+            3: {
+                title: "3. Dashboard Directivo (BI)",
+                desc: "Los datos ya modelados y limpios se despliegan de forma interactiva en herramientas como Power BI o Tableau. Permite a los directivos visualizar indicadores consolidados de reprobación, uso de aulas, morosidad de pensiones y distribución de becarios de manera integrada."
+            },
+            4: {
+                title: "4. Toma de Decisiones y Acción Preventiva",
+                desc: "Es el punto cumbre de la analítica prescriptiva. El directivo académico, respaldado por las proyecciones de riesgo, reasigna mentores y tutores específicos para acompañar a los alumnos de primer año que presentan alta vulnerabilidad académica antes del primer examen oficial."
+            }
+        };
+
+        function selectPipelineNode(nodeId) {
+            // Remover estilos activos previos de las tarjetas
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`node-card-${i}`);
+                el.classList.remove('border-brand-primary', 'bg-brand-navy/80', 'scale-105');
+                el.classList.add('border-slate-800', 'bg-brand-navy');
+            }
+
+            // Aplicar estilo activo a la tarjeta seleccionada
+            const selectedEl = document.getElementById(`node-card-${nodeId}`);
+            selectedEl.classList.remove('border-slate-800');
+            selectedEl.classList.add('border-brand-primary', 'scale-105');
+
+            // Actualizar panel explicativo
+            document.getElementById('pipeline-detail-title').innerText = pipelineNodes[nodeId].title;
+            document.getElementById('pipeline-detail-desc').innerText = pipelineNodes[nodeId].desc;
+
+            // Animación sutil del panel explicativo
+            const panel = document.getElementById('pipeline-details-panel');
+            panel.classList.add('scale-[1.01]', 'border-brand-primary/30');
+            setTimeout(() => {
+                panel.classList.remove('scale-[1.01]', 'border-brand-primary/30');
+            }, 300);
+        }
+
+        // 2. Lógica para el Dashboard Simulado (Sección 3)
+        const dashboardKPIs = {
+            mat: {
+                title: "KPI: Matrícula Escolar (12,450 Alumnos)",
+                desc: "Este indicador representa el número bruto de alumnos matriculados. Proviene directamente del sistema de admisiones (SIS). Al monitorearlo con IA, se puede pronosticar el cupo y la carga docente de los próximos ciclos académicos con una desviación menor al 2%."
+            },
+            ret: {
+                title: "KPI: Tasa de Retención (94.8%)",
+                desc: "Mide el porcentaje de estudiantes que continúan sus estudios de un semestre a otro. Es la métrica más crítica de la calidad y sustentabilidad de la institución. Los dashboards inteligentes permiten ver esta tasa segmentada por campus, carrera y nivel de ingresos."
+            },
+            des: {
+                title: "KPI: Riesgo de Deserción Escolar (3.1%)",
+                desc: "Calculado a través de modelos de regresión logística y bosques aleatorios que cruzan la asistencia presencial con las interacciones semanales del LMS. Se genera una alerta de 'riesgo alto' cuando la probabilidad de abandono calculada supera el 75%."
+            },
+            ren: {
+                title: "KPI: Rendimiento Académico (8.2/10)",
+                desc: "Promedio acumulado de calificaciones de la institución. Sirve para calibrar si el plan docente o los métodos evaluativos son los adecuados. Los picos abruptos de reprobación indican la necesidad de intervenir materias específicas."
+            },
+            mor: {
+                title: "KPI: Morosidad de Pago (8.4%)",
+                desc: "Métrica financiera clave que refleja el porcentaje de pensiones pagadas fuera de fecha. La IA ayuda a encontrar correlaciones directas entre la morosidad y la deserción escolar para ofrecer planes de refinanciamiento personalizados de manera preventiva."
+            },
+            aul: {
+                title: "KPI: Uso de Aulas Físicas (78%)",
+                desc: "Este indicador mide el nivel de ocupación de las instalaciones físicas. Un valor de 78% indica que hay subutilización de espacios en turnos vespertinos. BI ayuda a reorganizar horarios para ahorrar costos energéticos y logísticos."
+            },
+            doc: {
+                title: "KPI: Asignación Docente (98.2%)",
+                desc: "Mapea si todos los cursos vigentes cuentan con profesores con las credenciales y el tiempo adecuado asignado. Ayuda al departamento de Recursos Humanos a prevenir sobrecargas docentes o faltantes de última hora."
+            },
+            bec: {
+                title: "KPI: Alumnos con Beca (42%)",
+                desc: "Muestra la cantidad de estudiantes que reciben algún tipo de ayuda financiera institucional. El dashboard permite auditar si las becas están siendo asignadas con criterios socioeconómicos objetivos o si existen anomalías de distribución."
+            },
+            cri: {
+                title: "KPI: Materias Críticas (4 asignaturas)",
+                desc: "Representa el número de materias donde la reprobación supera el 30% histórico (usualmente Álgebra Básica y Programación). La IA ayuda a rediseñar los cursos e implementar tutorías virtuales enfocadas."
+            },
+            sat: {
+                title: "KPI: Satisfacción Estudiantil (86.4%)",
+                desc: "Medido a través de encuestas trimestrales y análisis de sentimientos de comentarios con NLP (Procesamiento de Lenguaje Natural). Permite a la junta de dirección identificar de forma proactiva descontentos con infraestructura o calidad académica."
+            }
+        };
+
+        function selectDashboardKPI(kpiId) {
+            document.getElementById('kpi-title').innerText = dashboardKPIs[kpiId].title;
+            document.getElementById('kpi-desc').innerText = dashboardKPIs[kpiId].desc;
+
+            const panel = document.getElementById('kpi-details-panel');
+            panel.classList.add('border-brand-secondary/30', 'scale-[1.01]');
+            setTimeout(() => {
+                panel.classList.remove('border-brand-secondary/30', 'scale-[1.01]');
+            }, 300);
+        }
+
+        // 3. Lógica del Simulador What-If (Sección 4)
+        function runWhatIf() {
+            // Capturar valores de los sliders
+            const mat = parseInt(document.getElementById('slider-mat').value);
+            const pres = parseInt(document.getElementById('slider-pres').value);
+            const aus = parseInt(document.getElementById('slider-aus').value);
+            const sec = parseInt(document.getElementById('slider-sec').value);
+            const becas = parseInt(document.getElementById('slider-becas').value);
+            const tut = parseInt(document.getElementById('slider-tut').value);
+
+            // Actualizar etiquetas visuales de los sliders
+            document.getElementById('slider-mat-val').innerText = `+${mat}%`;
+            document.getElementById('slider-pres-val').innerText = `${pres}%`;
+            document.getElementById('slider-aus-val').innerText = `${aus}%`;
+            document.getElementById('slider-sec-val').innerText = sec;
+            document.getElementById('slider-becas-val').innerText = `${becas}%`;
+            document.getElementById('slider-tut-val').innerText = tut;
+
+            // Motor de reglas simplificado para simulación de IA predictiva
+            let riesgoScore = 0;
+            riesgoScore += (aus * 2.5);
+            riesgoScore += (Math.abs(pres) * 1.2);
+            riesgoScore += (50 - tut) * 1.5;
+            riesgoScore -= (becas * 0.4);
+
+            let costoScore = 100;
+            costoScore += (mat * 0.8);
+            costoScore += (sec * 5);
+            costoScore += (becas * 0.5);
+            costoScore += pres;
+
+            let riesgoTxt = "Bajo";
+            let riesgoColor = "#10b981"; // Emerald
+            let costoTxt = "Saludable";
+            let recoTxt = "";
+
+            if (riesgoScore > 65) {
+                riesgoTxt = "Alto Riesgo";
+                riesgoColor = "#ef4444"; // Red
+            } else if (riesgoScore > 35) {
+                riesgoTxt = "Riesgo Moderado";
+                riesgoColor = "#f97316"; // Orange
+            }
+
+            if (costoScore > 120) {
+                costoTxt = "Presupuesto Comprometido / Déficit Financiero";
+            } else if (costoScore < 80) {
+                costoTxt = "Subinversión en Infraestructura";
+            } else {
+                costoTxt = "Presupuesto Balanceado";
+            }
+
+            if (riesgoTxt === "Alto Riesgo") {
+                recoTxt = `¡Alerta! El incremento de ausentismo del ${aus}% sumado a la falta de tutores activos (${tut}) proyecta una deserción potencial crítica. Recomendamos activar inmediatamente flujos de automatización para contactar a los alumnos en riesgo y redireccionar el presupuesto escolar para aumentar el programa de becas al menos un 10% adicional.`;
+            } else if (riesgoTxt === "Riesgo Moderado") {
+                recoTxt = `Riesgo controlado pero con tendencias preocupantes. Con una matrícula en crecimiento de +${mat}%, la apertura de ${sec} nuevas secciones requerirá mayor coordinación académica. Aumente la cantidad de tutores activos a un mínimo de 15 para estabilizar la retención de primer año.`;
+            } else {
+                recoTxt = `Felicidades, la configuración actual presenta niveles de riesgo óptimos. El presupuesto del ${becas}% asignado a becas académicas actúa como un amortiguador eficaz frente al ausentismo. Se recomienda mantener monitoreado el uso de aulas físicas para evitar sobrecostos administrativos.`;
+            }
+
+            document.getElementById('sim-riesgo-txt').innerText = riesgoTxt;
+            document.getElementById('sim-riesgo-txt').style.color = riesgoColor;
+            document.getElementById('sim-riesgo-color').style.backgroundColor = riesgoColor;
+            document.getElementById('sim-costo-txt').innerText = costoTxt;
+            document.getElementById('sim-reco-txt').innerText = recoTxt;
+
+            try {
+                // Sincronizar Altura y Color de la columna de Riesgo en la escena de AR
+                const arBarRiesgo = document.getElementById('ar-bar-riesgo');
+                const arValRiesgo = document.getElementById('ar-val-riesgo');
+                const calculoAlturaRiesgo = Math.max(0.1, (riesgoScore / 100) * 1.5);
+                arBarRiesgo.setAttribute('height', calculoAlturaRiesgo);
+                arBarRiesgo.setAttribute('color', riesgoColor);
+                arBarRiesgo.setAttribute('position', `0 ${calculoAlturaRiesgo / 2 - 0.3} 0`);
+                arValRiesgo.setAttribute('value', `${Math.min(100, Math.max(0, Math.round(riesgoScore)))}%`);
+                arValRiesgo.setAttribute('position', `0 ${calculoAlturaRiesgo + 0.15 - 0.3} 0`);
+
+                // Sincronizar Altura de la columna de Becas
+                const arBarBecas = document.getElementById('ar-bar-becas');
+                const arValBecas = document.getElementById('ar-val-becas');
+                const calculoAlturaBecas = Math.max(0.1, (becas / 100) * 1.4);
+                arBarBecas.setAttribute('height', calculoAlturaBecas);
+                arBarBecas.setAttribute('position', `0 ${calculoAlturaBecas / 2 - 0.3} 0`);
+                arValBecas.setAttribute('value', `${becas}%`);
+                arValBecas.setAttribute('position', `0 ${calculoAlturaBecas + 0.15 - 0.3} 0`);
+
+                // Sincronizar Altura de la columna de Matrícula (basado en incremento)
+                const arBarMatricula = document.getElementById('ar-bar-matricula');
+                const arValMatricula = document.getElementById('ar-val-matricula');
+                const calculoAlturaMat = Math.max(0.1, (1 + (mat / 100)) * 0.5);
+                arBarMatricula.setAttribute('height', calculoAlturaMat);
+                arBarMatricula.setAttribute('position', `0 ${calculoAlturaMat / 2 - 0.3} 0`);
+                arValMatricula.setAttribute('value', `+${mat}%`);
+                arValMatricula.setAttribute('position', `0 ${calculoAlturaMat + 0.15 - 0.3} 0`);
+
+                // Sincronizar Semáforo Predictivo 3D del Dashboard Holográfico
+                const redSphere = document.getElementById('ar-light-red');
+                const orangeSphere = document.getElementById('ar-light-orange');
+                const greenSphere = document.getElementById('ar-light-green');
+
+                redSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+                orangeSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+                greenSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+
+                if (riesgoTxt === "Alto Riesgo") {
+                    redSphere.setAttribute('material', 'emissiveIntensity', '1.6');
+                } else if (riesgoTxt === "Riesgo Moderado") {
+                    orangeSphere.setAttribute('material', 'emissiveIntensity', '1.6');
+                } else {
+                    greenSphere.setAttribute('material', 'emissiveIntensity', '1.6');
+                }
+            } catch (e) {
+                console.log("A-Frame no inicializado completamente para sincronización aún.", e);
+            }
+        }
+
+        // Ejecutar simulación inicial en carga de página
+        window.onload = function () {
+            runWhatIf();
+            setupInteractiveARGestures();
+        };
+
+        // 4. Lógica de Realidad Aumentada interactiva (Sección 5 / Visor AR)
+        let webcamStream = null;
+
+        async function toggleARScene(active) {
+            const overlay = document.getElementById('ar-overlay-container');
+            const video = document.getElementById('webcam');
+
+            if (active) {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100', 'pointer-events-auto');
+
+                // Solicitar cámara web
+                try {
+                    webcamStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" },
+                        audio: false
+                    });
+                    video.srcObject = webcamStream;
+                } catch (err) {
+                    console.log("No se pudo iniciar la cámara física o permisos denegados. Usando renderizado holográfico 3D puro.", err);
+                    video.classList.add('bg-slate-950');
+                }
+
+                // Forzar sincronización de valores al abrir
+                runWhatIf();
+            } else {
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+
+                // Apagar la cámara web para ahorrar batería/privacidad
+                if (webcamStream) {
+                    webcamStream.getTracks().forEach(track => track.stop());
+                }
+                video.srcObject = null;
+            }
+        }
+
+        // Súper control de gestos interactivos (Rotación, Paneo y Zoom) en el contenedor de A-Frame
+        function setupInteractiveARGestures() {
+            const container = document.getElementById('canvas-3d-container');
+            const pivot = document.getElementById('ar-orbit-pivot');
+            const camera = document.getElementById('ar-camera');
+
+            let isDragging = false;
+            let dragButton = 0; // 0 = Izquierdo (rotar), 2 = Derecho (paneo/mover)
+            let prevX = 0;
+            let prevY = 0;
+
+            // Valores de rotación actuales
+            let rotY = 0;
+            let rotX = 10;
+
+            // Valores de posición del pivote (paneo)
+            let posX = 0;
+            let posY = 0.5;
+            let posZ = 0;
+
+            // Escala/Zoom actual (Z de cámara)
+            let cameraZ = 2.8;
+
+            // Prevenir menú contextual para el botón derecho
+            container.addEventListener('contextmenu', e => e.preventDefault());
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragButton = e.button;
+                prevX = e.clientX;
+                prevY = e.clientY;
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const deltaX = e.clientX - prevX;
+                const deltaY = e.clientY - prevY;
+
+                prevX = e.clientX;
+                prevY = e.clientY;
+
+                if (dragButton === 0) {
+                    // ROTACIÓN CON CLICK IZQUIERDO
+                    rotY += deltaX * 0.3;
+                    rotX = Math.max(-45, Math.min(45, rotX - deltaY * 0.3)); // límites para no dar vuelta completa en vertical
+                    pivot.setAttribute('rotation', `${rotX} ${rotY} 0`);
+                } else if (dragButton === 2) {
+                    // DESPLAZAMIENTO (PANEO) CON CLICK DERECHO
+                    posX += deltaX * 0.005;
+                    posY = Math.max(-2, Math.min(3, posY - deltaY * 0.005));
+                    pivot.setAttribute('position', `${posX} ${posY} ${posZ}`);
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // SOPORTE PARA PANTALLAS TÁCTILES (Móviles/Tablets)
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    dragButton = 0; // Rotación por defecto con 1 dedo
+                    prevX = e.touches[0].clientX;
+                    prevY = e.touches[0].clientY;
+                } else if (e.touches.length === 2) {
+                    // Paneo con 2 dedos
+                    isDragging = true;
+                    dragButton = 2;
+                    prevX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    prevY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+
+                let currentX = 0;
+                let currentY = 0;
+
+                if (e.touches.length === 1 && dragButton === 0) {
+                    currentX = e.touches[0].clientX;
+                    currentY = e.touches[0].clientY;
+                } else if (e.touches.length === 2 && dragButton === 2) {
+                    currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                } else {
+                    return;
+                }
+
+                const deltaX = currentX - prevX;
+                const deltaY = currentY - prevY;
+
+                prevX = currentX;
+                prevY = currentY;
+
+                if (dragButton === 0) {
+                    rotY += deltaX * 0.4;
+                    rotX = Math.max(-45, Math.min(45, rotX - deltaY * 0.4));
+                    pivot.setAttribute('rotation', `${rotX} ${rotY} 0`);
+                } else if (dragButton === 2) {
+                    posX += deltaX * 0.008;
+                    posY = Math.max(-2, Math.min(3, posY - deltaY * 0.008));
+                    pivot.setAttribute('position', `${posX} ${posY} ${posZ}`);
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            // ZOOM CON RUEDA DEL MOUSE
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                cameraZ = Math.max(1.2, Math.min(6.0, cameraZ + e.deltaY * 0.003));
+                camera.setAttribute('position', `0 1.5 ${cameraZ}`);
+            }, { passive: false });
+        }
+
+        // Acciones interactivas de los botones flotantes de RA - Cambios Espectaculares en la visualización 3D
+        function triggerARAction(actionId) {
+            const titleEl = document.getElementById('ar-status-title');
+            const descEl = document.getElementById('ar-status-desc');
+
+            // Actualizar el estado visual de los botones
+            const btnIds = ['acad', 'riesgo', 'reco', 'humano', 'comparar'];
+            btnIds.forEach(id => {
+                const btn = document.getElementById('btn-ar-' + id);
+                if (btn) {
+                    btn.classList.remove('border-brand-primary', 'bg-slate-800', 'scale-[1.02]');
+                    btn.classList.add('border-slate-700', 'bg-slate-850');
+                }
+            });
+            const activeBtn = document.getElementById('btn-ar-' + actionId);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-slate-700', 'bg-slate-850');
+                activeBtn.classList.add('border-brand-primary', 'bg-slate-800', 'scale-[1.02]');
+            }
+
+            // Elementos del Dashboard 3D para alterar en respuesta a los clicks
+            const arDashboardTitle = document.getElementById('ar-dashboard-title');
+            const ar3dPopup = document.getElementById('ar-3d-popup');
+            const ar3dPopupText = document.getElementById('ar-3d-popup-text');
+            const arBarRiesgo = document.getElementById('ar-bar-riesgo');
+            const arValRiesgo = document.getElementById('ar-val-riesgo');
+            const arBarBecas = document.getElementById('ar-bar-becas');
+            const arValBecas = document.getElementById('ar-val-becas');
+            const arBarMatricula = document.getElementById('ar-bar-matricula');
+            const arValMatricula = document.getElementById('ar-val-matricula');
+            const arBarRetencion = document.getElementById('ar-bar-retencion');
+            const arValRetencion = document.getElementById('ar-val-retencion');
+
+            // Luces del Semáforo
+            const redSphere = document.getElementById('ar-light-red');
+            const orangeSphere = document.getElementById('ar-light-orange');
+            const greenSphere = document.getElementById('ar-light-green');
+
+            // Resetear semáforo 3D
+            redSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+            orangeSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+            greenSphere.setAttribute('material', 'emissiveIntensity', '0.2');
+
+            // Ocultar popup de alerta por defecto
+            ar3dPopup.setAttribute('visible', 'false');
+
+            switch (actionId) {
+                case 'acad':
+                    titleEl.innerHTML = '<i data-lucide="database" class="w-4 h-4 text-brand-primary"></i> Datos Académicos SIS + LMS';
+                    descEl.innerText = "Holograma Académico Activo: Cargando datos históricos de reprobación e interacción semanal. Semáforo predictivo calibrado en VERDE (Riesgo Bajo en alumnos activos de Matemáticas).";
+
+                    // Modificar Dashboard 3D: Estado ideal saludable
+                    arDashboardTitle.setAttribute('value', "SIS & LMS COMPILADO");
+                    arDashboardTitle.setAttribute('color', "#10b981");
+                    greenSphere.setAttribute('material', 'emissiveIntensity', '1.8');
+
+                    // Valores 3D ideales
+                    updateCylinderHeight(arBarMatricula, arValMatricula, 0.6, "96%");
+                    updateCylinderHeight(arBarRetencion, arValRetencion, 0.8, "95.2%");
+                    updateCylinderHeight(arBarRiesgo, arValRiesgo, 0.2, "2.4%");
+                    updateCylinderHeight(arBarBecas, arValBecas, 0.45, "42%");
+
+                    // Mostrar cartel flotante verde de confirmación
+                    ar3dPopup.setAttribute('visible', 'true');
+                    ar3dPopup.setAttribute('color', '#10b981');
+                    ar3dPopupText.setAttribute('value', "ACCESO LMS: ÓPTIMO / ASISTENCIA: 98%");
+                    break;
+
+                case 'riesgo':
+                    titleEl.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 text-brand-orange"></i> Predicción de Riesgo IA';
+                    descEl.innerText = "¡Alerta Predictiva! El algoritmo identifica un lote de estudiantes que han bajado sus interacciones un 40% en LMS. El semáforo holográfico de riesgo escala a ROJO.";
+
+                    // Modificar Dashboard 3D: Cargar simulación de crisis/alerta
+                    arDashboardTitle.setAttribute('value', "ALERTA PREDICTIVA: ACTIVA");
+                    arDashboardTitle.setAttribute('color', "#ef4444");
+                    redSphere.setAttribute('material', 'emissiveIntensity', '1.8');
+
+                    // Elevar barra de riesgo de deserción al máximo en el espacio 3D
+                    updateCylinderHeight(arBarMatricula, arValMatricula, 0.6, "96%");
+                    updateCylinderHeight(arBarRetencion, arValRetencion, 0.4, "82.1%");
+                    updateCylinderHeight(arBarRiesgo, arValRiesgo, 1.3, "78% CRITICO", "#ef4444");
+                    updateCylinderHeight(arBarBecas, arValBecas, 0.45, "42%");
+
+                    // Alerta holográfica flotante de advertencia
+                    ar3dPopup.setAttribute('visible', 'true');
+                    ar3dPopup.setAttribute('color', '#ef4444');
+                    ar3dPopupText.setAttribute('value', "48 ALUMNOS EN DESERCION LATENTE");
+                    break;
+
+                case 'reco':
+                    titleEl.innerHTML = '<i data-lucide="shield-alert" class="w-4 h-4 text-purple-400"></i> Recomendación IA';
+                    descEl.innerText = "Prescripción de Intervención: Se recomienda automatizar asignación de 12 mentores adicionales para tutorías virtuales personalizadas antes del primer examen oficial.";
+
+                    // Modificar Dashboard 3D: Cargar asignación recomendada
+                    arDashboardTitle.setAttribute('value', "RECOMENDACION PRESCRIPTIVA");
+                    arDashboardTitle.setAttribute('color', "#a855f7");
+                    orangeSphere.setAttribute('material', 'emissiveIntensity', '1.8');
+
+                    // Elevar barras de soporte presupuestal y tutoría
+                    updateCylinderHeight(arBarMatricula, arValMatricula, 0.6, "96%");
+                    updateCylinderHeight(arBarRetencion, arValRetencion, 0.7, "91%");
+                    updateCylinderHeight(arBarRiesgo, arValRiesgo, 0.4, "12% BAJANDO");
+                    updateCylinderHeight(arBarBecas, arValBecas, 1.1, "80% TUTORIAS", "#a855f7");
+
+                    // Mostrar cartel flotante de recomendación
+                    ar3dPopup.setAttribute('visible', 'true');
+                    ar3dPopup.setAttribute('color', '#a855f7');
+                    ar3dPopupText.setAttribute('value', "ACCION: REASIGNAR 12 TUTORES EN LMS");
+                    break;
+
+                case 'humano':
+                    titleEl.innerHTML = '<i data-lucide="user-check" class="w-4 h-4 text-brand-secondary"></i> Validación Humana';
+                    descEl.innerText = "Gobernanza de Datos: El Director Académico aprueba las tutorías recomendadas pero excluye las alertas públicas para proteger el bienestar emocional de los alumnos.";
+
+                    // Modificar Dashboard 3D: Estado final validado/aprobado por humano
+                    arDashboardTitle.setAttribute('value', "APROBADO POR DIRECTIVA");
+                    arDashboardTitle.setAttribute('color', "#f59e0b");
+                    greenSphere.setAttribute('material', 'emissiveIntensity', '1.5');
+
+                    // Retornar a estados estables normales
+                    updateCylinderHeight(arBarMatricula, arValMatricula, 0.6, "96%");
+                    updateCylinderHeight(arBarRetencion, arValRetencion, 0.85, "94.8%");
+                    updateCylinderHeight(arBarRiesgo, arValRiesgo, 0.15, "3.1%");
+                    updateCylinderHeight(arBarBecas, arValBecas, 0.6, "55%");
+
+                    // Cartel holográfico de decisión tomada
+                    ar3dPopup.setAttribute('visible', 'true');
+                    ar3dPopup.setAttribute('color', '#f59e0b');
+                    ar3dPopupText.setAttribute('value', "GOBERNANZA: ACCION AUTORIZADA");
+                    break;
+
+                case 'comparar':
+                    titleEl.innerHTML = '<i data-lucide="git-compare" class="w-4 h-4 text-cyan-400"></i> BI Tradicional vs BI Predictivo';
+                    descEl.innerText = "El BI tradicional solo muestra cuántos reprobaron el año pasado. El BI predictivo potenciado por IA anticipa los estudiantes que suspenderán con 3 semanas de antelación.";
+
+                    // Modificar Dashboard 3D: Mostrar dos tendencias
+                    arDashboardTitle.setAttribute('value', "BI TRADICIONAL VS PREDICTIVO");
+                    arDashboardTitle.setAttribute('color', "#0ea5e9");
+                    redSphere.setAttribute('material', 'emissiveIntensity', '1.2');
+                    orangeSphere.setAttribute('material', 'emissiveIntensity', '1.2');
+
+                    // Barras divididas
+                    updateCylinderHeight(arBarMatricula, arValMatricula, 0.3, "BI HISTORICO");
+                    updateCylinderHeight(arBarRetencion, arValRetencion, 0.9, "PROYECCION IA", "#0ea5e9");
+                    updateCylinderHeight(arBarRiesgo, arValRiesgo, 1.1, "RIESGO INVISIBLE", "#ef4444");
+                    updateCylinderHeight(arBarBecas, arValBecas, 0.3, "ESTATICO");
+
+                    ar3dPopup.setAttribute('visible', 'true');
+                    ar3dPopup.setAttribute('color', '#0ea5e9');
+                    ar3dPopupText.setAttribute('value', "BI PREDICTIVO: +3 SEMANAS DE VENTAJA");
+                    break;
+            }
+            lucide.createIcons();
+        }
+
+        // Función auxiliar para actualizar dinámicamente dimensiones de columnas A-Frame
+        function updateCylinderHeight(barElement, textElement, targetHeight, textValue, colorHex = null) {
+            barElement.setAttribute('height', targetHeight);
+            barElement.setAttribute('position', `0 ${targetHeight / 2 - 0.3} 0`);
+            if (colorHex) {
+                barElement.setAttribute('color', colorHex);
+            } else {
+                // Recuperar color original del dataset
+                if (barElement.id === 'ar-bar-matricula') barElement.setAttribute('color', '#3b82f6');
+                if (barElement.id === 'ar-bar-retencion') barElement.setAttribute('color', '#10b981');
+                if (barElement.id === 'ar-bar-riesgo') barElement.setAttribute('color', '#f97316');
+                if (barElement.id === 'ar-bar-becas') barElement.setAttribute('color', '#8b5cf6');
+            }
+            textElement.setAttribute('value', textValue);
+            textElement.setAttribute('position', `0 ${targetHeight + 0.15 - 0.3} 0`);
+        }
+
+        // 5. Generación del Reporte Final de Reflexión
+        let compiledReportText = "";
+
+        function generateStrategicReport() {
+            const q1 = document.getElementById('ref-q1').value;
+            const q2 = document.getElementById('ref-q2').value;
+            const q3 = document.getElementById('ref-q3').value;
+            const q4 = document.getElementById('ref-q4').value;
+
+            if (!q1 || !q2 || !q3 || !q4) {
+                alert("Por favor responde todas las preguntas del cuestionario para compilar tu plan estratégico.");
+                return;
+            }
+
+            const outputContainer = document.getElementById('report-content');
+            const actionButtons = document.getElementById('report-action-buttons');
+
+            compiledReportText = `PLAN DE GESTIÓN INSTITUCIONAL INTELIGENTE (PROYECTO EDUMANDOS-IA)
+
+1. MÉTRICA DE ALERTA TEMPRANA PRIORITARIA:
+- Selección: ${q1}
+- Justificación: Detectar inasistencia y falta de participación digital en las primeras 3 semanas permite adelantarse al examen parcial y actuar de manera proactiva.
+
+2. DECISIÓN ESTRATÉGICA POTENCIADA POR IA:
+- Selección: ${q2}
+- Justificación: Reasignar tutores académicos a cursos críticos (como Álgebra o Programación) optimiza los recursos de la institución enfocándolos en donde hay mayor reprobación.
+
+3. RIESGO ÉTICO A EVITAR (GOBERNANZA):
+- Selección: ${q3}
+- Justificación: Evitar que los modelos de Machine Learning hereden sesgos geográficos o socioeconómicos que puedan estigmatizar y perjudicar la equidad académica.
+
+4. PROCESO ADMINISTRATIVO AUTOMATIZABLE (RPA):
+- Selección: ${q4}
+- Justificación: Automatizar el traspaso de registros físicos de notas al SIS libera cientos de horas laborables al equipo escolar para enfocarse en la retención presencial.
+
+PLAN EMITIDO CON CRITERIO ÉTICO, HUMANO Y CONTEXTUALIZADO.`;
+
+            // Renderizar reporte en HTML de manera elegante
+            outputContainer.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold">Plan Compilado Correctamente</p>
+                    
+                    <div>
+                        <span class="font-bold text-white block">1. Indicador Inicial Clave:</span>
+                        <p class="text-xs text-slate-300 mt-1">${q1}</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-white block">2. Decisión Estratégica IA:</span>
+                        <p class="text-xs text-slate-300 mt-1">${q2}</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-white block">3. Riesgo Ético Controlado:</span>
+                        <p class="text-xs text-slate-300 mt-1">${q3}</p>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-white block">4. Automatización Administrativa:</span>
+                        <p class="text-xs text-slate-300 mt-1">${q4}</p>
+                    </div>
+
+                    <div class="p-3 bg-brand-primary/10 text-brand-primary text-[10px] font-bold rounded border border-brand-primary/20 flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+                        <span>Este reporte cumple íntegramente con el logro de aprendizaje institucional.</span>
+                    </div>
+                </div>
+            `;
+
+            actionButtons.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function copyToClipboard() {
+            if (!compiledReportText) return;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = compiledReportText;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                document.execCommand('copy');
+                alert("¡Plan estratégico copiado al portapapeles con éxito!");
+            } catch (err) {
+                console.log("No se pudo copiar", err);
+            }
+
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataShield AI - Portal de Gobernanza Ética de la IA de la Institución Educativa</title>
+    <!-- Tailwind CSS CDN para estilos visuales premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN para íconos institucionales -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes scan {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(100%);
+            }
+        }
+
+        .animate-scan {
+            animation: scan 3s linear infinite;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-950 text-slate-100 font-sans antialiased h-full flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- HEADER DE LA INSTITUCIÓN EDUCATIVA -->
+    <header
+        class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/85 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div
+                class="bg-amber-500 text-slate-950 font-black px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg shadow-amber-500/10">
+                <span class="text-xl">↑</span>
+                <span class="tracking-widest font-bold text-sm">I.E.</span>
+            </div>
+            <div class="h-6 w-px bg-slate-700 hidden sm:block"></div>
+            <div>
+                <h1 class="text-sm font-bold tracking-tight text-amber-500">Dirección de Instituciones
+                    Educativas</h1>
+                <p class="text-xs text-slate-400">Inteligencia Artificial Aplicada a la Gestión Educativa - Privacidad
+                    de Datos y Explicabilidad</p>
+            </div>
+        </div>
+
+        <!-- HUD DE CONTROL DIRECTIVO -->
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 bg-slate-800/60 px-3 py-1 rounded-full text-xs">
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-amber-500 animate-pulse"></i>
+                <span class="text-slate-300">Cumplimiento Ético: <strong id="score-etica"
+                        class="text-amber-400">50%</strong></span>
+                <span class="text-slate-500">|</span>
+                <span class="text-slate-300">Confianza de Familias: <strong id="score-confianza"
+                        class="text-cyan-400">50%</strong></span>
+            </div>
+            <button onclick="resetProgress()"
+                class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition"
+                title="Reiniciar Progreso">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="flex-1 flex flex-col md:flex-row h-full overflow-hidden">
+        <!-- SIDEBAR DE NAVEGACIÓN -->
+        <aside
+            class="w-full md:w-64 bg-slate-900/40 border-r border-slate-800/80 p-4 space-y-1 md:block overflow-y-auto shrink-0">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">Panel de Gobernanza</p>
+            <nav class="space-y-1" id="sidebar-nav">
+                <!-- Generados dinámicamente -->
+            </nav>
+
+
+
+        </aside>
+
+        <!-- ÁREA DE CONTENIDO -->
+        <main class="flex-1 p-4 md:p-6 overflow-y-auto w-full">
+
+            <!-- PANTALLA DE INICIO (PORTADA DE LA EXPERIENCIA) -->
+            <div id="tab-inicio" class="tab-content space-y-8">
+                <div
+                    class="relative rounded-3xl overflow-hidden border border-slate-800 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 p-6 md:p-10 shadow-2xl">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20">
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl -ml-20 -mb-20">
+                    </div>
+
+                    <div class="relative max-w-3xl space-y-6">
+                        <div
+                            class="inline-flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-xs text-amber-400 font-bold tracking-wider">
+                            <i data-lucide="shield" class="w-3.5 h-3.5"></i> ÉTICA, PRIVACIDAD Y REGULACIÓN DE
+                            LA IA
+                        </div>
+
+                        <h1 class="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
+                            ¿Cómo gobernar la IA sin vulnerar la privacidad de nuestros estudiantes?
+                        </h1>
+
+                        <p class="text-sm md:text-base text-slate-400 leading-relaxed">
+                            La Inteligencia Artificial ha transformado los datos escolares de ser registros estáticos a
+                            convertirse en insumos dinámicos para predicciones algorítmicas de alto impacto. En esta
+                            simulación, se revisarán lineamientos éticos alineados a la
+                            <strong class="text-slate-200">Ley N° 29733 (Perú)</strong>, evaluando riesgos de
+                            perfilamiento, discriminación algorítmica y protección del menor de edad.
+                        </p>
+
+
+
+
+                        <div class="flex flex-wrap gap-3 pt-4">
+                            <button onclick="switchTab('ar')"
+                                class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 flex items-center gap-2 tracking-wide uppercase">
+                                <i data-lucide="camera" class="w-4 h-4"></i> Laboratorio 3D/AR
+                            </button>
+                            <button onclick="switchTab('simulador')"
+                                class="bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-750 text-slate-100 font-bold text-xs px-6 py-3 rounded-xl transition-all flex items-center gap-2">
+                                <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i> Iniciar Simulador Gerencial
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-slate-900/50 rounded-2xl border border-slate-800/80 p-6 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="p-4 bg-amber-500/10 rounded-xl text-amber-400 flex-shrink-0">
+                        <i data-lucide="help-circle" class="w-8 h-8"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-lg font-bold text-slate-200">La Pregunta de Gestión Escolar</h3>
+                        <p class="text-xs md:text-sm text-slate-400 leading-relaxed">
+                            Como líderes de instituciones educativas, no podemos ser simples consumidores pasivos de
+                            tecnología EdTech. Debemos responder:
+                            <strong class="text-amber-500 block mt-1 text-sm md:text-base font-serif italic">
+                                "¿De qué manera equilibramos la precisión de los modelos predictivos del colegio
+                                (deserción, rendimiento, becas) con el derecho constitucional de nuestros estudiantes a
+                                su privacidad y a la transparencia pedagógica?"
+                            </strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAPA DE RIESGO / USO ESCOLAR -->
+            <div id="tab-mapa" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Mapa de Impacto de IA en la Institución Educativa</h2>
+                    <p class="text-xs text-slate-400">Analice en qué áreas de la institución se procesan datos mediante
+                        IA y evalúe la postura directiva óptima para resguardar a la comunidad.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-4 space-y-3" id="map-buttons-container">
+                        <!-- Dinámico -->
+                    </div>
+                    <div class="lg:col-span-8 bg-slate-900/20 border border-slate-800 rounded-2xl p-6 relative overflow-hidden"
+                        id="map-detail-container">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- LABORATORIO 3D/AR DE GOBERNANZA -->
+            <div id="tab-ar" class="tab-content space-y-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-white">Laboratorio Visual de Datos Escolares</h2>
+                        <p class="text-xs text-slate-400">Manipule las políticas de protección escolar del plantel y
+                            verifique el impacto regulatorio en tiempo real en la maqueta interactiva.</p>
+                    </div>
+                    <button onclick="toggleARMode()"
+                        class="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-4 py-2 rounded-xl border border-purple-400/30 transition-all flex items-center gap-2">
+                        <i data-lucide="camera" class="w-4 h-4"></i> <span id="btn-ar-text">Simular Cámara AR</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Controles Directivos -->
+                    <div class="lg:col-span-4 space-y-5 bg-slate-900/40 border border-slate-800 p-5 rounded-2xl">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Controles de Política del
+                            Plantel</h3>
+                        <div class="space-y-4">
+                            <div
+                                class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-200">Blindaje de Matrículas (Cifrado
+                                        escolar)</h4>
+                                    <p class="text-[10px] text-slate-500">Cifra los datos durante el envío a plataformas
+                                        externas.</p>
+                                </div>
+                                <button onclick="toggleEncrypt()" id="toggle-encrypt"
+                                    class="w-11 h-6 rounded-full transition-colors flex items-center p-1 bg-slate-700">
+                                    <div class="w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                </button>
+                            </div>
+
+                            <div
+                                class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-200">Uso de Códigos de Privacidad</h4>
+                                    <p class="text-[10px] text-slate-500">Oculta los nombres reales de los alumnos en
+                                        los reportes.</p>
+                                </div>
+                                <button onclick="toggleAnonymize()" id="toggle-anonymize"
+                                    class="w-11 h-6 rounded-full transition-colors flex items-center p-1 bg-slate-700">
+                                    <div class="w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                </button>
+                            </div>
+
+                            <div
+                                class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-200">Explicabilidad Pedagógica</h4>
+                                    <p class="text-[10px] text-slate-500">Asegura que los docentes puedan explicar los
+                                        reportes de la IA.</p>
+                                </div>
+                                <button onclick="toggleXAI()" id="toggle-xai"
+                                    class="w-11 h-6 rounded-full transition-colors flex items-center p-1 bg-slate-700">
+                                    <div class="w-4 h-4 bg-white rounded-full transition-transform"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-2 border-t border-slate-800/80 text-xs">
+                            <p class="font-mono text-[10px] text-slate-400 uppercase tracking-widest">Nodos del Campus
+                                Virtual (Presione para auditar)</p>
+                            <div class="grid grid-cols-2 gap-2" id="node-audit-buttons">
+                                <!-- Generado dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maqueta / AR Screen -->
+                    <div class="lg:col-span-8 bg-slate-900/20 border border-slate-800 rounded-2xl flex flex-col overflow-hidden relative min-h-[450px]"
+                        id="ar-main-viewport">
+                        <!-- Renderizado según modo (Canvas de flujo escolar o simulación de cámara AR) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIMULADOR DE DECISIONES DE DIRECCIÓN ESCOLAR -->
+            <div id="tab-simulador" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Simulador de Decisiones para Directivos</h2>
+                    <p class="text-xs text-slate-400">Asuma el rol de Director y equilibre el éxito financiero,
+                        pedagógico y la protección de su comunidad escolar.</p>
+                </div>
+
+                <!-- Explicación del Simulador para Alumnos de Educación -->
+                <div class="bg-amber-500/10 border border-amber-500/30 p-5 rounded-2xl space-y-3">
+                    <div class="flex items-center gap-2 text-amber-400">
+                        <i data-lucide="info" class="w-5 h-5 flex-shrink-0"></i>
+                        <h4 class="text-xs font-bold uppercase tracking-wider font-mono">Guía Metodológica de Operación
+                            para el Director</h4>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Como directivo de una <strong>Institución Educativa</strong>, cada plataforma que contrata o
+                        reglamento que aprueba influye directamente en el plantel. Este simulador evalúa sus decisiones
+                        en base a cuatro indicadores críticos:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-1 text-xs">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                            <strong class="text-amber-400 block mb-0.5">Rendimiento Pedagógico:</strong> Eficacia de la
+                            enseñanza, retención de alumnos y calidad educativa.
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                            <strong class="text-emerald-400 block mb-0.5">Presupuesto del Plantel:</strong> Optimización
+                            económica de recursos financieros y viabilidad institucional.
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                            <strong class="text-cyan-400 block mb-0.5">Ética Legal (Ley 29733):</strong> Adecuación al
+                            marco regulatorio de la ANPD en Perú para evitar multas.
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                            <strong class="text-purple-400 block mb-0.5">Confianza de Familias:</strong> Clima
+                            institucional favorable, reputación de marca y buena relación con apoderados.
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 italic">
+                        Regla de Oro: Si su indicador de "Ética Legal" cae por debajo del 40%, la ANPD sancionará a su
+                        Institución Educativa y dañará irreversiblemente su reputación.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="sim-metrics-container">
+                    <!-- Métricas del simulador -->
+                </div>
+                <div class="bg-slate-900/30 border border-slate-800 p-6 rounded-2xl space-y-6 relative overflow-hidden"
+                    id="sim-step-card">
+                    <!-- Despliegue de pasos del simulador -->
+                </div>
+            </div>
+
+            <!-- CASOS DE APLICACIÓN REALISTA -->
+            <div id="tab-casos" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Casos Reales y Lecciones de Gobernanza Escolar</h2>
+                    <p class="text-xs text-slate-400">Analice expedientes regulatorios y de adopción real de IA en el
+                        ecosistema educativo latinoamericano.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="casos-container">
+                    <!-- Tarjetas de casos -->
+                </div>
+            </div>
+
+            <!-- DIRECTORIO DE SOLUCIONES PEDAGÓGICAS -->
+            <div id="tab-soluciones" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Directorio de Soluciones de Arquitectura Ética</h2>
+                    <p class="text-xs text-slate-400">Implementaciones metodológicas y tecnológicas concretas que
+                        armonizan la innovación con la Ley N° 29733.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="soluciones-container">
+                    <!-- Tarjetas de soluciones -->
+                </div>
+            </div>
+
+            <!-- GESTIÓN DE INCIDENTES ESCOLARES -->
+            <div id="tab-escenarios" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Auditoría y Gestión de Incidentes Críticos</h2>
+                    <p class="text-xs text-slate-400">Resuelva problemas complejos de privacidad de datos cometidos por
+                        su equipo docente o apoderados.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div class="lg:col-span-5 space-y-4" id="incidentes-list">
+                        <!-- Lista de incidentes -->
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-900/20 border border-slate-800 rounded-2xl p-6 min-h-[300px] flex items-center justify-center"
+                        id="incidente-detail-panel">
+                        <!-- Detalle y opciones del incidente escolar -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TALLER PRÁCTICO (LEY 29733 EN LA DIRECCIÓN ESCOLAR) -->
+            <div id="tab-taller" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Taller Práctico: Clasificación de Datos bajo Ley N° 29733
+                    </h2>
+                    <p class="text-xs text-slate-400">Ordene y clasifique la información recolectada en su Institución
+                        Educativa para fijar directrices de privacidad según la normativa peruana.</p>
+                </div>
+
+                <!-- Resumen Legal -->
+                <div
+                    class="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+                    <div class="p-3 bg-amber-500/10 rounded-xl text-amber-500">
+                        <i data-lucide="info" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        <h3 class="text-sm font-bold text-slate-200">Ley N° 29733 (Ley de Protección de Datos
+                            Personales)</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Normativa peruana que garantiza el derecho a la protección de datos personales. Establece
+                            cómo las instituciones deben recolectar y usar la información. Exige el
+                            <strong>consentimiento previo, expreso e inequívoco</strong>, y clasifica ciertos datos
+                            (salud, biométricos) como <strong>"datos sensibles"</strong> que requieren medidas de
+                            seguridad reforzadas.
+                        </p>
+                    </div>
+                    <a href="https://leyes.congreso.gob.pe/Documentos/Leyes/29733.pdf" target="_blank"
+                        class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2 rounded-lg border border-slate-700 transition-all flex items-center gap-2 flex-shrink-0">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Leer Ley Oficial (PDF)
+                    </a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="taller-container">
+                    <!-- Columnas clasificadoras con interacción simplificada -->
+                </div>
+                <div class="text-center">
+                    <button onclick="checkTaller()"
+                        class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-6 py-3 rounded-xl uppercase tracking-wider transition">
+                        Validar Estructura Legal
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- CASO FINAL Y CERTIFICADO -->
+            <div id="tab-evaluacion" class="tab-content space-y-8">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Evaluación Directiva Final</h2>
+                    <p class="text-xs text-slate-400">Ponga a prueba su madurez de toma de decisiones éticas frente a un
+                        jurado simulado del Consejo Educativo.</p>
+                </div>
+                <div class="bg-slate-900/30 border border-slate-800 rounded-3xl p-6 relative overflow-hidden"
+                    id="evaluacion-case-card">
+                    <!-- Despliegue evaluativo -->
+                </div>
+                <div id="certificado-holder" class="hidden">
+                    <!-- Certificado renderizado si califica de forma perfecta -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL PREMIUM DE MENSAJES (Reemplaza los alertas de navegador) -->
+    <div id="custom-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-2xl space-y-4 shadow-2xl relative">
+            <div class="flex items-center gap-3 text-amber-500">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                <h3 id="modal-title" class="text-sm font-bold tracking-wider font-mono uppercase">Notificación
+                    Institucional</h3>
+            </div>
+            <p id="modal-body" class="text-xs text-slate-300 leading-relaxed"></p>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeCustomModal()"
+                    class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-4 py-2 rounded-xl transition">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-4 px-6 text-center text-xs text-slate-500"
+        style="color:white">
+        <p>Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias
+        </p>
+    </footer>
+
+    <!-- LÓGICA DE CONTROL DE LA APLICACIÓN -->
+    <script>
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ie-datashield-ai';
+        const apiKey = ""; // Inyectado automáticamente por la plataforma en runtime
+
+        let state = {
+            activeTab: 'inicio',
+            progress: {
+                userName: '',
+                simulationScore: { academica: 50, presupuesto: 50, etica: 50, confianza: 50 },
+                simStep: 0,
+                scenariosSolved: {},
+                workshopAnswers: {},
+                evalCompleted: false,
+                evalScore: null
+            }
+        };
+
+        // Estructuras de Datos adaptadas a la terminología pedagógica y de gestión escolar
+        const mapAreas = {
+            admisiones: {
+                title: "Ingreso Automatizado y Otorgamiento de Becas",
+                icon: "users",
+                problema: "Sesgos del algoritmo que reproducen desigualdades socioeconómicas y geográficas en la selección.",
+                aplicacion: "Ponderación automática del expediente escolar y estimación de probabilidad de retiro escolar anticipado.",
+                datos: "Antecedentes académicos anteriores, distrito de procedencia, ingresos declarados por el apoderado.",
+                beneficio: "Rapidez para brindar becas del plantel a alumnos destacados con limitaciones socioeconómicas.",
+                riesgo: "Exclusión discriminatoria indirecta a familias residentes en zonas vulnerables catalogadas como de alto riesgo.",
+                decision: "Establecer una política institucional que obligue a que la decisión de becas dependa de un comité pedagógico multidisciplinario.",
+                regla: "Ley N° 29733, Arts. 6 y 7 (Principios de Finalidad y Proporcionalidad) — El tratamiento automatizado de datos sensibles debe ser proporcional a la finalidad declarada y no puede generar discriminación indirecta."
+            },
+            proctoring: {
+                title: "Evaluación Virtual de Aprendizaje (Supervisión por IA)",
+                icon: "eye",
+                problema: "Generación de estrés en los estudiantes, invasión de la privacidad e indefensión ante fallas técnicas.",
+                aplicacion: "Visión artificial para certificar la identidad del menor de edad, analizando movimientos de ojos o micro-gestos en la webcam.",
+                datos: "Video del rostro del alumno, registros biométricos del contorno facial, clics y tiempos de teclado.",
+                beneficio: "Garantizar la identidad del examinado en evaluaciones virtuales a distancia.",
+                riesgo: "Multas de la ANPD por registrar datos sensibles de menores sin consentimiento expreso previo y provocar falsas anulaciones por tics nerviosos.",
+                decision: "Reemplazar los controles faciales de video continuos por metodologías de evaluación alternativas (portafolios, proyectos reales).",
+                regla: "Ley N° 29733, Art. 13.6 — El tratamiento de datos biométricos (sensibles) requiere consentimiento por escrito del titular o su representante legal."
+            },
+            bienestar: {
+                title: "Alerta Temprana de Bienestar del Estudiante",
+                icon: "activity",
+                problema: "Vulneración del secreto y la confidencialidad de la información psicológica y de salud mental.",
+                aplicacion: "IA para analizar la participación del alumno en los foros escolares (NLP) y detectar caídas anímicas.",
+                datos: "Expresión lingüística en chats, accesos de lectura al aula virtual, encuestas familiares y socioafectivas.",
+                beneficio: "Alertas tempranas para derivación prioritaria del alumno al departamento de tutoría o psicología del colegio.",
+                riesgo: "Acceso indebido a los perfiles de vulnerabilidad emocional por parte del personal de admisiones o docentes sin filtro.",
+                decision: "Implementar un protocolo estricto donde los datos emocionales permanezcan bajo custodia médica y cifrados en la ficha familiar.",
+                regla: "Ley N° 29733, Art. 2 num. 5 — Los datos de salud (incluida la psicológica) son datos sensibles con protección reforzada que requieren consentimiento escrito."
+            }
+        };
+
+        let activeMapArea = 'admisiones';
+
+        // Laboratorio de Políticas Escolares
+        let encryptOn = false;
+        let anonymizeOn = false;
+        let xaiOn = false;
+        let activeNode = null;
+        let activeARMode = false;
+        let canvasAnimationId = null;
+
+        const nodesDetails = {
+            moodle: {
+                title: "Ficha del Alumno (Registro de Matrícula)",
+                desc: "Historial completo de datos personales del estudiante, calificaciones, asistencia y dirección residencial.",
+                riesgo: "Pérdida de la custodia legal de la ficha escolar al compartirse libremente con plataformas de terceros.",
+                accion: "Establecer la política de 'Privacidad desde el Diseño', minimizando los accesos según el rol de cada docente."
+            },
+            biometria: {
+                title: "Registro Biométrico de Asistencia",
+                desc: "Datos de reconocimiento de rostro del estudiante capturados para verificar el ingreso diario al plantel.",
+                riesgo: "Almacenamiento de fotos y rasgos de menores de edad sin resguardo criptográfico adecuado.",
+                accion: "Sustituir las fotos por 'Códigos de Privacidad' cifrados e inalterables (Hashes) no reversibles."
+            },
+            algoritmo: {
+                title: "IA de Alerta de Deserción Escolar",
+                desc: "Módulo predictivo encargado de alertar a los directivos sobre la probabilidad de retiro de un alumno.",
+                riesgo: "Decisión basada en una 'Caja Negra' que impide al apoderado impugnar o comprender la decisión institucional.",
+                accion: "Adoptar modelos de explicabilidad pedagógica que desglosen las variables familiares y de conducta analizadas."
+            },
+            servidor: {
+                title: "Servidor del Plantel Educativo",
+                desc: "Estructura local de almacenamiento donde descansa la base de datos de las familias y sus reportes de pago.",
+                riesgo: "Brechas de seguridad física o informática que expongan la solvencia de los padres al público.",
+                accion: "Implementar políticas de segmentación por roles institucionales y auditorías recurrentes de la ANPD."
+            }
+        };
+
+        // Simulador de Decisiones Adaptado a Alumnos de Educación (Gestión Pedagógica)
+        const simSteps = [
+            {
+                title: "Paso 1: Adquisición de la Plataforma de Monitoreo con IA",
+                context: "Usted es el Director del plantel escolar. El equipo de TI le presenta opciones para implementar un módulo de IA que estime qué alumnos están en riesgo de abandonar los estudios y ayude a direccionar recursos socioeconómicos.",
+                options: [
+                    {
+                        label: "Opción A: Proveedor Gratuito Internacional (La empresa procesa y entrena sus modelos con las notas y fichas familiares de sus estudiantes).",
+                        consecuencias: "No tiene costo para el colegio, pero cede las trayectorias de sus alumnos de forma masiva e irregular.",
+                        effects: [15, 30, -35, -25] // academica, presupuesto, etica, confianza
+                    },
+                    {
+                        label: "Opción B: Licencia bajo Convenio Institucional (Contrato blindado de confidencialidad, almacenamiento local y control de acceso restringido).",
+                        consecuencias: "Requiere inversión presupuestal, pero se garantiza contractualmente que los datos no serán comercializados.",
+                        effects: [10, -20, 25, 20]
+                    },
+                    {
+                        label: "Opción C: Diagnóstico Tradicional sin IA (Un comité de tutores analiza las alertas de forma manual periódicamente).",
+                        consecuencias: "Costos operativos altos, requiere muchas horas de labor docente, pero anula la exposición legal de datos de menores.",
+                        effects: [5, -35, 35, 30]
+                    }
+                ]
+            },
+            {
+                title: "Paso 2: Formulación del Consentimiento para las Familias",
+                context: "La Autoridad Nacional de Protección de Datos Personales (ANPD) exige recabar el consentimiento de los apoderados para usar sus datos socioeconómicos. ¿Cómo diseñará la cartilla de matrícula escolar?",
+                options: [
+                    {
+                        label: "Opción A: Consentimiento implícito ('Al matricularse, el apoderado acepta que usemos algoritmos de IA en la educación de su hijo').",
+                        consecuencias: "Agiliza la matrícula, pero viola los requisitos de la Ley N° 29733, Art. 13 (Consentimiento previo, informado, expreso e inequívoco; por escrito para datos sensibles).",
+                        effects: [10, 15, -40, -30]
+                    },
+                    {
+                        label: "Opción B: Ficha de Consentimiento Modular (El apoderado aprueba de forma independiente el uso de IA para alertas de bienestar académico).",
+                        consecuencias: "Fomenta la transparencia, genera confianza en las familias y asegura el cumplimiento ante auditorías de la ANPD.",
+                        effects: [0, -10, 35, 35]
+                    }
+                ]
+            },
+            {
+                title: "Paso 3: Elección del Control de Fraude en Exámenes Virtuales",
+                context: "Para las evaluaciones académicas a distancia, algunos coordinadores piden usar software de reconocimiento facial de micro-gestos para evitar plagio. ¿Qué directriz instituirá?",
+                options: [
+                    {
+                        label: "Opción A: Implementación estricta de grabación de cámara continua con IA de análisis de estrés y desvío de mirada.",
+                        consecuencias: "Control rígido, pero genera altos niveles de estrés en los alumnos y potenciales falsos positivos que dañan el clima escolar.",
+                        effects: [20, 10, -45, -40]
+                    },
+                    {
+                        label: "Opción B: Validación de identidad inicial y supervisión guiada por el propio tutor docente (Criterio pedagógico prioritario).",
+                        consecuencias: "El docente asume la revisión de alertas marcadas, evitando sanciones de la IA sin criterio humano.",
+                        effects: [10, -5, 25, 25]
+                    },
+                    {
+                        label: "Opción C: Diseñar evaluaciones basadas en desafíos prácticos (Elaboración de proyectos, ensayos o portafolios abiertos).",
+                        consecuencias: "Elimina la necesidad de recolectar biometría, promueve el aprendizaje autónomo y fortalece el clima institucional.",
+                        effects: [20, -5, 40, 45]
+                    }
+                ]
+            },
+            {
+                title: "Paso 4: Explicabilidad ante el Reclamo de un Padre de Familia",
+                context: "Un apoderado del plantel presenta un reclamo porque la IA de becas redujo la subvención asignada a su hijo alegando 'alto índice predictivo de egreso exitoso'. El padre exige comprender el criterio del cálculo.",
+                options: [
+                    {
+                        label: "Opción A: Sostener la respuesta de la IA indicando que el algoritmo posee un 95% de asertividad matemática compleja.",
+                        consecuencias: "Genera desconfianza, sensación de frialdad institucional y fundamenta denuncias ante la ANPD por 'falta de explicabilidad'.",
+                        effects: [0, 10, -35, -30]
+                    },
+                    {
+                        label: "Opción B: Transparentar los criterios evaluados, auditar el cálculo y ofrecer un canal formal de apelación humana inmediata.",
+                        consecuencias: "Firme compromiso con la ética, resguarda el prestigio del colegio y desmitifica los sesgos automáticos del software.",
+                        effects: [10, -10, 35, 30]
+                    }
+                ]
+            }
+        ];
+
+        const casos = [
+            {
+                title: "Caso de Auditoría ANPD - Proctoring en Posgrados",
+                context: "Escenario Peruano Realista",
+                problema: "Una importante universidad de Lima utilizó reconocimiento facial de atención continuo en sus exámenes de ingreso sin consentimiento expreso previo, alegando 'interés legítimo'.",
+                solucion: "La Autoridad Nacional de Protección de Datos Personales (ANPD) emitió una resolución sancionadora por violación del principio de proporcionalidad, exigiendo suspender la analítica emocional algorítmica.",
+                leccion: "La telemetría biométrica de atención requiere consentimiento inquebrantable e individualizado. La 'IA de detección de mentiras o emociones' carece de fundamentación científica libre de sesgos y es altamente punitiva.",
+                art: "Ley 29733, Art. 2 num. 5 — Los datos biométricos que identifican al titular son clasificados como datos sensibles con tutela reforzada."
+            },
+            {
+                title: "Implementación AWS Educate en Alertas Tempranas",
+                context: "Casos de Universidades de Latinoamérica",
+                problema: "Deserción masiva en los primeros ciclos de pregrado por factores multifactoriales.",
+                solucion: "Configuración de un lago de datos unificado en AWS e implementación de algoritmos de bosque aleatorio que analizan clicks en Moodle e historial académico tradicional.",
+                leccion: "El modelo predice deserción con 87% de precisión, pero la institución impuso un cortafuegos: los docentes solo reciben alertas genéricas de apoyo, ocultando el puntaje de probabilidad exacto para evitar sesgos discriminatorios preventivos.",
+                art: "Privacy by Design — Segmentación y control estricto de visibilidad por roles."
+            }
+        ];
+
+        const soluciones = [
+            {
+                title: "Modelos Predictivos con Privacidad Diferencial",
+                uso: "Predicción de deserción y rendimiento de becarios de Cajamarca y Trujillo.",
+                funcion: "Añade ruido matemático calibrado a los datos de entrenamiento para que los científicos de datos puedan predecir tendencias grupales sin posibilidad de identificar a estudiantes de manera individual.",
+                requisitos: "Equipo de ingeniería de datos avanzado, base unificada en Postgres o BigQuery.",
+                beneficio: "Protección matemática irreversible frente a ciberataques que pretendan exponer PII."
+            },
+            {
+                title: "API Segura LTI v1.3 (Learning Tools Interoperability)",
+                uso: "Integración de aplicaciones EdTech externas (ej. Duolingo, Khan Academy) en Moodle.",
+                funcion: "Establece un puente criptográfico de intercambio de datos estrictamente limitado. Prohíbe que el proveedor externo 'chupe' la base de datos de correos o teléfonos de alumnos.",
+                requisitos: "Moodle UPN configurado con certificados OAuth2.",
+                beneficio: "Cumplimiento total como 'Controlador de Datos' (UPN) asegurando que el proveedor sea mero 'Procesador'."
+            },
+            {
+                title: "Dashboard de Auditoría de Sesgo de Datos",
+                uso: "Mitigación de sesgos en el comité de admisión y becas de posgrado.",
+                funcion: "Utiliza métricas de paridad demográfica y modelos SHAP para evidenciar en lenguaje natural qué pesos otorga la IA a variables geográficas, edad u origen del postulante.",
+                requisitos: "Implementación de frameworks de XAI (Interpretability) de código abierto en Python.",
+                beneficio: "Transparencia absoluta y derecho a la impugnación humana garantizado."
+            }
+        ];
+
+        // Incidentes Críticos
+        const incidentes = {
+            incident_1: {
+                title: "Docentes cargando ensayos estudiantiles a herramientas gratuitas",
+                desc: "Docentes copian y pegan ensayos completos de estudiantes en ChatGPT gratis para acelerar la retroalimentación, sin control de privacidad institucional.",
+                pregunta: "¿Cuál es el riesgo legal y ético y qué medida correctiva inmediata debe dictaminar como Director?",
+                options: [
+                    {
+                        id: "A",
+                        text: "Ignorar el caso ya que mejora los tiempos de respuesta y ahorra presupuesto docente.",
+                        correct: false,
+                        feedback: "Mala decisión. Expone propiedad intelectual de alumnos y viola la Ley de Protección de Datos Personales, ya que los servidores externos de OpenAI absorben los textos para re-entrenamiento."
+                    },
+                    {
+                        id: "B",
+                        text: "Prohibir ChatGPT y sancionar a todo docente que use IA en sus revisiones.",
+                        correct: false,
+                        feedback: "Poco realista y frena la innovación de manera innecesaria. Generará resistencia en el claustro."
+                    },
+                    {
+                        id: "C",
+                        text: "Adquirir una licencia institucional de API Enterprise (con garantía de que no almacena ni entrena con prompts) y capacitar al docente en la anonimización de nombres previos al envío.",
+                        correct: true,
+                        feedback: "¡Excelente! Combina soberanía de datos, gobernanza del consentimiento y permite aprovechar el poder de la IA de manera legal."
+                    }
+                ]
+            },
+            incident_2: {
+                title: "Falso positivo biométrico de Proctoring en examen final",
+                desc: "La IA de Proctoring anuló el examen de un estudiante de Trujillo tras detectar altos índices de 'anomalía y mirada ausente'. El alumno padece de un estrabismo leve no reportado en su matrícula.",
+                pregunta: "¿Qué resolución institucional debe tomar ante la queja formal del alumno?",
+                options: [
+                    {
+                        id: "A",
+                        text: "Respaldar al algoritmo para evitar sentar precedentes de indisciplina en el proctoring.",
+                        correct: false,
+                        feedback: "Cruel e ilegal. Los algoritmos no poseen certeza absoluta y discriminan ante neurodivergencias y condiciones físicas físicas."
+                    },
+                    {
+                        id: "B",
+                        text: "Anular las cámaras de Proctoring y permitir que todos rindan exámenes sin control.",
+                        correct: false,
+                        feedback: "Extremo que deteriora la validez de los títulos emitidos por la institución."
+                    },
+                    {
+                        id: "C",
+                        text: "Restablecer el examen, anular la decisión automática, e implementar una directiva que exija que toda alerta sea evaluada por un revisor humano independiente (Human-in-the-loop) antes de cualquier sanción.",
+                        correct: true,
+                        feedback: "¡Brillante! Restablece la justicia algorítmica y la explicabilidad inalienable exigida por la directiva de ética."
+                    }
+                ]
+            }
+        };
+
+        let selectedIncident = null;
+        let userSolutions = {};
+
+        let tallerSchema = {
+            sensible: [],
+            comun: [],
+            unclassified: [
+                { id: 'biometria', label: 'Huella de Rostro Proctoring' },
+                { id: 'salud', label: 'Informe Psicológico Moodle' },
+                { id: 'notas', label: 'Historial de Notas de Pregrado' },
+                { id: 'correo', label: 'Dirección de Correo Alumno' }
+            ]
+        };
+
+        let chatMessages = [
+            {
+                role: 'model',
+                text: "¡Saludos directivos de la Institución Educativa! Soy su Consultor en Ética y Gobernanza de Datos. ¿Desea auditar algún sistema de IA, redactar una política de consentimiento o interpretar la Ley N° 29733 para su institución?"
+            }
+        ];
+
+        const evaluationCase = {
+            title: "Caso Evaluativo: El Motor Predictivo Cajamarca",
+            desc: "La Institución Educativa desea desplegar un sistema para calcular el riesgo académico y asignar 100 becas completas en Cajamarca. Para maximizar la precisión, el programador incluyó en el entrenamiento el código postal y los ingresos reportados por la familia del egresado.",
+            options: [
+                { id: 'A', text: "Es una gran estrategia ya que optimiza el recurso financiero y asegura alta precisión matemática.", score: 0, feedback: "Incorrecto. Usar variables geográficas e ingresos directos de la familia viola el principio de no discriminación indirecta, ya que el algoritmo tenderá a castigar automáticamente a quienes residen en distritos de alta vulnerabilidad histórica." },
+                { id: 'B', text: "El algoritmo debe ser auditado de inmediato para prohibir el uso de variables geográficas sensibles en el cálculo de becas, incorporando un Comité de Ética Humano (Human-in-the-loop).", score: 100, feedback: "¡CORRECTO! Ha demostrado un criterio excelente. Prohibir el sesgo geográfico directo, proteger las variables sensibles y asegurar la rendición de cuentas (accountability) de un revisor humano cumple a cabalidad con la Ley N° 29733." },
+                { id: 'C', text: "Debe eliminarse todo el sistema informático y otorgar las becas mediante sorteo tradicional de ánforas.", score: 20, feedback: "Poco viable e innovador. Su función como directivo es guiar el uso responsable y ético de la tecnología, no prohibir su avance de forma extremista." }
+            ]
+        };
+
+        let selectedEvalAns = null;
+        let evalVoted = false;
+
+        window.onload = function () {
+            loadProgress();
+            buildSidebar();
+            renderAllTabs();
+            switchTab(state.activeTab);
+            lucide.createIcons();
+        };
+
+        function loadProgress() {
+            const saved = localStorage.getItem(`${appId}_progress`);
+            if (saved) {
+                state.progress = JSON.parse(saved);
+            }
+            const savedTaller = localStorage.getItem(`${appId}_workshop`);
+            if (savedTaller) {
+                tallerSchema = JSON.parse(savedTaller);
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem(`${appId}_progress`, JSON.stringify(state.progress));
+            localStorage.setItem(`${appId}_workshop`, JSON.stringify(tallerSchema));
+            updateGlobalHUD();
+        }
+
+        function resetProgress() {
+            showCustomModal("Reinicio de progreso", "¿Desea restablecer todos sus datos?", true, () => {
+                state.progress = {
+                    userName: '',
+                    simulationScore: { academica: 50, presupuesto: 50, etica: 50, confianza: 50 },
+                    simStep: 0,
+                    scenariosSolved: {},
+                    workshopAnswers: {},
+                    evalCompleted: false,
+                    evalScore: null
+                };
+                tallerSchema = {
+                    sensible: [],
+                    comun: [],
+                    unclassified: [
+                        { id: 'biometria', label: 'Huella de Rostro Proctoring' },
+                        { id: 'salud', label: 'Informe Psicológico Moodle' },
+                        { id: 'notas', label: 'Historial de Notas de Pregrado' },
+                        { id: 'correo', label: 'Dirección de Correo Alumno' }
+                    ]
+                };
+                selectedIncident = null;
+                userSolutions = {};
+                chatMessages = [
+                    {
+                        role: 'model',
+                        text: "¡Saludos directivos de la Institución Educativa! Soy su Consultor en Ética y Gobernanza de Datos. ¿Desea auditar algún sistema de IA, redactar una política de consentimiento o interpretar la Ley N° 29733 para su institución?"
+                    }
+                ];
+                selectedEvalAns = null;
+                evalVoted = false;
+
+                saveProgress();
+                renderAllTabs();
+                switchTab('inicio');
+            });
+        }
+
+        let modalCallback = null;
+        function showCustomModal(title, text, confirmMode = false, callback = null) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').textContent = text;
+            modalCallback = callback;
+            const modal = document.getElementById('custom-modal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+            if (modalCallback) {
+                modalCallback();
+                modalCallback = null;
+            }
+        }
+
+        function buildSidebar() {
+            const nav = document.getElementById('sidebar-nav');
+            const items = [
+                { id: "inicio", icon: "book-open", label: "Portal del Directivo" },
+                { id: "mapa", icon: "layers", label: "Mapa de Riesgo/Uso" },
+                { id: "ar", icon: "camera", label: "Laboratorio 3D/AR" },
+                { id: "simulador", icon: "cpu", label: "Simulador de Decisiones" },
+                { id: "casos", icon: "scale", label: "Casos de Aplicación" },
+                { id: "soluciones", icon: "shield", label: "Directorio de Soluciones" },
+                { id: "escenarios", icon: "alert-triangle", label: "Gestión de Incidentes" },
+                { id: "taller", icon: "database", label: "Taller Ley N° 29733" },
+                { id: "evaluacion", icon: "award", label: "Caso Final y Certificado" }
+            ];
+
+            nav.innerHTML = items.map(item => `
+        <button onclick="switchTab('${item.id}')" id="btn-tab-${item.id}" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60">
+          <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+          <span>${item.label}</span>
+        </button>
+      `).join('');
+        }
+
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            const activeEl = document.getElementById(`tab-${tabId}`);
+            if (activeEl) activeEl.classList.add('active');
+
+            const navButtons = document.querySelectorAll('#sidebar-nav button');
+            navButtons.forEach(btn => {
+                btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-900/60";
+            });
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all bg-amber-500/10 text-amber-400 border-l-4 border-amber-500 pl-2 bg-gradient-to-r from-amber-500/5 to-transparent";
+            }
+
+            if (tabId === 'ar') {
+                startCanvasAnimation();
+            } else {
+                stopCanvasAnimation();
+            }
+        }
+
+        function updateGlobalHUD() {
+            const etica = state.progress.simulationScore.etica;
+            const confianza = state.progress.simulationScore.confianza;
+
+            document.getElementById('score-etica').textContent = `${etica}%`;
+            document.getElementById('score-confianza').textContent = `${confianza}%`;
+
+            const regEl = document.getElementById('regulatory-status');
+            const govEl = document.getElementById('governance-level');
+
+            if (etica >= 65) {
+                regEl.textContent = '✓ Conforme a Ley 29733';
+                regEl.className = 'text-xs text-emerald-400 leading-relaxed font-mono';
+            } else {
+                regEl.textContent = '⚠️ Alerta de Sanción ANPD';
+                regEl.className = 'text-xs text-red-400 leading-relaxed font-mono';
+            }
+
+            govEl.textContent = `Cumplimiento ético general: Nivel ${Math.round((etica + confianza) / 2)}%`;
+        }
+
+        function renderAllTabs() {
+            renderTabInicio();
+            renderTabMapa();
+            renderTabARControls();
+            renderTabARViewport();
+            renderTabSimulador();
+            renderTabCasos();
+            renderTabSoluciones();
+            renderTabEscenarios();
+            renderTabTaller();
+            renderTabTutor();
+            renderTabEvaluacion();
+            updateGlobalHUD();
+            lucide.createIcons();
+        }
+
+        function renderTabInicio() {
+            // El formulario de perfil directivo y mensaje de bienvenida han sido retirados.
+            // Función mantenida por compatibilidad con renderAllTabs.
+        }
+
+        function renderTabMapa() {
+            const buttonsBox = document.getElementById('map-buttons-container');
+            const detailBox = document.getElementById('map-detail-container');
+
+            buttonsBox.innerHTML = Object.entries(mapAreas).map(([key, value]) => {
+                const active = activeMapArea === key;
+                return `
+          <button onclick="selectMapArea('${key}')" class="w-full text-left p-4 rounded-2xl border transition-all flex items-start gap-4 ${active
+                        ? 'bg-amber-500/10 border-amber-500 text-white shadow-lg shadow-amber-500/5'
+                        : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-750'
+                    }">
+            <div class="p-2 rounded-xl flex-shrink-0 ${active ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">
+              <i data-lucide="${value.icon}" class="w-5 h-5"></i>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider ${active ? 'text-amber-400' : 'text-slate-300'}">${key}</span>
+              <h4 class="text-sm font-semibold leading-snug">${value.title}</h4>
+            </div>
+          </button>
+        `;
+            }).join('');
+
+            const area = mapAreas[activeMapArea];
+            detailBox.innerHTML = `
+        <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-2xl"></div>
+        <div class="relative space-y-6">
+          <div class="flex items-center gap-3">
+            <div class="p-3 bg-amber-500/15 rounded-2xl text-amber-500">
+              <i data-lucide="${area.icon}" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-amber-500 uppercase">AUDITORÍA ACTIVA</span>
+              <h3 class="text-xl font-bold text-white">${area.title}</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-800/80">
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-bold text-red-400 uppercase tracking-wider">El Problema de Base</span>
+              <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800/50">${area.problema}</p>
+            </div>
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Aplicación de la IA</span>
+              <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800/50">${area.aplicacion}</p>
+            </div>
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-wider">Datos Utilizados (Insumos)</span>
+              <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800/50">${area.datos}</p>
+            </div>
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Beneficios para el Colegio</span>
+              <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800/50">${area.beneficio}</p>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2 bg-red-955/20 p-4 rounded-xl border border-red-900/40">
+              <div class="flex items-center gap-2 text-red-400">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Riesgos Éticos & Legales</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">${area.riesgo}</p>
+            </div>
+            <div class="space-y-2 bg-emerald-955/20 p-4 rounded-xl border border-emerald-900/40">
+              <div class="flex items-center gap-2 text-emerald-400">
+                <i data-lucide="scale" class="w-4 h-4"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Recomendación Directiva</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">${area.decision}</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-amber-500 flex-shrink-0"></i>
+            <p class="text-xs text-slate-400 font-mono">
+              <strong class="text-slate-200">Marco Legal de Referencia:</strong> ${area.regla}
+            </p>
+          </div>
+        </div>
+      `;
+            lucide.createIcons();
+        }
+
+        function selectMapArea(key) {
+            activeMapArea = key;
+            renderTabMapa();
+        }
+
+        function renderTabARControls() {
+            const toggleEnc = document.getElementById('toggle-encrypt');
+            const toggleAnon = document.getElementById('toggle-anonymize');
+            const toggleXai = document.getElementById('toggle-xai');
+
+            toggleEnc.className = `w-11 h-6 rounded-full transition-colors flex items-center p-1 ${encryptOn ? 'bg-cyan-500' : 'bg-slate-700'}`;
+            toggleEnc.querySelector('div').className = `w-4 h-4 bg-white rounded-full transition-transform ${encryptOn ? 'translate-x-5' : ''}`;
+
+            toggleAnon.className = `w-11 h-6 rounded-full transition-colors flex items-center p-1 ${anonymizeOn ? 'bg-cyan-500' : 'bg-slate-700'}`;
+            toggleAnon.querySelector('div').className = `w-4 h-4 bg-white rounded-full transition-transform ${anonymizeOn ? 'translate-x-5' : ''}`;
+
+            toggleXai.className = `w-11 h-6 rounded-full transition-colors flex items-center p-1 ${xaiOn ? 'bg-cyan-500' : 'bg-slate-700'}`;
+            toggleXai.querySelector('div').className = `w-4 h-4 bg-white rounded-full transition-transform ${xaiOn ? 'translate-x-5' : ''}`;
+
+            const btnsBox = document.getElementById('node-audit-buttons');
+            btnsBox.innerHTML = Object.keys(nodesDetails).map(k => `
+        <button onclick="selectNodeAudit('${k}')" class="p-2 rounded-xl border text-center font-bold text-[10px] tracking-wide transition ${activeNode === k
+                    ? 'bg-amber-500 text-slate-950 border-amber-400'
+                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+                }">
+          ${k.toUpperCase()}
+        </button>
+      `).join('');
+        }
+
+        function toggleEncrypt() { encryptOn = !encryptOn; renderTabARControls(); }
+        function toggleAnonymize() { anonymizeOn = !anonymizeOn; renderTabARControls(); }
+        function toggleXAI() { xaiOn = !xaiOn; renderTabARControls(); }
+
+        function selectNodeAudit(nodeKey) {
+            activeNode = nodeNodeToggle(nodeKey);
+            renderTabARControls();
+            renderTabARViewport();
+        }
+
+        function nodeNodeToggle(k) {
+            return activeNode === k ? null : k;
+        }
+
+        function toggleARMode() {
+            activeARMode = !activeARMode;
+            document.getElementById('btn-ar-text').textContent = activeARMode ? 'Volver a Maqueta 3D' : 'Simular Cámara AR';
+            renderTabARViewport();
+        }
+
+        function renderTabARViewport() {
+            const container = document.getElementById('ar-main-viewport');
+
+            if (activeARMode) {
+                stopCanvasAnimation();
+                container.innerHTML = `
+          <div class="absolute inset-0 bg-slate-950 flex flex-col justify-between p-6">
+            <div class="flex items-center justify-between">
+              <span class="bg-red-500/20 text-red-400 font-mono text-[9px] px-2 py-1 rounded border border-red-500/30 animate-pulse">
+                ● SIMULANDO CÁMARA TRASERA MÓVIL (AR)
+              </span>
+              <span class="text-xs text-slate-500 font-mono">Detección de Patrón: IE_MARKER_05</span>
+            </div>
+
+            <div class="flex-1 my-4 rounded-xl border-2 border-dashed border-slate-700 relative flex items-center justify-center overflow-hidden bg-slate-900">
+              <div class="absolute w-12 h-12 border-t-2 border-l-2 border-amber-500 top-4 left-4"></div>
+              <div class="absolute w-12 h-12 border-t-2 border-r-2 border-amber-500 top-4 right-4"></div>
+              <div class="absolute w-12 h-12 border-b-2 border-l-2 border-amber-500 bottom-4 left-4"></div>
+              <div class="absolute w-12 h-12 border-b-2 border-r-2 border-amber-500 bottom-4 right-4"></div>
+
+              <div class="text-center space-y-4 animate-bounce">
+                <div class="relative mx-auto w-32 h-32 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center shadow-xl shadow-amber-500/5">
+                  <span class="text-5xl">🏢</span>
+                  <div class="absolute top-0 left-0 w-full h-1 bg-amber-500/80 animate-scan"></div>
+                </div>
+                <div class="space-y-1">
+                  <h4 class="text-sm font-black text-amber-400 uppercase tracking-widest font-mono">CAMPUS DE LA INSTITUCIÓN EDUCATIVA</h4>
+                  <p class="text-[10px] text-slate-400">Escaneo de Infraestructura Conforme a Ley 29733</p>
+                </div>
+              </div>
+
+              <div class="absolute bottom-4 left-4 right-4 bg-slate-950/90 border border-slate-800 p-3 rounded-xl backdrop-blur">
+                <div class="flex items-center gap-2 mb-1">
+                  <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span class="text-[9px] font-bold tracking-wider text-slate-300">HOLOGRAPHIC OVERLAY ACTIVE</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-tight">
+                  El sistema detecta transmisión de datos familiares no protegidos enviándose hacia servidores fuera del país. <strong class="text-red-400">Peligro legal inminente de sanción ANPD.</strong>
+                </p>
+              </div>
+            </div>
+
+            <div class="flex justify-center gap-3">
+              <button onclick="mitigateARVulnerability()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl border border-emerald-500/30 transition-all">
+                Aplicar Blindaje Escolar (Cifrado + Códigos de Privacidad)
+              </button>
+            </div>
+          </div>
+        `;
+            } else {
+                container.innerHTML = `
+          <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-mono font-bold tracking-wider text-amber-500 uppercase">VISTA INTERACTIVA DE DATOS</span>
+            <span class="text-[10px] text-slate-400">Presione los nodos del menú lateral para auditar.</span>
+          </div>
+          <div class="flex-1 flex items-center justify-center p-4 bg-gradient-to-b from-slate-950 to-slate-900">
+            <canvas id="canvas-3d" width="450" height="350" class="max-w-full aspect-video"></canvas>
+          </div>
+          <div id="node-details-bubble"></div>
+        `;
+                startCanvasAnimation();
+                renderActiveNodeBubble();
+            }
+            lucide.createIcons();
+        }
+
+        function mitigateARVulnerability() {
+            encryptOn = true;
+            anonymizeOn = true;
+            showCustomModal("Seguridad Aplicada", "Se ha encriptado de extremo a extremo la base de datos familiar y se han enmascarado los datos personales.");
+            renderAllTabs();
+        }
+
+        function renderActiveNodeBubble() {
+            const el = document.getElementById('node-details-bubble');
+            if (!el) return;
+            if (activeNode) {
+                const details = nodesDetails[activeNode];
+                el.innerHTML = `
+          <div class="absolute bottom-4 left-4 right-4 bg-slate-950/95 border border-slate-800 p-4 rounded-xl shadow-2xl">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-xs font-mono text-amber-500 uppercase tracking-widest">Auditoría de Nodo: ${activeNode.toUpperCase()}</h4>
+              <button onclick="closeActiveNodeBubble()" class="text-slate-500 hover:text-slate-300">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-1">${details.title}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">${details.desc}</p>
+            <div class="grid grid-cols-2 gap-3 text-[10px]">
+              <div class="bg-red-955/30 p-2 rounded border border-red-900/40">
+                <strong class="text-red-400 block mb-0.5">Riesgo Directivo:</strong>
+                ${details.riesgo}
+              </div>
+              <div class="bg-emerald-955/30 p-2 rounded border border-emerald-900/40">
+                <strong class="text-emerald-400 block mb-0.5">Solución de Gestión:</strong>
+                ${details.accion}
+              </div>
+            </div>
+          </div>
+        `;
+            } else {
+                el.innerHTML = '';
+            }
+            lucide.createIcons();
+        }
+
+        function closeActiveNodeBubble() {
+            activeNode = null;
+            renderTabARControls();
+            renderTabARViewport();
+        }
+
+        function startCanvasAnimation() {
+            stopCanvasAnimation();
+            const canvas = document.getElementById('canvas-3d');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let angle = 0;
+
+            const render = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 1;
+                for (let i = 50; i < 300; i += 50) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, i, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                const particleCount = 20;
+                for (let i = 0; i < particleCount; i++) {
+                    const pAngle = angle + (i * Math.PI * 2) / particleCount;
+                    const radius = 100 + Math.sin(angle * 2 + i) * 30;
+                    const px = cx + Math.cos(pAngle) * radius;
+                    const py = cy + Math.sin(pAngle) * radius;
+
+                    ctx.beginPath();
+                    ctx.arc(px, py, encryptOn ? 3 : 5, 0, Math.PI * 2);
+                    ctx.fillStyle = encryptOn ? '#06b6d4' : '#f59e0b';
+                    ctx.fill();
+                }
+
+                const nodes = [
+                    { id: 'moodle', label: 'Ficha Estudiante', x: cx - 140, y: cy - 100, color: '#f97316' },
+                    { id: 'biometria', label: anonymizeOn ? 'Códigos de Privacidad' : 'Registro de Rostro', x: cx + 140, y: cy - 100, color: '#ec4899' },
+                    { id: 'algoritmo', label: xaiOn ? 'IA Explicable (XAI)' : 'IA Caja Negra', x: cx + 140, y: cy + 100, color: '#3b82f6' },
+                    { id: 'servidor', label: 'Servidor del Colegio', x: cx - 140, y: cy + 100, color: '#10b981' }
+                ];
+
+                nodes.forEach(n => {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(n.x, n.y);
+                    ctx.strokeStyle = encryptOn ? '#0284c7' : '#ef4444';
+                    ctx.lineWidth = encryptOn ? 2 : 1;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 25, 0, Math.PI * 2);
+                    ctx.fillStyle = '#0f172a';
+                    ctx.strokeStyle = n.color;
+                    ctx.lineWidth = 3;
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#e2e8f0';
+                    ctx.font = 'bold 9px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(n.label, n.x, n.y + 38);
+                });
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 35, 0, Math.PI * 2);
+                ctx.fillStyle = xaiOn ? 'rgba(16, 185, 129, 0.2)' : '#1e1b4b';
+                ctx.strokeStyle = xaiOn ? '#10b981' : '#a855f7';
+                ctx.lineWidth = 4;
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText('NÚCLEO IA', cx, cy - 3);
+                ctx.font = '8px monospace';
+                ctx.fillStyle = encryptOn ? '#06b6d4' : '#f59e0b';
+                ctx.fillText(encryptOn ? 'SEGURO' : 'EXPUESTO', cx, cy + 11);
+
+                angle += 0.012;
+                canvasAnimationId = requestAnimationFrame(render);
+            };
+            render();
+        }
+
+        function stopCanvasAnimation() {
+            if (canvasAnimationId) {
+                cancelAnimationFrame(canvasAnimationId);
+                canvasAnimationId = null;
+            }
+        }
+
+        function renderTabSimulador() {
+            const score = state.progress.simulationScore;
+            const metricsBox = document.getElementById('sim-metrics-container');
+
+            metricsBox.innerHTML = `
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400 font-medium">Rendimiento Pedagógico</span>
+            <span class="font-mono font-bold text-white">${score.academica}%</span>
+          </div>
+          <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-500 transition-all duration-500" style="width: ${score.academica}%"></div>
+          </div>
+        </div>
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400 font-medium">Presupuesto Institucional</span>
+            <span class="font-mono font-bold text-white">${score.presupuesto}%</span>
+          </div>
+          <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 transition-all duration-500" style="width: ${score.presupuesto}%"></div>
+          </div>
+        </div>
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400 font-medium">Cumplimiento Ético (Ley 29733)</span>
+            <span class="font-mono font-bold text-white">${score.etica}%</span>
+          </div>
+          <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-cyan-500 transition-all duration-500" style="width: ${score.etica}%"></div>
+          </div>
+        </div>
+        <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-400 font-medium">Confianza de Familias</span>
+            <span class="font-mono font-bold text-white">${score.confianza}%</span>
+          </div>
+          <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-500 transition-all duration-500" style="width: ${score.confianza}%"></div>
+          </div>
+        </div>
+      `;
+
+            const simStep = state.progress.simStep;
+            const card = document.getElementById('sim-step-card');
+
+            if (simStep < simSteps.length) {
+                const stepData = simSteps[simStep];
+                card.innerHTML = `
+          <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-2xl"></div>
+          <div class="relative space-y-4">
+            <span class="text-[10px] font-mono font-black text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 font-mono uppercase tracking-widest">
+              ${stepData.title}
+            </span>
+            <p class="text-sm text-slate-300 leading-relaxed font-semibold">${stepData.context}</p>
+          </div>
+          <div class="space-y-3 pt-4 border-t border-slate-800/80">
+            ${stepData.options.map((opt, idx) => `
+              <button onclick="handleSimChoice(${idx})" class="w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900 hover:border-slate-700 transition flex justify-between items-center group gap-4">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition">${opt.label}</h4>
+                  <p class="text-[11px] text-slate-500 mt-1 leading-snug">${opt.consecuencias}</p>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transform group-hover:translate-x-1 transition flex-shrink-0"></i>
+              </button>
+            `).join('')}
+          </div>
+        `;
+            } else {
+                const eticaScore = score.etica;
+                const legalRisk = eticaScore < 60;
+                card.innerHTML = `
+          <div class="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+          <div class="text-center max-w-2xl mx-auto space-y-4">
+            <i data-lucide="award" class="w-16 h-16 text-amber-500 mx-auto"></i>
+            <h3 class="text-2xl font-black text-white">Simulación de Gestión Concluida</h3>
+            <p class="text-sm text-slate-400">Su balance estratégico ha sido procesado por el algoritmo evaluador de gobernanza.</p>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-6 border-y border-slate-800/80">
+            <div class="text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+              <h4 class="text-xs text-slate-500 font-mono uppercase">Pedagogía</h4>
+              <p class="text-2xl font-black text-amber-400 mt-1">${score.academica}%</p>
+            </div>
+            <div class="text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+              <h4 class="text-xs text-slate-500 font-mono uppercase">Finanzas</h4>
+              <p class="text-2xl font-black text-emerald-400 mt-1">${score.presupuesto}%</p>
+            </div>
+            <div class="text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+              <h4 class="text-xs text-slate-500 font-mono uppercase">Ética (Ley 29733)</h4>
+              <p class="text-2xl font-black text-cyan-400 mt-1">${score.etica}%</p>
+            </div>
+            <div class="text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+              <h4 class="text-xs text-slate-500 font-mono uppercase">Clima Familiar</h4>
+              <p class="text-2xl font-black text-purple-400 mt-1">${score.confianza}%</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-955 p-4 rounded-xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-500 font-mono">DIAGNÓSTICO DEL CONSEJO EDUCATIVO</h4>
+            <p class="text-xs text-slate-300 leading-relaxed font-sans">
+              ${legalRisk
+                        ? "⚠️ ALERTA DE RIESGO DE SANCIÓN: Su gestión priorizó el ahorro presupuestario y el control estricto sobre el resguardo de las familias. Ha violado directrices esenciales de la Ley N° 29733 de Protección de Datos Personales en el Perú, exponiendo la privacidad socioafectiva y biométrica de sus alumnos. Su plantel enfrenta el riesgo de multas severas de la ANPD."
+                        : "✓ GOBERNANZA EXCELENTE: ¡Felicitaciones! Ha demostrado un liderazgo directivo ético y estratégico excepcional. Al incorporar políticas de 'Privacidad desde el Diseño', consentimiento modular transparente y explicabilidad algorítmica, ha garantizado un entorno protector para sus alumnos. Su Institución Educativa es un modelo de innovación escolar responsable a nivel nacional."}
+            </p>
+          </div>
+
+          <div class="text-center">
+            <button onclick="resetSim()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-6 py-3 rounded-xl uppercase tracking-wider transition">
+              Reiniciar Simulador Gerencial
+            </button>
+          </div>
+        `;
+            }
+            lucide.createIcons();
+        }
+
+        function handleSimChoice(optionIdx) {
+            const stepData = simSteps[state.progress.simStep];
+            const selected = stepData.options[optionIdx];
+
+            state.progress.simulationScore.academica = Math.max(0, Math.min(100, state.progress.simulationScore.academica + selected.effects[0]));
+            state.progress.simulationScore.presupuesto = Math.max(0, Math.min(100, state.progress.simulationScore.presupuesto + selected.effects[1]));
+            state.progress.simulationScore.etica = Math.max(0, Math.min(100, state.progress.simulationScore.etica + selected.effects[2]));
+            state.progress.simulationScore.confianza = Math.max(0, Math.min(100, state.progress.simulationScore.confianza + selected.effects[3]));
+
+            state.progress.simStep += 1;
+            saveProgress();
+            renderAllTabs();
+        }
+
+        function resetSim() {
+            state.progress.simStep = 0;
+            state.progress.simulationScore = { academica: 50, presupuesto: 50, etica: 50, confianza: 50 };
+            saveProgress();
+            renderAllTabs();
+        }
+
+        function renderTabCasos() {
+            const el = document.getElementById('casos-container');
+            el.innerHTML = casos.map((c, i) => `
+        <div class="bg-slate-900/30 border border-slate-800 rounded-2xl p-6 relative flex flex-col justify-between">
+          <div class="space-y-4">
+            <span class="text-[9px] font-mono font-bold tracking-widest text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 uppercase">
+              ${c.context}
+            </span>
+            <h3 class="text-lg font-bold text-white pt-2">${c.title}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-sans">
+              <strong class="text-red-400 block text-[10px] uppercase font-mono tracking-wider mb-1">El Desafío / Incidente:</strong>
+              ${c.problema}
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed font-sans">
+              <strong class="text-emerald-400 block text-[10px] uppercase font-mono tracking-wider mb-1">La Resolución / Solución:</strong>
+              ${c.solucion}
+            </p>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-800 space-y-3">
+            <p class="text-[11px] text-slate-400 italic font-sans">
+              <strong class="text-amber-500 block text-[10px] not-italic font-bold tracking-wider uppercase mb-0.5">Lección para el Director Educativo:</strong>
+              "${c.leccion}"
+            </p>
+            <div class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400 flex-shrink-0"></i>
+              <span class="text-[9px] font-mono text-slate-400">${c.art}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function renderTabSoluciones() {
+            const el = document.getElementById('soluciones-container');
+            el.innerHTML = soluciones.map((s, i) => `
+        <div class="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="p-3 bg-amber-500/10 text-amber-500 rounded-xl w-fit">
+              <i data-lucide="shield" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white">${s.title}</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed font-mono">
+              <strong class="text-slate-300">Área de Uso:</strong> ${s.uso}
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              ${s.funcion}
+            </p>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 space-y-2 text-[10px]">
+            <p class="text-slate-400">
+              <strong class="text-amber-500 block uppercase font-mono tracking-wider mb-0.5">Requisitos Institucionales:</strong>
+              ${s.requisitos}
+            </p>
+            <div class="p-2 bg-slate-900 rounded border border-slate-800 text-emerald-400 font-mono leading-tight">
+              ★ Beneficio Directivo: ${s.beneficio}
+            </div>
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function renderTabEscenarios() {
+            const list = document.getElementById('incidentes-list');
+            const detail = document.getElementById('incidente-detail-panel');
+
+            list.innerHTML = Object.entries(incidentes).map(([id, inc]) => `
+        <button onclick="selectIncident('${id}')" class="w-full text-left p-4 rounded-2xl border transition-all space-y-2 ${selectedIncident === id
+                    ? 'bg-amber-500/10 border-amber-500 text-white'
+                    : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-750'
+                }">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold tracking-wider text-amber-500 uppercase">INCIDENTE ACTIVO</span>
+            ${state.progress.scenariosSolved[id] ? `
+              <span class="text-emerald-400 text-xs font-mono flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> RESUELTO
+              </span>
+            ` : ''}
+          </div>
+          <h3 class="text-sm font-bold leading-tight">${inc.title}</h3>
+        </button>
+      `).join('');
+
+            if (selectedIncident) {
+                const inc = incidentes[selectedIncident];
+                const userChoice = userSolutions[selectedIncident];
+                const hasVoted = !!userChoice;
+
+                detail.innerHTML = `
+          <div class="space-y-6 w-full">
+            <div class="space-y-2">
+              <h3 class="text-lg font-bold text-white">${inc.title}</h3>
+              <p class="text-xs text-slate-400 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-900">${inc.desc}</p>
+            </div>
+
+            <div class="space-y-4 pt-4 border-t border-slate-800/85">
+              <p class="text-xs font-bold text-amber-400 font-mono">Pregunta Directiva: ${inc.pregunta}</p>
+              
+              <div class="space-y-3">
+                ${inc.options.map(opt => {
+                    const isUserChoice = userChoice?.id === opt.id;
+                    let btnStyle = 'bg-slate-900/60 border-slate-800 hover:border-slate-750 text-slate-300 hover:text-white';
+                    if (hasVoted) {
+                        if (opt.correct) btnStyle = 'bg-emerald-955/20 border-emerald-500/60 text-emerald-300';
+                        else if (isUserChoice) btnStyle = 'bg-red-955/20 border-red-500/60 text-red-300';
+                        else btnStyle = 'bg-slate-900/40 border-slate-800 text-slate-500';
+                    }
+
+                    return `
+                    <button
+                      ${hasVoted ? 'disabled' : ''}
+                      onclick="solveIncident('${selectedIncident}', '${opt.id}')"
+                      class="w-full text-left p-3.5 rounded-xl border text-xs transition flex justify-between items-center gap-4 ${btnStyle}"
+                    >
+                      <span>${opt.text}</span>
+                      ${hasVoted && opt.correct ? '<i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>' : ''}
+                      ${hasVoted && isUserChoice && !opt.correct ? '<i data-lucide="x" class="w-4 h-4 text-red-400 flex-shrink-0"></i>' : ''}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              ${hasVoted ? `
+                <div class="p-4 rounded-xl text-xs leading-relaxed border ${userChoice.correct
+                            ? 'bg-emerald-955/20 border-emerald-900/50 text-slate-300'
+                            : 'bg-red-955/20 border-red-900/50 text-slate-300'
+                        }">
+                  <strong class="block font-mono text-[10px] tracking-wider uppercase mb-1">
+                    ${userChoice.correct ? '✓ RETROALIMENTACIÓN CORRECTA:' : '⚠️ ANÁLISIS DEL ERROR:'}
+                  </strong>
+                  ${userChoice.feedback}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+            } else {
+                detail.innerHTML = `
+          <div class="text-center space-y-2">
+            <i data-lucide="alert-triangle" class="w-12 h-12 text-slate-700 mx-auto"></i>
+            <h3 class="text-sm font-bold text-slate-400">Seleccione un incidente del listado lateral para auditar.</h3>
+          </div>
+        `;
+            }
+            lucide.createIcons();
+        }
+
+        function selectIncident(id) {
+            selectedIncident = id;
+            renderTabEscenarios();
+        }
+
+        function solveIncident(incId, optId) {
+            const inc = incidentes[incId];
+            const option = inc.options.find(o => o.id === optId);
+            userSolutions[incId] = option;
+
+            if (option.correct) {
+                state.progress.simulationScore.etica = Math.min(100, state.progress.simulationScore.etica + 15);
+                state.progress.simulationScore.confianza = Math.min(100, state.progress.simulationScore.confianza + 10);
+                state.progress.scenariosSolved[incId] = true;
+            } else {
+                state.progress.simulationScore.etica = Math.max(0, state.progress.simulationScore.etica - 10);
+                state.progress.simulationScore.confianza = Math.max(0, state.progress.simulationScore.confianza - 10);
+            }
+
+            saveProgress();
+            renderAllTabs();
+        }
+
+        function renderTabTaller() {
+            const container = document.getElementById('taller-container');
+
+            container.innerHTML = `
+        <div class="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <h3 class="text-xs font-mono font-bold text-amber-500 uppercase tracking-wider">Datos sin Clasificar</h3>
+          <div class="space-y-2">
+            ${tallerSchema.unclassified.length === 0 ? '<p class="text-slate-500 text-xs">Todos los elementos clasificados.</p>' : ''}
+            ${tallerSchema.unclassified.map(i => `
+              <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-200">${i.label}</span>
+                <div class="flex gap-1">
+                  <button onclick="moveTallerItem('${i.id}', 'sensible')" class="bg-red-955 hover:bg-red-900 text-red-400 px-2 py-1 rounded text-[10px] font-bold">SENSIBLE</button>
+                  <button onclick="moveTallerItem('${i.id}', 'comun')" class="bg-cyan-955 hover:bg-cyan-900 text-cyan-400 px-2 py-1 rounded text-[10px] font-bold">COMÚN</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="bg-red-955/10 border border-red-900/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center gap-2 text-red-400">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            <h3 class="text-xs font-mono font-bold uppercase tracking-wider">Sensibilidad Muy Alta</h3>
+          </div>
+          <div class="space-y-2 min-h-[150px] bg-red-955/5 rounded-xl border border-dashed border-red-900/20 p-2">
+            ${tallerSchema.sensible.length === 0 ? '<p class="text-slate-600 text-xs p-2">Inserte datos aquí...</p>' : ''}
+            ${tallerSchema.sensible.map(i => `
+              <div class="p-3 bg-slate-950 border border-red-900/30 rounded-xl flex items-center justify-between">
+                <span class="text-xs font-bold text-red-400">${i.label}</span>
+                <button onclick="moveTallerItem('${i.id}', 'unclassified')" class="text-slate-500 hover:text-slate-300 text-[10px]">✕ Quitar</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="bg-cyan-955/10 border border-cyan-900/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center gap-2 text-cyan-400">
+            <i data-lucide="database" class="w-4 h-4"></i>
+            <h3 class="text-xs font-mono font-bold uppercase tracking-wider">Datos Personales Comunes</h3>
+          </div>
+          <div class="space-y-2 min-h-[150px] bg-cyan-955/5 rounded-xl border border-dashed border-cyan-900/20 p-2">
+            ${tallerSchema.comun.length === 0 ? '<p class="text-slate-600 text-xs p-2">Inserte datos aquí...</p>' : ''}
+            ${tallerSchema.comun.map(i => `
+              <div class="p-3 bg-slate-950 border border-cyan-900/30 rounded-xl flex items-center justify-between">
+                <span class="text-xs font-bold text-cyan-400">${i.label}</span>
+                <button onclick="moveTallerItem('${i.id}', 'unclassified')" class="text-slate-500 hover:text-slate-300 text-[10px]">✕ Quitar</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+            lucide.createIcons();
+        }
+
+        function moveTallerItem(id, target) {
+            const allItems = [...tallerSchema.sensible, ...tallerSchema.comun, ...tallerSchema.unclassified];
+            const movedItem = allItems.find(i => i.id === id);
+
+            tallerSchema.sensible = tallerSchema.sensible.filter(i => i.id !== id);
+            tallerSchema.comun = tallerSchema.comun.filter(i => i.id !== id);
+            tallerSchema.unclassified = tallerSchema.unclassified.filter(i => i.id !== id);
+
+            if (target === 'sensible') tallerSchema.sensible.push(movedItem);
+            else if (target === 'comun') tallerSchema.comun.push(movedItem);
+            else tallerSchema.unclassified.push(movedItem);
+
+            saveProgress();
+            renderTabTaller();
+        }
+
+        function checkTaller() {
+            const correctSensible = ['biometria', 'salud'];
+            const correctComun = ['notas', 'correo'];
+
+            const userSensible = tallerSchema.sensible.map(i => i.id);
+            const userComun = tallerSchema.comun.map(i => i.id);
+
+            const checkSensible = correctSensible.every(id => userSensible.includes(id)) && userSensible.length === correctSensible.length;
+            const checkComun = correctComun.every(id => userComun.includes(id)) && userComun.length === correctComun.length;
+
+            if (checkSensible && checkComun) {
+                showCustomModal("¡Excelente Clasificación!", "Cumple estrictamente el catálogo de la Ley N° 29733 de Protección de Datos Personales de Perú. Suma +20 de Cumplimiento Ético.");
+                state.progress.simulationScore.etica = Math.min(100, state.progress.simulationScore.etica + 20);
+                saveProgress();
+                renderAllTabs();
+            } else {
+                showCustomModal("Clasificación incorrecta", "Recuerde: los datos biométricos y la información de salud mental/psicológica tienen tutela reforzada en Perú. Intente nuevamente.");
+            }
+        }
+
+        function renderTabTutor() {
+            // Sección del Consultor IA removida
+        }
+
+        function renderTabEvaluacion() {
+            const card = document.getElementById('evaluacion-case-card');
+            const cert = document.getElementById('certificado-holder');
+
+            card.innerHTML = `
+        <div class="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <span class="text-[10px] font-mono font-bold tracking-widest text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 uppercase">
+              CASO DE GRADO ACADÉMICO
+            </span>
+            <h3 class="text-lg font-bold text-white pt-2">${evaluationCase.title}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-900">${evaluationCase.desc}</p>
+          </div>
+
+          <div class="space-y-3">
+            ${evaluationCase.options.map(o => {
+                let btnStyle = 'bg-slate-900/60 border-slate-800 hover:border-slate-750 text-slate-300 hover:text-white';
+                if (evalVoted) {
+                    if (o.score === 100) btnStyle = 'bg-emerald-955/20 border-emerald-500/60 text-emerald-300';
+                    else if (selectedEvalAns?.id === o.id) btnStyle = 'bg-red-955/20 border-red-500/60 text-red-300';
+                    else btnStyle = 'bg-slate-900/40 border-slate-800 text-slate-500';
+                }
+
+                return `
+                <button
+                  ${evalVoted ? 'disabled' : ''}
+                  onclick="voteEvaluation('${o.id}')"
+                  class="w-full text-left p-4 rounded-xl border text-xs transition flex justify-between items-center gap-4 ${btnStyle}"
+                >
+                  <span>${o.text}</span>
+                  ${evalVoted && o.score === 100 ? '<i data-lucide="check" class="w-4.5 h-4.5 text-emerald-400 flex-shrink-0"></i>' : ''}
+                  ${evalVoted && selectedEvalAns?.id === o.id && o.score < 100 ? '<i data-lucide="x" class="w-4.5 h-4.5 text-red-400 flex-shrink-0"></i>' : ''}
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          ${evalVoted ? `
+            <div class="p-4 rounded-xl text-xs leading-relaxed border ${selectedEvalAns.score === 100
+                        ? 'bg-emerald-955/20 border-emerald-900/50 text-slate-300'
+                        : 'bg-red-955/20 border-red-900/50 text-slate-300'
+                    }">
+              <strong class="block font-mono text-[10px] tracking-wider uppercase mb-1">
+                ${selectedEvalAns.score === 100 ? '✓ EVALUACIÓN SATISFACTORIA:' : '⚠️ OBSERVACIÓN DE AUDITORÍA:'}
+              </strong>
+              ${selectedEvalAns.feedback}
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+            if (state.progress.evalCompleted && state.progress.evalScore === 100) {
+                cert.classList.remove('hidden');
+                cert.innerHTML = `
+          <div class="border border-amber-500/30 rounded-3xl p-8 bg-slate-900/30 text-center space-y-6 max-w-2xl mx-auto shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-2xl"></div>
+            
+            <div class="space-y-2">
+              <span class="text-[10px] tracking-widest uppercase font-mono text-amber-500">CERTIFICATE OF COMPLETION</span>
+              <h3 class="text-2xl font-serif text-white">Institución Educativa DataShield & Ethics Governance</h3>
+              <p class="text-xs text-slate-400">Por cuanto se certifica que el estudiante ha aprobado satisfactoriamente los retos de ética de la Unidad 5.</p>
+            </div>
+
+            <div class="py-4 border-y border-slate-800 max-w-md mx-auto">
+              <p class="text-sm font-bold text-slate-200">${state.progress.userName || "Estudiante de Dirección Educativa"}</p>
+              <p class="text-[11px] text-slate-500 font-mono mt-1">Acreditación: LEY_29733_IE_DIRECCION_EDUCATIVA</p>
+            </div>
+
+            <p class="text-[11px] text-emerald-400 font-mono">✓ Acreditado con 100% de Cumplimiento Ético Ley N° 29733</p>
+          </div>
+        `;
+            } else {
+                cert.classList.add('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function voteEvaluation(optId) {
+            const opt = evaluationCase.options.find(o => o.id === optId);
+            selectedEvalAns = opt;
+            evalVoted = true;
+
+            state.progress.evalCompleted = true;
+            state.progress.evalScore = opt.score;
+
+            saveProgress();
+            renderAllTabs();
+        }
+    </script>
+</body>
+
+</html>

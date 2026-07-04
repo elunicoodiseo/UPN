@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Principios del Machine Learning en AR</title>
+
+    <!-- Tailwind CSS para la interfaz -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- A-Frame (Motor 3D) -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- AR.js se cargará dinámicamente si se elige modo AR -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            /* Elevado al máximo para evitar solapamientos en otras pantallas */
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .interactive-ui {
+            pointer-events: auto;
+            touch-action: auto !important;
+            /* Fuerza a que los clics funcionen siempre */
+        }
+
+        .a-enter-vr,
+        .rs-base {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-glass-panel {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos para inputs abiertos */
+        textarea {
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="start-screen"
+        class="interactive-ui absolute inset-0 z-[100] flex items-center justify-center bg-slate-900 bg-opacity-95 p-4 fade-in">
+        <div class="max-w-2xl bg-white rounded-2xl shadow-2xl p-8 text-slate-800">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-indigo-600 text-white p-3 rounded-xl shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 leading-tight">Principios del Machine Learning en Realidad
+                    Aumentada</h1>
+            </div>
+
+            <p class="text-slate-600 mb-6 text-lg leading-relaxed">
+                En esta experiencia aprenderás cómo una IA puede identificar patrones a partir de ejemplos, cómo
+                diferencia variables y etiquetas, y por qué una predicción debe ser interpretada con criterio docente.
+            </p>
+
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 rounded-r-lg p-4 mb-8 text-sm text-slate-700">
+                <strong>Enfoque Educativo:</strong> Esta es una experiencia guiada y reflexiva. No hay respuestas
+                "incorrectas", puntajes ni calificaciones. El objetivo es explorar los conceptos a nivel fundamental.
+            </div>
+
+            <h3 class="font-semibold mb-3 text-slate-800">Seleccione su entorno de visualización:</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <button onclick="initExperience('ar')"
+                    class="group flex flex-col items-center justify-center p-5 border-2 border-slate-200 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition-all text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-10 h-10 mb-3 text-indigo-400 group-hover:text-indigo-600 transition-colors">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                    </svg>
+                    <span class="font-bold text-slate-800 text-center">Realidad Aumentada</span>
+                    <span class="text-xs text-slate-500 text-center mt-2 leading-tight">Requiere acceso a cámara y
+                        marcador "Hiro".</span>
+                </button>
+                <button onclick="initExperience('sim')"
+                    class="group flex flex-col items-center justify-center p-5 border-2 border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-10 h-10 mb-3 text-blue-400 group-hover:text-blue-600 transition-colors">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                    </svg>
+                    <span class="font-bold text-slate-800 text-center">Modo Simulación</span>
+                    <span class="text-xs text-slate-500 text-center mt-2 leading-tight">Navegación 3D en pantalla
+                        interactiva. No usa cámara.</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR 3D (A-Frame) -->
+    <div id="scene-container" class="absolute inset-0 z-0 bg-slate-900"></div>
+
+    <!-- CAPA DE INTERFAZ DE USUARIO -->
+    <div id="ui-layer" class="hidden">
+
+        <!-- HEADER -->
+        <header
+            class="interactive-ui w-full dark-glass-panel text-white p-3 md:px-6 flex justify-between items-center shadow-lg relative z-[60]">
+            <div class="hidden md:flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                <span class="font-semibold tracking-wide text-sm">Experiencia
+                    Técnica Interactiva. Fines educativos-©2026-Luis Torrejón Arias</span>
+            </div>
+            <div class="flex items-center gap-3 mx-auto md:mx-0">
+                <!-- Se retiraron los onclick en línea para manejarlos de forma más segura por JS -->
+                <button id="btn-prev"
+                    class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-sm disabled:opacity-30 transition-colors flex items-center gap-1"><svg
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4 pointer-events-none">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg> Anterior</button>
+                <div
+                    class="px-4 py-1.5 font-bold text-indigo-300 bg-slate-800/50 rounded-lg text-sm border border-slate-700">
+                    Módulo <span id="current-mod-number">1</span> / 3
+                </div>
+                <button id="btn-next"
+                    class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-sm disabled:opacity-30 transition-colors flex items-center gap-1">Siguiente
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4 pointer-events-none">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg></button>
+            </div>
+        </header>
+
+        <div
+            class="flex-1 flex flex-col md:flex-row overflow-hidden relative justify-between pointer-events-none p-4 md:p-6 gap-4">
+
+            <!-- PANEL EXPLICATIVO (Izquierda) -->
+            <aside id="pedagogy-panel"
+                class="hidden interactive-ui w-full md:w-[420px] rounded-2xl glass-panel text-slate-800 flex flex-col max-h-[45vh] md:max-h-full overflow-y-auto z-20 pointer-events-auto">
+                <div class="p-5 md:p-7 border-b border-slate-100 bg-white/50 rounded-t-2xl">
+                    <h2 id="mod-title" class="text-2xl font-bold text-indigo-900 mb-4 leading-tight">Cargando...</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3
+                                class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                    class="w-4 h-4">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
+                                        clip-rule="evenodd" />
+                                </svg> Explicación del Docente
+                            </h3>
+                            <div id="mod-explanation" class="text-sm text-slate-700 leading-relaxed space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 md:p-7 flex-1 bg-slate-50/80 rounded-b-2xl">
+                    <h3 class="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                                clip-rule="evenodd" />
+                        </svg> Ejemplo Guiado
+                    </h3>
+                    <div id="mod-example"
+                        class="bg-indigo-100/50 border border-indigo-200 text-indigo-900 p-4 rounded-xl text-sm font-medium italic mb-4 shadow-sm">
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PANEL DE INTERACCIÓN / REFLEXIÓN (Derecha) -->
+            <div id="interaction-panel"
+                class="hidden interactive-ui w-full md:w-[400px] rounded-2xl glass-panel flex flex-col shadow-2xl transition-all z-20 self-end pointer-events-auto max-h-[50vh] md:max-h-full overflow-y-auto">
+                <div class="bg-slate-800 text-white p-4 rounded-t-2xl border-b border-slate-700">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="w-5 h-5 text-indigo-400">
+                            <path fill-rule="evenodd"
+                                d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-6.75 3a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5h1.5Zm13.5 0a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5h1.5Zm-9.879-6.379a.75.75 0 0 0-1.061-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06Zm10.606 10.606a.75.75 0 0 0-1.06-1.061l-1.061 1.06a.75.75 0 0 0 1.06 1.061l1.061-1.06Zm-10.606 0a.75.75 0 0 0-1.06 1.06l-1.06-1.06a.75.75 0 0 0 1.06-1.06l1.061 1.06Zm10.606-10.606a.75.75 0 0 0-1.06 1.06l-1.061-1.06a.75.75 0 1 0 1.06 1.061l1.061-1.061Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Actividad de Comprensión
+                    </h3>
+                </div>
+                <div class="p-5 flex-1 flex flex-col bg-white rounded-b-2xl">
+                    <p id="mod-instruction" class="text-sm text-slate-600 mb-4 pb-3 border-b border-slate-100"></p>
+
+                    <!-- Contenedor dinámico de interacción -->
+                    <div id="interaction-container" class="flex-1 space-y-4">
+                        <!-- Se llena vía JS -->
+                    </div>
+
+                    <button id="btn-closure" onclick="showPedagogicalClosure()"
+                        class="w-full mt-6 bg-slate-900 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow transition-colors flex justify-center items-center gap-2">
+                        Ver Cierre Pedagógico <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" class="w-5 h-5">
+                            <path fill-rule="evenodd"
+                                d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 0 0 1.075.676L10 15.082l5.925 2.844A.75.75 0 0 0 17 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0 0 10 2Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CIERRE PEDAGÓGICO (Informativo, no evaluativo) -->
+    <div id="closure-modal"
+        class="hidden interactive-ui absolute inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-2xl shadow-2xl max-w-lg w-full relative overflow-hidden fade-in border border-slate-200">
+            <div class="bg-indigo-50 border-b border-indigo-100 p-6 flex items-center gap-4">
+                <div class="bg-indigo-100 text-indigo-600 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800">Cierre Pedagógico</h2>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div id="closure-text" class="text-slate-600 leading-relaxed text-[15px] space-y-3 mb-6"></div>
+
+                <div id="product-feedback"
+                    class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700 italic hidden">
+                </div>
+
+                <button onclick="closeModalAndNext()"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors shadow-sm">
+                    Comprendido, continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA -->
+    <script>
+        // --- 0. COMPONENTES A-FRAME PERSONALIZADOS (PAN Y ZOOM) ---
+        AFRAME.registerComponent('pan-zoom-controls', {
+            schema: {
+                minZoom: { type: 'number', default: 0.5 },
+                maxZoom: { type: 'number', default: 5.0 },
+                panSpeed: { type: 'number', default: 0.012 } // Velocidad de desplazamiento
+            },
+            init: function () {
+                this.zoom = 1;
+                this.isDragging = false;
+                this.prevMouse = { x: 0, y: 0 };
+                this.prevTouch = { x: 0, y: 0 };
+
+                this.onWheel = this.onWheel.bind(this);
+                this.onMouseDown = this.onMouseDown.bind(this);
+                this.onMouseMove = this.onMouseMove.bind(this);
+                this.onMouseUp = this.onMouseUp.bind(this);
+
+                this.onTouchStart = this.onTouchStart.bind(this);
+                this.onTouchMove = this.onTouchMove.bind(this);
+                this.onTouchEnd = this.onTouchEnd.bind(this);
+            },
+            play: function () {
+                window.addEventListener('wheel', this.onWheel, { passive: false });
+                window.addEventListener('mousedown', this.onMouseDown);
+                window.addEventListener('mousemove', this.onMouseMove);
+                window.addEventListener('mouseup', this.onMouseUp);
+                window.addEventListener('mouseleave', this.onMouseUp);
+
+                window.addEventListener('touchstart', this.onTouchStart, { passive: false });
+                window.addEventListener('touchmove', this.onTouchMove, { passive: false });
+                window.addEventListener('touchend', this.onTouchEnd);
+            },
+            pause: function () {
+                window.removeEventListener('wheel', this.onWheel);
+                window.removeEventListener('mousedown', this.onMouseDown);
+                window.removeEventListener('mousemove', this.onMouseMove);
+                window.removeEventListener('mouseup', this.onMouseUp);
+                window.removeEventListener('mouseleave', this.onMouseUp);
+
+                window.removeEventListener('touchstart', this.onTouchStart);
+                window.removeEventListener('touchmove', this.onTouchMove);
+                window.removeEventListener('touchend', this.onTouchEnd);
+            },
+            isUI: function (e) {
+                // Validación segura para evitar que el canvas bloquee botones (especialmente en móviles/Safari)
+                if (!e.target) return false;
+                if (e.target.closest && e.target.closest('.interactive-ui')) return true;
+                if (e.target.classList && e.target.classList.contains('interactive-ui')) return true;
+                return false;
+            },
+            onWheel: function (e) {
+                if (this.isUI(e)) return;
+                let delta = e.deltaY > 0 ? -0.2 : 0.2;
+                this.zoom += delta;
+                this.zoom = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoom));
+                this.el.setAttribute('camera', 'zoom', this.zoom);
+            },
+            onMouseDown: function (e) {
+                if (this.isUI(e)) return;
+                this.isDragging = true;
+                this.prevMouse = { x: e.clientX, y: e.clientY };
+            },
+            onMouseMove: function (e) {
+                // Deshabilitamos el desplazamiento espacial en Modo AR (la cámara se mueve físicamente)
+                if (!this.isDragging || typeof isARMode !== 'undefined' && isARMode) return;
+
+                let dx = e.clientX - this.prevMouse.x;
+                let dy = e.clientY - this.prevMouse.y;
+                this.prevMouse = { x: e.clientX, y: e.clientY };
+
+                let pos = this.el.object3D.position;
+                // Ajustamos cámara (mover mouse derecha -> mueve cámara izquierda)
+                pos.x -= dx * this.data.panSpeed;
+                pos.y += dy * this.data.panSpeed;
+            },
+            onMouseUp: function () {
+                this.isDragging = false;
+            },
+            onTouchStart: function (e) {
+                if (this.isUI(e)) return;
+                if (e.touches.length === 1) {
+                    this.isDragging = true;
+                    this.prevTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                } else if (e.touches.length === 2) {
+                    this.isDragging = false; // Cancela el Pan para hacer Zoom
+                    let dx = e.touches[0].pageX - e.touches[1].pageX;
+                    let dy = e.touches[0].pageY - e.touches[1].pageY;
+                    this.initialDist = Math.sqrt(dx * dx + dy * dy);
+                }
+            },
+            onTouchMove: function (e) {
+                if (this.isUI(e)) return;
+
+                if (e.touches.length === 1 && this.isDragging && !(typeof isARMode !== 'undefined' && isARMode)) {
+                    let dx = e.touches[0].pageX - this.prevTouch.x;
+                    let dy = e.touches[0].pageY - this.prevTouch.y;
+                    this.prevTouch = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+
+                    let pos = this.el.object3D.position;
+                    pos.x -= dx * this.data.panSpeed;
+                    pos.y += dy * this.data.panSpeed;
+
+                } else if (e.touches.length === 2) {
+                    let dx = e.touches[0].pageX - e.touches[1].pageX;
+                    let dy = e.touches[0].pageY - e.touches[1].pageY;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    let delta = (dist - this.initialDist) * 0.01;
+
+                    this.zoom += delta;
+                    this.zoom = Math.max(this.data.minZoom, Math.min(this.data.maxZoom, this.zoom));
+                    this.el.setAttribute('camera', 'zoom', this.zoom);
+                    this.initialDist = dist;
+                }
+            },
+            onTouchEnd: function () {
+                this.isDragging = false;
+            }
+        });
+
+        // --- 1. DATOS DE LOS MÓDULOS ---
+        const modules = [
+            {
+                id: 1,
+                title: "Módulo 1: La IA aprende con ejemplos",
+                explanation: `
+                    <p>En el Machine Learning, no programamos las reglas manualmente (como "SI falta 3 veces, ENTONCES desaprueba").</p>
+                    <p>En su lugar, le damos a la IA <strong>casos históricos</strong>. Frente a ti verás <strong>80 cuadros ampliados</strong>, cada uno representa el historial de un estudiante:</p>
+                    <ul class="list-disc pl-5 space-y-1 mt-3 mb-3 text-sm text-slate-700 bg-slate-100 p-3 rounded-lg border border-slate-200">
+                        <li><strong>A (Asistencia)</strong> y <strong>T (Tareas):</strong> Son los datos analizados.</li>
+                        <li><span class="text-emerald-600 font-bold">Verde:</span> Estudiante que aprobó.</li>
+                        <li><span class="text-amber-500 font-bold drop-shadow-sm">Amarillo:</span> Estudiante en riesgo.</li>
+                        <li><span class="text-red-600 font-bold">Rojo:</span> Estudiante que desaprobó.</li>
+                    </ul>
+                    <p>El modelo analiza estadísticamente a los 80 estudiantes y por sí solo detecta el patrón: qué combinación exacta de A y T genera el color rojo.</p>
+                `,
+                example: "Regla probable aprendida: baja asistencia + tareas incompletas = mayor riesgo académico.",
+                instruction: "Observa los casos en la visualización 3D y selecciona la conclusión correcta sobre cómo aprende el modelo:",
+                setup3D: "setupMod1",
+                clear3D: "clearMod1",
+                renderUI: () => `
+                    <div class="flex-1 flex flex-col space-y-2">
+                        <div class="text-xs font-medium text-indigo-800 bg-indigo-50 border border-indigo-200 p-2.5 rounded-lg mb-2 flex items-center gap-2 shadow-sm">
+                            <span class="text-base">👆</span> <span>Arrastra la pantalla y haz zoom para explorar todos los datos.</span>
+                        </div>
+                        <button onclick="checkAnswer(1, this, false, 'Recuerda que en el Machine Learning no se programan reglas manuales.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">A) El modelo sigue reglas programadas manualmente por el docente.</button>
+                        <button onclick="checkAnswer(1, this, true, '¡Correcto! La IA identifica patrones (como la relación entre asistencia y tareas) procesando los ejemplos históricos.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">B) El modelo aprende encontrando patrones matemáticos en el historial de los estudiantes.</button>
+                        <button onclick="checkAnswer(1, this, false, 'La IA no adivina al azar, utiliza cálculos matemáticos sobre los datos proporcionados.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">C) El modelo asigna resultados al azar sin usar los datos.</button>
+                        <div id="feedback-1" class="hidden mt-2 p-3 rounded-xl text-sm font-medium"></div>
+                    </div>
+                `,
+                closureText: `
+                    <p><strong>Excelente reflexión.</strong> Lo importante es entender que la Inteligencia Artificial hace exactamente esto: procesa miles de observaciones buscando patrones matemáticos.</p>
+                    <p>El aprendizaje se llama "Supervisado" porque le dimos ejemplos que ya tenían el resultado final (sabíamos quién aprobó y quién no) para que pudiera aprender la regla.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "Módulo 2: Variables y Etiquetas",
+                explanation: `
+                    <p>Para que la IA encuentre patrones, necesita que le estructuremos la información en dos grandes grupos:</p>
+                    <ul class="list-disc pl-5 space-y-1 mt-2">
+                        <li><strong>Las Variables de entrada (Features):</strong> Son los datos o pistas que el modelo usa para aprender (ej: asistencia, participación, tareas entregadas).</li>
+                        <li><strong>Las Etiquetas (Labels):</strong> Son los resultados históricos que queremos que el modelo aprenda a predecir (ej: aprueba, desaprueba, abandona).</li>
+                    </ul>
+                `,
+                example: "Asistencia → Variable<br>Tareas entregadas → Variable<br>Aprueba / desaprueba → Etiqueta",
+                instruction: "Basado en los conceptos de Variables y Etiquetas, elige la afirmación correcta:",
+                setup3D: "setupMod2",
+                clear3D: "clearMod2",
+                renderUI: () => `
+                    <div class="flex-1 flex flex-col space-y-2">
+                        <button onclick="checkAnswer(2, this, false, 'Incorrecto. La participación es un dato de entrada (Variable) y Aprobar es el resultado a predecir (Etiqueta).')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">A) La participación es una Etiqueta, y Aprobar es una Variable.</button>
+                        <button onclick="checkAnswer(2, this, true, '¡Exacto! Las variables son los datos de entrada (como la asistencia) y las etiquetas son el resultado a predecir (como el riesgo).')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">B) La asistencia es una Variable, y el riesgo académico es una Etiqueta.</button>
+                        <button onclick="checkAnswer(2, this, false, 'No, son conceptos distintos. Uno es la entrada y el otro es el objetivo de salida.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">C) Asistencia y Riesgo Académico son ambas Variables.</button>
+                        <div id="feedback-2" class="hidden mt-2 p-3 rounded-xl text-sm font-medium"></div>
+                    </div>
+                `,
+                closureText: `
+                    <p><strong>Diseño de datos:</strong> Comprender la diferencia entre Variables y Etiquetas es el primer paso para diseñar un proyecto de Machine Learning educativo.</p>
+                    <p>Si elegimos malas variables (datos irrelevantes), o si nuestras etiquetas históricas están sesgadas, el modelo aprenderá y repetirá esos errores. La calidad de la predicción depende enteramente de la calidad de estas variables y etiquetas.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "Módulo 3: ¿Predicción o Sentencia?",
+                explanation: `
+                    <p>Una vez entrenado, el modelo puede evaluar nuevos estudiantes y generar predicciones. Pero, <strong>¿qué significa una predicción probabilística?</strong></p>
+                    <p>Si el sistema arroja una alerta de <em>"85% de riesgo de desaprobar"</em>, <strong>NO significa</strong> que el estudiante necesariamente va a fracasar.</p>
+                    <p>Significa que, según los datos analizados, el comportamiento del estudiante se parece matemáticamente al de casos anteriores que tuvieron dificultades. El modelo es ciego ante la realidad completa del alumno.</p>
+                `,
+                example: "El docente no debe actuar automáticamente; debe interpretar la alerta, conversar con el estudiante y tomar decisiones pedagógicas responsables.",
+                instruction: "¿Cuál debe ser la postura del docente frente a una alerta del 85% de riesgo?",
+                setup3D: "setupMod3",
+                clear3D: "clearMod3",
+                renderUI: () => `
+                    <div class="flex-1 flex flex-col space-y-2">
+                        <button onclick="checkAnswer(3, this, false, 'Incorrecto. Una predicción estadística no es una sentencia inamovible.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">A) Desaprobar automáticamente al estudiante debido al alto riesgo predicho.</button>
+                        <button onclick="checkAnswer(3, this, false, 'No se debe ignorar; la alerta es una herramienta útil, pero requiere interpretación humana.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">B) Ignorar la predicción porque los algoritmos nunca son precisos ni útiles.</button>
+                        <button onclick="checkAnswer(3, this, true, '¡Correcto! El algoritmo carece de empatía y contexto. Es una alerta temprana para intervenir humanamente.')" class="p-3 text-sm text-left border border-slate-200 rounded-xl hover:bg-slate-50 transition">C) Usar la alerta como advertencia para conversar con el estudiante y entender su contexto.</button>
+                        <div id="feedback-3" class="hidden mt-2 p-3 rounded-xl text-sm font-medium"></div>
+                    </div>
+                `,
+                closureText: `
+                    <p><strong>El humano en el proceso (Human-in-the-loop):</strong></p>
+                    <p>El algoritmo no tiene empatía, ni entiende contextos sociales, problemas de salud o de motivación. Solo calcula probabilidades matemáticas basadas en el pasado.</p>
+                    <p>Por lo tanto, una predicción algorítmica jamás debe usarse como una sentencia inamovible ni como un protocolo de intervención automático. Es exclusivamente una <em>alerta temprana</em> para que el educador investigue y actúe de manera humana y ética.</p>
+                `
+            }
+        ];
+
+        let currentModuleIndex = 0;
+        let isARMode = false;
+
+        // --- 2. INICIALIZACIÓN DE LA EXPERIENCIA ---
+
+        // Bloquear eventos de A-Frame en la interfaz
+        document.addEventListener('DOMContentLoaded', () => {
+            // Asignar listeners robustos a los botones de navegación
+            document.getElementById('btn-next').addEventListener('click', handleNextClick);
+            document.getElementById('btn-prev').addEventListener('click', prevModule);
+
+            // Aislar completamente la UI para que el canvas 3D no robe los clics
+            document.querySelectorAll('.interactive-ui').forEach(el => {
+                el.addEventListener('mousedown', e => e.stopPropagation());
+                el.addEventListener('touchstart', e => e.stopPropagation());
+                el.addEventListener('wheel', e => e.stopPropagation());
+                el.addEventListener('pointerdown', e => e.stopPropagation());
+                el.addEventListener('dblclick', e => e.stopPropagation());
+            });
+        });
+
+        function initExperience(mode) {
+            isARMode = (mode === 'ar');
+            document.getElementById('start-screen').classList.add('hidden');
+
+            const container = document.getElementById('scene-container');
+
+            if (isARMode) {
+                const arScript = document.createElement('script');
+                arScript.src = "https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js";
+                arScript.onload = () => buildScene();
+                document.head.appendChild(arScript);
+            } else {
+                buildScene();
+            }
+
+            document.getElementById('ui-layer').classList.remove('hidden');
+
+            setTimeout(() => {
+                loadModule(0);
+            }, 500);
+        }
+
+        function buildScene() {
+            const container = document.getElementById('scene-container');
+            let sceneHTML = '';
+
+            if (isARMode) {
+                sceneHTML = `
+                    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;" vr-mode-ui="enabled: false">
+                        <a-marker preset="hiro">
+                            <a-entity id="content-anchor" position="0 0 0" rotation="-90 0 0" scale="0.8 0.8 0.8"></a-entity>
+                        </a-marker>
+                        <a-entity camera pan-zoom-controls></a-entity>
+                    </a-scene>
+                `;
+            } else {
+                sceneHTML = `
+                    <a-scene embedded vr-mode-ui="enabled: false" background="color: #0f172a">
+                        <!-- Luces suaves para simulación -->
+                        <a-light type="ambient" color="#ffffff" intensity="0.7"></a-light>
+                        <a-light type="directional" position="-1 2 1" intensity="0.4"></a-light>
+                        
+                        <!-- Base de simulación (mesa virtual) -->
+                        <a-plane position="0 -1.5 -3" rotation="-90 0 0" width="15" height="15" color="#1e293b"></a-plane>
+                        <a-grid position="0 -1.49 -3" width="15" height="15" color="#334155"></a-grid>
+
+                        <!-- La cámara elimina look/wasd-controls y delega todo al pan-zoom-controls -->
+                        <a-entity camera pan-zoom-controls position="0 0 0"></a-entity>
+                        
+                        <a-entity id="content-anchor" position="0 0 -3"></a-entity>
+                    </a-scene>
+                `;
+            }
+            container.innerHTML = sceneHTML;
+        }
+
+        // --- 3. NAVEGACIÓN Y CARGA DE MÓDULOS ---
+        function loadModule(index) {
+            if (window[modules[currentModuleIndex].clear3D]) {
+                window[modules[currentModuleIndex].clear3D]();
+            }
+
+            currentModuleIndex = index;
+            const mod = modules[index];
+
+            // UI
+            document.getElementById('pedagogy-panel').classList.remove('hidden');
+            document.getElementById('pedagogy-panel').classList.add('fade-in');
+            document.getElementById('interaction-panel').classList.remove('hidden');
+            document.getElementById('interaction-panel').classList.add('fade-in');
+            document.getElementById('current-mod-number').innerText = mod.id;
+            document.getElementById('mod-title').innerText = mod.title;
+            document.getElementById('mod-explanation').innerHTML = mod.explanation;
+            document.getElementById('mod-example').innerHTML = mod.example;
+            document.getElementById('mod-instruction').innerText = mod.instruction;
+            document.getElementById('interaction-container').innerHTML = mod.renderUI();
+
+            document.getElementById('btn-prev').disabled = (index === 0);
+
+            // Si es el último, cambiar texto a "Finalizar"
+            const btnNext = document.getElementById('btn-next');
+            if (index === modules.length - 1) {
+                btnNext.innerHTML = `Finalizar <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 pointer-events-none"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>`;
+            } else {
+                btnNext.innerHTML = `Siguiente <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 pointer-events-none"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>`;
+            }
+
+            setTimeout(() => {
+                if (window[mod.setup3D]) window[mod.setup3D]();
+            }, 100);
+        }
+
+        function handleNextClick(e) {
+            if (e) e.preventDefault(); // Evitar comportamientos por defecto del navegador
+            if (currentModuleIndex < modules.length - 1) {
+                loadModule(currentModuleIndex + 1);
+            } else {
+                location.reload(); // Recargar al finalizar
+            }
+        }
+
+        function nextModule() {
+            if (currentModuleIndex < modules.length - 1) loadModule(currentModuleIndex + 1);
+        }
+
+        function prevModule(e) {
+            if (e) e.preventDefault();
+            if (currentModuleIndex > 0) loadModule(currentModuleIndex - 1);
+        }
+
+        // --- 4. LÓGICA DE INTERACCIONES Y MODAL ---
+        function showPedagogicalClosure() {
+            const mod = modules[currentModuleIndex];
+            document.getElementById('closure-text').innerHTML = mod.closureText;
+
+            const feedbackBox = document.getElementById('product-feedback');
+
+            // Recoger productos para mostrar un feedback empático
+            if (window['mod' + mod.id + 'Answered'] === true) {
+                feedbackBox.innerHTML = `<strong>¡Excelente trabajo!</strong> Has comprendido correctamente el concepto principal de esta fase.`;
+                feedbackBox.classList.remove('hidden');
+            } else if (window['mod' + mod.id + 'Answered'] === false) {
+                feedbackBox.innerHTML = `<strong>Aún puedes seguir aprendiendo.</strong> Recuerda que equivocarse es parte del proceso de asimilar nuevos conceptos de IA.`;
+                feedbackBox.classList.remove('hidden');
+            } else {
+                feedbackBox.classList.add('hidden');
+            }
+
+            document.getElementById('closure-modal').classList.remove('hidden');
+        }
+
+        function closeModalAndNext() {
+            document.getElementById('closure-modal').classList.add('hidden');
+            // Animar botón siguiente para sugerir avance
+            document.getElementById('btn-next').classList.add('ring-2', 'ring-indigo-400', 'ring-offset-2', 'ring-offset-slate-900');
+            setTimeout(() => {
+                document.getElementById('btn-next').classList.remove('ring-2', 'ring-indigo-400', 'ring-offset-2', 'ring-offset-slate-900');
+            }, 2000);
+        }
+
+        function checkAnswer(modId, btn, isCorrect, explanation) {
+            const container = btn.parentElement;
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(b => {
+                b.classList.remove('bg-emerald-50', 'border-emerald-400', 'text-emerald-800', 'bg-red-50', 'border-red-400', 'text-red-800');
+                b.classList.add('border-slate-200');
+            });
+
+            if (isCorrect) {
+                btn.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800');
+                btn.classList.remove('border-slate-200');
+            } else {
+                btn.classList.add('bg-red-50', 'border-red-400', 'text-red-800');
+                btn.classList.remove('border-slate-200');
+            }
+
+            const feedbackEl = document.getElementById('feedback-' + modId);
+            feedbackEl.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-red-100', 'text-red-800');
+            if (isCorrect) {
+                feedbackEl.classList.add('bg-emerald-100', 'text-emerald-800');
+            } else {
+                feedbackEl.classList.add('bg-red-100', 'text-red-800');
+            }
+            feedbackEl.innerHTML = explanation;
+
+            window['mod' + modId + 'Answered'] = isCorrect;
+        }
+
+
+        // --- 5. ESCENAS 3D (A-Frame) ---
+        const getAnchor = () => document.getElementById('content-anchor');
+
+        // Escena Módulo 1: Tarjetas de Estudiantes
+        function setupMod1() {
+            const anchor = getAnchor();
+            if (!anchor) return;
+
+            const group = document.createElement('a-entity');
+            group.setAttribute('id', 'mod1-group');
+
+            // Ajustamos escala y posición para que quepan 80 cuadros enormes a la vista
+            group.setAttribute('scale', isARMode ? '0.35 0.35 0.35' : '0.5 0.5 0.5');
+            group.setAttribute('position', isARMode ? '0 1 0' : '0 1.5 -1.5');
+
+            const title = document.createElement('a-text');
+            title.setAttribute('value', 'HISTORIAL: 80 ESTUDIANTES');
+            title.setAttribute('align', 'center');
+            title.setAttribute('position', '0 3.5 0');
+            title.setAttribute('color', isARMode ? '#334155' : '#cbd5e1');
+            title.setAttribute('width', '10');
+            title.setAttribute('font', 'mozillavr');
+            group.appendChild(title);
+
+            // Generar 80 estudiantes con un patrón claro
+            const data = [];
+            for (let i = 0; i < 80; i++) {
+                // 8 Filas. Superiores: alto rendimiento. Inferiores: bajo rendimiento.
+                const row = Math.floor(i / 10);
+                let a = 100 - (row * 8) - Math.floor(Math.random() * 15);
+                let t = 100 - (row * 8) - Math.floor(Math.random() * 15);
+
+                // Asegurar que no pasen de 100 ni bajen de 0
+                a = Math.max(0, Math.min(100, a));
+                t = Math.max(0, Math.min(100, t));
+
+                let c = "#10b981"; // Verde (Aprueba)
+                if (a < 60 || t < 60) { c = "#ef4444"; } // Rojo (Desaprueba)
+                else if (a < 80 || t < 80) { c = "#f59e0b"; } // Amarillo (Riesgo)
+
+                data.push({ a, t, c });
+            }
+
+            // Posicionar en 8 filas de 10 columnas
+            data.forEach((st, i) => {
+                if (i === 79) { window.anaGomezData = { a: st.a, t: st.t }; }
+                const col = i % 10;
+                const row = Math.floor(i / 10);
+
+                const card = document.createElement('a-plane');
+                // Cuadros mucho más grandes y espaciados
+                const x = (col - 4.5) * 0.95;
+                const y = 2.0 - (row * 0.65);
+
+                card.setAttribute('position', `${x} ${y} 0`);
+                card.setAttribute('width', '0.85');
+                card.setAttribute('height', '0.55');
+                card.setAttribute('color', st.c);
+                card.setAttribute('opacity', '0.95');
+
+                // Efecto de flotación desfasado
+                card.setAttribute('animation', `property: position; dir: alternate; dur: ${1500 + Math.random() * 1000}; easing: easeInOutSine; loop: true; to: ${x} ${y + 0.08} 0`);
+
+                const text = document.createElement('a-text');
+                text.setAttribute('value', `A: ${st.a}%\nT: ${st.t}%`);
+                text.setAttribute('align', 'center');
+                // Ajuste crítico: width menor al tamaño del plano (0.85) para no desbordar
+                text.setAttribute('width', '0.8');
+                text.setAttribute('wrap-count', '10'); // Cantidad de caracteres por línea para que encaje perfecto
+                text.setAttribute('line-height', '65'); // Separación limpia entre líneas
+                text.setAttribute('color', '#fff');
+                text.setAttribute('position', '0 0 0.02');
+
+                card.appendChild(text);
+                group.appendChild(card);
+            });
+
+            anchor.appendChild(group);
+        }
+
+        function clearMod1() {
+            const el = document.getElementById('mod1-group');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+        // Escena Módulo 2: Zonas de Variables y Etiquetas
+        function setupMod2() {
+            const anchor = getAnchor();
+            if (!anchor) return;
+
+            const group = document.createElement('a-entity');
+            group.setAttribute('id', 'mod2-group');
+
+            // Zona Izquierda: Variables
+            const zoneVar = document.createElement('a-entity');
+            zoneVar.setAttribute('position', '-1.2 0 0');
+
+            const planeVar = document.createElement('a-plane');
+            planeVar.setAttribute('color', '#4f46e5'); // Indigo
+            planeVar.setAttribute('width', '2');
+            planeVar.setAttribute('height', '2.5');
+            planeVar.setAttribute('opacity', '0.2');
+            planeVar.setAttribute('material', 'transparent: true');
+            zoneVar.appendChild(planeVar);
+
+            const titleVar = document.createElement('a-text');
+            titleVar.setAttribute('value', 'VARIABLES DE ENTRADA\n(Datos)');
+            titleVar.setAttribute('align', 'center');
+            titleVar.setAttribute('position', '0 1.4 0');
+            titleVar.setAttribute('color', isARMode ? '#334155' : '#818cf8');
+            titleVar.setAttribute('width', '2.5');
+            zoneVar.appendChild(titleVar);
+
+            // Ejemplos de Variables en 3D
+            const vars = ['Asistencia (%)', 'Participacion en Foro', 'Tareas Entregadas'];
+            vars.forEach((v, i) => {
+                const text = document.createElement('a-text');
+                text.setAttribute('value', `[+] ${v}`);
+                text.setAttribute('align', 'center');
+                text.setAttribute('position', `0 ${0.6 - (i * 0.6)} 0.05`);
+                text.setAttribute('color', isARMode ? '#000' : '#fff');
+                text.setAttribute('width', '2.5');
+                zoneVar.appendChild(text);
+            });
+
+            // Zona Derecha: Etiquetas
+            const zoneLab = document.createElement('a-entity');
+            zoneLab.setAttribute('position', '1.2 0 0');
+
+            const planeLab = document.createElement('a-plane');
+            planeLab.setAttribute('color', '#059669'); // Emerald
+            planeLab.setAttribute('width', '2');
+            planeLab.setAttribute('height', '2.5');
+            planeLab.setAttribute('opacity', '0.2');
+            planeLab.setAttribute('material', 'transparent: true');
+            zoneLab.appendChild(planeLab);
+
+            const titleLab = document.createElement('a-text');
+            titleLab.setAttribute('value', 'ETIQUETAS\n(Resultados Esperados)');
+            titleLab.setAttribute('align', 'center');
+            titleLab.setAttribute('position', '0 1.4 0');
+            titleLab.setAttribute('color', isARMode ? '#334155' : '#34d399');
+            titleLab.setAttribute('width', '2.5');
+            zoneLab.appendChild(titleLab);
+
+            // Ejemplos de Etiquetas en 3D
+            const labs = ['Aprueba / Desaprueba', 'Riesgo Academico', 'Abandono (Si/No)'];
+            labs.forEach((l, i) => {
+                const text = document.createElement('a-text');
+                text.setAttribute('value', `=> ${l}`);
+                text.setAttribute('align', 'center');
+                text.setAttribute('position', `0 ${0.6 - (i * 0.6)} 0.05`);
+                text.setAttribute('color', isARMode ? '#000' : '#fff');
+                text.setAttribute('width', '2.5');
+                zoneLab.appendChild(text);
+            });
+
+            group.appendChild(zoneVar);
+            group.appendChild(zoneLab);
+            anchor.appendChild(group);
+        }
+
+        function clearMod2() {
+            const el = document.getElementById('mod2-group');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+        // Escena Módulo 3: Alerta Predictiva
+        function setupMod3() {
+            const anchor = getAnchor();
+            if (!anchor) return;
+
+            const group = document.createElement('a-entity');
+            group.setAttribute('id', 'mod3-group');
+
+            const board = document.createElement('a-entity');
+            board.setAttribute('position', '0 0.5 0');
+
+            const background = document.createElement('a-plane');
+            background.setAttribute('color', '#1e293b');
+            background.setAttribute('width', '3.5');
+            background.setAttribute('height', '1.8');
+            background.setAttribute('opacity', '0.9');
+            board.appendChild(background);
+
+            // Borde animado
+            const border = document.createElement('a-plane');
+            border.setAttribute('color', '#ef4444'); // Rojo alerta
+            border.setAttribute('width', '3.6');
+            border.setAttribute('height', '1.9');
+            border.setAttribute('position', '0 0 -0.01');
+            border.setAttribute('animation', 'property: opacity; dir: alternate; dur: 1000; from: 0.3; to: 1; loop: true');
+            board.appendChild(border);
+
+            const icon = document.createElement('a-text');
+            icon.setAttribute('value', 'A L E R T A');
+            icon.setAttribute('color', '#ef4444');
+            icon.setAttribute('align', 'center');
+            icon.setAttribute('width', '4');
+            icon.setAttribute('position', '0 0.65 0.05');
+            icon.setAttribute('font', 'mozillavr');
+            board.appendChild(icon);
+
+            const textMain = document.createElement('a-text');
+            textMain.setAttribute('value', 'Estudiante: Ana Gomez\nPROBABILIDAD DE RIESGO: 85%');
+            textMain.setAttribute('color', '#f8fafc');
+            textMain.setAttribute('align', 'center');
+            textMain.setAttribute('width', '3');
+            textMain.setAttribute('position', '0 0.25 0.05');
+            board.appendChild(textMain);
+
+            const textData = document.createElement('a-text');
+            const aData = window.anaGomezData ? window.anaGomezData.a : 45;
+            const tData = window.anaGomezData ? window.anaGomezData.t : 30;
+            textData.setAttribute('value', `DATOS DE ENTRADA:\nAsistencia (Simulación): ${aData}%  |  Tareas: ${tData}%`);
+            textData.setAttribute('color', '#fbbf24');
+            textData.setAttribute('align', 'center');
+            textData.setAttribute('width', '2.5');
+            textData.setAttribute('position', '0 -0.2 0.05');
+            board.appendChild(textData);
+
+            const textSub = document.createElement('a-text');
+            textSub.setAttribute('value', 'Generado por Algoritmo Predictivo V1.2\nRequiere revision docente.');
+            textSub.setAttribute('color', '#94a3b8');
+            textSub.setAttribute('align', 'center');
+            textSub.setAttribute('width', '2');
+            textSub.setAttribute('position', '0 -0.65 0.05');
+            board.appendChild(textSub);
+
+            group.appendChild(board);
+            anchor.appendChild(group);
+        }
+
+        function clearMod3() {
+            const el = document.getElementById('mod3-group');
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+
+    </script>
+</body>
+
+</html>

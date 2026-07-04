@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PredictEdu AR: Análisis Predictivo para la Gestión Educativa</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a', // Slate 900
+                            light: '#f8fafc', // Slate 50
+                            gray: '#cbd5e1', // Slate 300
+                            accent: '#eab308', // Yellow 500
+                            accentHover: '#ca8a04' // Yellow 600
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Three.js para la simulación AR/3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls para rotar el modelo -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-border {
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+            }
+        }
+
+        /* 3D Container y AR */
+        #ar-container {
+            width: 100%;
+            height: 70vh;
+            background: #000;
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        #ar-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            display: none;
+        }
+
+        #ar-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            outline: none;
+            z-index: 1;
+        }
+
+        .ar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 3;
+        }
+
+        .ar-ui-panel {
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            border: 1px solid #334155;
+        }
+
+        /* Etiquetas HTML que siguen a los objetos 3D */
+        #ar-labels-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .node-label {
+            position: absolute;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #3b82f6;
+            transition: opacity 0.3s;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        input[type=range] {
+            accent-color: #eab308;
+        }
+    </style>
+</head>
+
+<body class="text-brand-dark antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-brand-dark text-white z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 bg-brand-accent rounded-lg flex items-center justify-center font-bold text-brand-dark">
+                        P</div>
+                    <span class="font-bold text-xl tracking-tight text-white hidden sm:block">PredictEdu <span
+                            class="text-brand-accent">AR</span></span>
+                </div>
+                <div class="hidden md:flex space-x-6 text-sm font-medium text-gray-300">
+                    <a href="#objetivo" class="hover:text-brand-accent transition-colors">Objetivo</a>
+                    <a href="#sat" class="hover:text-brand-accent transition-colors">SAT</a>
+                    <a href="#simulador" class="hover:text-brand-accent transition-colors">Simulador</a>
+                    <a href="#dashboard" class="hover:text-brand-accent transition-colors">Dashboard</a>
+                    <a href="#herramientas" class="hover:text-brand-accent transition-colors">Herramientas</a>
+                </div>
+                <a href="#ar-section"
+                    class="bg-brand-accent text-brand-dark px-4 py-2 rounded-md font-bold hover:bg-brand-accentHover transition-colors text-sm">
+                    Explorar AR
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Pantalla Inicial (Hero) -->
+    <section class="pt-32 pb-20 bg-brand-dark text-white text-center px-4 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none"
+            style="background-image: radial-gradient(#eab308 1px, transparent 1px); background-size: 30px 30px;"></div>
+        <div class="max-w-4xl mx-auto relative z-10 fade-in">
+            <span class="text-brand-accent font-semibold tracking-wider uppercase text-sm mb-4 block">Inteligencia
+                Artificial Educativa</span>
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Análisis Predictivo en la <br><span
+                    class="text-brand-accent">Gestión Educativa</span></h1>
+            <h2 class="text-xl md:text-2xl text-gray-300 mb-8 font-light">De la gestión reactiva a la anticipación
+                preventiva y humana mediante IA.</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-10">
+                El análisis predictivo usa datos históricos, modelos estadísticos y Machine Learning para anticipar
+                riesgos, generar alertas tempranas y apoyar decisiones educativas oportunas.
+            </p>
+            <a href="#ar-section"
+                class="inline-block bg-brand-accent text-brand-dark font-bold text-lg px-8 py-4 rounded-full hover:scale-105 transition-transform pulse-border shadow-lg shadow-yellow-500/20">
+                Explorar experiencia AR
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. Objetivo Estratégico -->
+    <section id="objetivo" class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4">El objetivo estratégico del análisis predictivo</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto text-lg">El análisis predictivo busca transitar de la autopsia
+                    de datos a la prevención proactiva en la gestión educativa.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div
+                    class="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+                    <div
+                        class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-xl font-bold mb-6">
+                        1</div>
+                    <h3 class="text-xl font-bold mb-3">Gestión reactiva</h3>
+                    <p class="text-gray-600">Intervención después del fracaso, con altos costos operativos, académicos y
+                        humanos.</p>
+                </div>
+                <div
+                    class="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent"></div>
+                    <div
+                        class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-lg flex items-center justify-center text-xl font-bold mb-6">
+                        2</div>
+                    <h3 class="text-xl font-bold mb-3">Análisis predictivo</h3>
+                    <p class="text-gray-600">Anticipación de escenarios mediante señales tempranas provenientes de datos
+                        institucionales.</p>
+                </div>
+                <div
+                    class="bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+                    <div
+                        class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center text-xl font-bold mb-6">
+                        3</div>
+                    <h3 class="text-xl font-bold mb-3">Enfoque humano</h3>
+                    <p class="text-gray-600">Empoderamiento de tutores, docentes y directivos con información
+                        accionable, no con sentencias algorítmicas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Sistemas de Alerta Temprana -->
+    <section id="sat" class="py-20 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-4">Sistemas de Alerta Temprana con IA</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Un Sistema de Alerta Temprana permite
+                identificar el riesgo de abandono semanas antes de que el estudiante tome la decisión final.</p>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Flujo -->
+                <div>
+                    <h3 class="font-bold text-xl mb-6">Secuencia de Detección</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-white shadow-sm p-3 rounded-lg">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-sm">
+                                1</div><span>Caída de interacciones en LMS</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white shadow-sm p-3 rounded-lg">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-sm">
+                                2</div><span>Ausentismo recurrente</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white shadow-sm p-3 rounded-lg">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-sm">
+                                3</div><span>Baja de calificaciones parciales</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 bg-yellow-50 p-3 rounded-lg border border-yellow-200 shadow-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold text-sm">
+                                4</div><span class="font-semibold text-yellow-800">Generación de score de riesgo
+                                predictivo</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-red-50 p-3 rounded-lg border border-red-200 shadow-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm">
+                                5</div><span class="text-red-700 font-bold">Alerta al equipo de retención</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 bg-green-50 p-3 rounded-lg border border-green-200 shadow-sm">
+                            <div
+                                class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-sm">
+                                6</div><span class="text-green-700 font-bold">Intervención temprana personalizada</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caso interactivo -->
+                <div class="bg-brand-dark text-white rounded-2xl p-8 shadow-2xl relative">
+                    <div
+                        class="absolute -top-4 -right-4 bg-brand-accent text-brand-dark font-bold py-1 px-3 rounded-full text-sm transform rotate-12">
+                        Caso de Decisión</div>
+                    <p class="italic text-gray-300 mb-6 bg-gray-800 p-4 rounded-lg border-l-4 border-brand-accent">
+                        "Un estudiante presenta baja participación en el LMS, ausencias frecuentes y descenso en sus
+                        calificaciones. El sistema predictivo genera una alerta de riesgo de abandono alto."
+                    </p>
+                    <h4 class="font-bold mb-4 text-lg">¿Qué debería hacer la institución?</h4>
+                    <div class="space-y-3" id="quiz-options">
+                        <button onclick="checkAnswer('A')"
+                            class="w-full text-left p-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-colors">A.
+                            Esperar hasta el cierre del semestre para evaluar.</button>
+                        <button onclick="checkAnswer('B')"
+                            class="w-full text-left p-3 rounded-lg bg-gray-800 hover:bg-brand-accent hover:text-brand-dark hover:border-brand-accent border border-gray-600 transition-colors">B.
+                            Activar intervención preventiva con un tutor humano.</button>
+                        <button onclick="checkAnswer('C')"
+                            class="w-full text-left p-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-colors">C.
+                            Dar de baja automáticamente al estudiante por algoritmo.</button>
+                    </div>
+                    <div id="quiz-feedback" class="mt-4 p-4 rounded-lg hidden font-medium text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Estimación del rendimiento (Simulador Predictivo Mejorado) -->
+    <section id="simulador" class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-4">Simulador de Casos Predictivos</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Carga perfiles de estudiantes reales, observa
+                cómo reacciona el modelo predictivo e interactúa con las variables para simular el impacto de tus
+                intervenciones pedagógicas.</p>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Selectores de Caso -->
+                <div class="space-y-6">
+                    <h3 class="font-bold text-xl text-brand-dark border-b pb-2">1. Selecciona un Perfil de Estudiante
+                    </h3>
+
+                    <div class="space-y-4">
+                        <button onclick="loadProfile('maria')"
+                            class="w-full text-left p-4 rounded-xl border border-blue-200 hover:border-blue-500 hover:shadow-md transition-all bg-blue-50 group">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-bold text-blue-800">Caso 1: María (Riesgo por Inasistencia)</h4>
+                                <span class="text-xl group-hover:scale-125 transition-transform">👩🏽‍🎓</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Tiene buenas calificaciones parciales, pero ha comenzado a
+                                faltar recurrentemente a las sesiones sincrónicas por problemas laborales.</p>
+                        </button>
+
+                        <button onclick="loadProfile('carlos')"
+                            class="w-full text-left p-4 rounded-xl border border-purple-200 hover:border-purple-500 hover:shadow-md transition-all bg-purple-50 group">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-bold text-purple-800">Caso 2: Carlos (Desconexión Digital)</h4>
+                                <span class="text-xl group-hover:scale-125 transition-transform">👨🏻‍💻</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Asiste físicamente, pero tiene cero interacciones en el
+                                LMS, no descarga materiales ni participa en foros. Notas decayendo.</p>
+                        </button>
+
+                        <button onclick="loadProfile('elena')"
+                            class="w-full text-left p-4 rounded-xl border border-green-200 hover:border-green-500 hover:shadow-md transition-all bg-green-50 group">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-bold text-green-800">Caso 3: Elena (Perfil Seguro)</h4>
+                                <span class="text-xl group-hover:scale-125 transition-transform">👩🏻‍🔬</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Participación constante, asistencia perfecta y buenas
+                                calificaciones. Estudiante base para modelo predictivo positivo.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulador Interactivo -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-brand-accent opacity-10 rounded-bl-full pointer-events-none">
+                    </div>
+
+                    <h3 class="font-bold text-xl mb-2 flex items-center gap-2"><span class="text-brand-accent">⚙️</span>
+                        Motor Predictivo en Vivo</h3>
+                    <p class="text-xs text-gray-500 mb-6 italic" id="case-status">Selecciona un caso a la izquierda o
+                        mueve los deslizadores libremente.</p>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                                Asistencia al Aula <span id="val-asis" class="text-brand-dark font-bold">80%</span>
+                            </label>
+                            <input type="range" id="sim-asis" min="0" max="100" value="80" class="w-full cursor-pointer"
+                                oninput="updateSimulation()">
+                            <p class="text-xs text-gray-400 mt-1">Impacto predictivo: Medio-Alto</p>
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                                Participación en Plataforma (LMS) <span id="val-lms"
+                                    class="text-brand-dark font-bold">60%</span>
+                            </label>
+                            <input type="range" id="sim-lms" min="0" max="100" value="60" class="w-full cursor-pointer"
+                                oninput="updateSimulation()">
+                            <p class="text-xs text-gray-400 mt-1">Impacto predictivo: Alto (Indicador temprano)</p>
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                                Calificaciones Parciales Acumuladas <span id="val-eval"
+                                    class="text-brand-dark font-bold">14/20</span>
+                            </label>
+                            <input type="range" id="sim-eval" min="0" max="20" value="14" class="w-full cursor-pointer"
+                                oninput="updateSimulation()">
+                            <p class="text-xs text-gray-400 mt-1">Impacto predictivo: Muy Alto</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-6 rounded-xl bg-gray-50 border border-gray-200 text-center relative overflow-hidden transition-all duration-300 shadow-inner"
+                        id="sim-container">
+                        <div id="sim-bg"
+                            class="absolute inset-0 opacity-20 bg-green-500 transition-colors duration-500"></div>
+                        <div class="relative z-10">
+                            <p class="text-sm text-gray-700 font-bold mb-1">Predicción del Algoritmo</p>
+                            <div class="text-5xl font-black mb-2 tracking-tighter" id="sim-prob">75%</div>
+                            <p class="text-xs text-gray-500 mb-4 uppercase tracking-wide font-semibold">Probabilidad de
+                                Éxito Académico</p>
+
+                            <div class="flex flex-col sm:flex-row justify-center gap-3 text-sm">
+                                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex-1">Nivel
+                                    de Riesgo:<br><span id="sim-risk"
+                                        class="font-black text-lg text-green-600">BAJO</span></div>
+                                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex-1">IA
+                                    Sugiere:<br><span id="sim-action" class="font-bold text-gray-700">Monitoreo
+                                        Normal</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 13. EXPERIENCIA AR (Simulación 3D Interactiva Real) -->
+    <section id="ar-section" class="py-20 px-4 bg-brand-dark relative overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-10 text-white relative z-10">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Experiencia <span class="text-brand-accent">Realidad
+                        Aumentada</span></h2>
+                <p class="text-gray-300 max-w-2xl mx-auto mb-8" id="ar-warning-text">
+                    Interactúa en 3D con el Motor Predictivo. Gira el modelo con tu dedo o ratón.
+                    Al iniciar, podrás activar tu cámara para proyectar el holograma de datos en tu entorno real
+                    (Realidad Aumentada genuina) o navegarlo en modo 3D inmersivo.
+                </p>
+                <button id="btn-start-ar"
+                    class="bg-brand-accent text-brand-dark font-bold text-xl px-10 py-5 rounded-full hover:scale-105 transition-all shadow-[0_0_30px_rgba(234,179,8,0.4)]">
+                    🚀 Iniciar Experiencia AR/3D
+                </button>
+            </div>
+
+            <!-- Contenedor 3D / AR -->
+            <div id="ar-container" class="shadow-2xl ring-1 ring-white/10">
+                <!-- Video para fondo AR (Cámara Real) -->
+                <video id="ar-video-bg" autoplay playsinline></video>
+                <!-- Canvas de Three.js -->
+                <canvas id="ar-canvas"></canvas>
+                <!-- Contenedor de Etiquetas HTML que flotan sobre el 3D -->
+                <div id="ar-labels-container"></div>
+
+                <!-- UI Overlay sobre el 3D -->
+                <div class="ar-overlay">
+                    <div class="flex justify-between items-start">
+                        <div class="ar-ui-panel p-4 rounded-lg text-white max-w-[200px] shadow-lg">
+                            <h3 class="font-bold text-brand-accent text-xs mb-1 uppercase tracking-wider">Estado del
+                                Motor IA</h3>
+                            <div id="ar-status" class="text-sm font-bold text-blue-400">Capturando Datos...</div>
+                            <div class="mt-1 text-[10px] text-gray-300 leading-tight" id="ar-detail">Arrastra para rotar
+                                el modelo. Haz scroll para acercar.</div>
+                        </div>
+
+                        <!-- Panel de Riesgo -->
+                        <div id="ar-risk-panel"
+                            class="ar-ui-panel p-4 rounded-lg text-white text-center opacity-0 transition-opacity duration-500 shadow-lg border-red-500/50">
+                            <div class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Alerta Predictiva
+                            </div>
+                            <div id="ar-risk-score"
+                                class="text-4xl font-black text-red-500 my-1 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">
+                                85%</div>
+                            <div id="ar-risk-label" class="text-xs font-bold bg-red-500 text-white rounded px-2 py-1">
+                                RIESGO ALTO</div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Control AR -->
+                    <div class="flex flex-col items-center gap-3 mt-auto pb-4 pointer-events-auto">
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button
+                                class="ar-btn bg-brand-dark/90 text-white border border-brand-accent/50 hover:bg-brand-accent hover:text-brand-dark px-4 py-3 rounded-xl text-sm font-bold transition-colors shadow-lg flex items-center gap-2"
+                                onclick="arAction('procesar')" id="btn-ar-procesar">
+                                <span>⚙️</span> 1. Procesar Machine Learning
+                            </button>
+                            <button
+                                class="ar-btn bg-brand-dark/90 text-white border border-red-500/50 hover:bg-red-500 hover:text-white px-4 py-3 rounded-xl text-sm font-bold transition-colors shadow-lg flex items-center gap-2"
+                                onclick="arAction('alerta')" disabled id="btn-ar-alerta">
+                                <span>🚨</span> 2. Generar Alerta
+                            </button>
+                            <button
+                                class="ar-btn bg-brand-dark/90 text-white border border-green-500/50 hover:bg-green-500 hover:text-white px-4 py-3 rounded-xl text-sm font-bold transition-colors shadow-lg flex items-center gap-2"
+                                onclick="arAction('intervencion')" disabled id="btn-ar-intervenir">
+                                <span>👨‍🏫</span> 3. Activar Intervención Humana
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal de intervención (sobrepuesto en el 3D) -->
+                <div id="ar-modal-intervencion"
+                    class="absolute inset-0 bg-brand-dark/90 backdrop-blur-sm flex items-center justify-center hidden z-50">
+                    <div
+                        class="bg-gray-900 p-8 rounded-2xl border border-brand-accent text-white max-w-md text-center shadow-2xl">
+                        <div class="text-4xl mb-4">🛡️</div>
+                        <h4 class="font-bold text-2xl mb-2 text-brand-accent">Decisión Humana</h4>
+                        <p class="text-sm text-gray-400 mb-6">El modelo ha detectado riesgo. Selecciona la acción
+                            pedagógica que el consejero aplicará en la realidad.</p>
+                        <div class="space-y-3">
+                            <button
+                                class="w-full bg-gray-800 hover:bg-blue-600 border border-gray-700 hover:border-blue-500 p-4 rounded-xl transition-all text-left font-medium flex items-center gap-3"
+                                onclick="selectIntervention('Tutoría académica 1 a 1')"><span class="text-2xl">📚</span>
+                                Tutoría académica 1 a 1</button>
+                            <button
+                                class="w-full bg-gray-800 hover:bg-purple-600 border border-gray-700 hover:border-purple-500 p-4 rounded-xl transition-all text-left font-medium flex items-center gap-3"
+                                onclick="selectIntervention('Entrevista socioemocional')"><span
+                                    class="text-2xl">💬</span> Entrevista socioemocional</button>
+                            <button
+                                class="w-full bg-gray-800 hover:bg-green-600 border border-gray-700 hover:border-green-500 p-4 rounded-xl transition-all text-left font-medium flex items-center gap-3"
+                                onclick="selectIntervention('Activación de Beca Preventiva')"><span
+                                    class="text-2xl">💰</span> Activación de Beca Preventiva</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 14. Dashboard Predictivo Interactivo -->
+    <section id="dashboard" class="py-20 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2 text-brand-dark">Dashboard Directivo Operativo</h2>
+                <p class="text-gray-500 text-sm">Visualización macro simulada. Así ven los gestores institucionales el
+                    panorama predictivo general.</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="flex flex-wrap gap-4 mb-8 bg-white shadow-sm p-4 rounded-xl border border-gray-200">
+                <select id="filter-programa"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-accent focus:border-brand-accent p-2.5 font-medium"
+                    onchange="updateCharts()">
+                    <option value="todos">Todos los Programas Académicos</option>
+                    <option value="ingenieria">Facultad de Ingeniería</option>
+                    <option value="negocios">Escuela de Negocios</option>
+                    <option value="salud">Ciencias de la Salud</option>
+                </select>
+                <select id="filter-ciclo"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-accent focus:border-brand-accent p-2.5 font-medium"
+                    onchange="updateCharts()">
+                    <option value="2026-1">Ciclo Actual (2026-1)</option>
+                    <option value="2025-2">Ciclo Anterior (2025-2)</option>
+                </select>
+            </div>
+
+            <!-- KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div
+                    class="bg-white p-5 rounded-xl shadow-md border border-gray-100 border-l-4 border-l-red-500 relative overflow-hidden">
+                    <div class="absolute right-2 top-2 opacity-10 text-4xl">🚨</div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Estudiantes Riesgo Alto</p>
+                    <p class="text-3xl font-black text-brand-dark my-1" id="kpi-riesgo">142</p>
+                    <p class="text-xs text-red-500 font-bold">↑ 12% vs ciclo anterior</p>
+                </div>
+                <div
+                    class="bg-white p-5 rounded-xl shadow-md border border-gray-100 border-l-4 border-l-yellow-500 relative overflow-hidden">
+                    <div class="absolute right-2 top-2 opacity-10 text-4xl">📈</div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Prob. Media Aprobación</p>
+                    <p class="text-3xl font-black text-brand-dark my-1" id="kpi-prob">78%</p>
+                    <p class="text-xs text-green-500 font-bold">Dentro del objetivo</p>
+                </div>
+                <div
+                    class="bg-white p-5 rounded-xl shadow-md border border-gray-100 border-l-4 border-l-blue-500 relative overflow-hidden">
+                    <div class="absolute right-2 top-2 opacity-10 text-4xl">👤</div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Desconexión LMS (< 20%)</p>
+                            <p class="text-3xl font-black text-brand-dark my-1" id="kpi-asis">85</p>
+                            <p class="text-xs text-gray-400 font-bold">Casos críticos a revisar</p>
+                </div>
+                <div
+                    class="bg-white p-5 rounded-xl shadow-md border border-gray-100 border-l-4 border-l-green-500 relative overflow-hidden">
+                    <div class="absolute right-2 top-2 opacity-10 text-4xl">🤝</div>
+                    <p class="text-xs text-gray-500 uppercase font-bold">Tutorías Ejecutadas</p>
+                    <p class="text-3xl font-black text-brand-dark my-1" id="kpi-tuto">210</p>
+                    <p class="text-xs text-green-500 font-bold">Acción preventiva exitosa</p>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 md:col-span-2">
+                    <h3 class="text-base font-bold text-gray-800 mb-4">Curva de Riesgo Detectado vs Intervenciones (Sem
+                        1-8)</h3>
+                    <div class="relative h-72 w-full">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="text-base font-bold text-gray-800 mb-4">Estratificación de Riesgo Actual</h3>
+                    <div class="relative h-72 w-full flex justify-center">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 15. Herramientas del Mercado y Desarrollos Propios -->
+    <section id="herramientas" class="py-20 px-4 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4">Tecnología Aplicada: ¿Cómo implementarlo?</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto text-lg">Conoce las herramientas comerciales líderes en el
+                    mercado y cómo las instituciones construyen sus propios ecosistemas predictivos a medida.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- Herramienta 1 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200">Cloud
+                        Microsoft</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">📊</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Power BI + Azure ML</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Es una de las opciones que permite construir modelos propios para predecir deserción, bajo
+                            rendimiento, demanda de tutorías, necesidad de becas, matrícula, saturación de cursos o uso
+                            de recursos institucionales.</p>
+                        <p>Microsoft documenta la integración de Power BI con Azure Machine Learning para aplicar
+                            modelos predictivos y hacer predicciones de abandono o enriquecimiento de datos
+                            institucionales.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 2 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-green-100 text-green-800 border border-green-200">Cloud
+                        Google</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">📈</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Looker Studio + BigQuery ML</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Buena alternativa si la institución usa Google Workspace for Education. Permite trabajar con
+                            datos académicos, asistencia, encuestas, LMS o matrículas, y construir modelos predictivos
+                            en BigQuery ML para luego visualizarlos en Looker Studio.</p>
+                        <p><strong class="text-brand-dark">Uso:</strong> Colegios, institutos o universidades
+                            que ya usan Google Workspace.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 3 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-red-100 text-red-800 border border-red-200">LMS
+                        Canvas</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">🎓</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Canvas Analytics + Power BI</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Si la institución usa Canvas, esta opción sí aplica. Canvas permite analizar participación,
+                            entregas, actividad del curso y desempeño; si se conecta con Power BI o modelos externos,
+                            puede usarse para predicciones más avanzadas.</p>
+                        <p><strong class="text-brand-dark">Uso:</strong> Hay instituciones que usan Canvas, y
+                            existen investigaciones locales sobre su uso en universidades peruanas.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 4 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">LMS
+                        Moodle</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">📚</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Moodle Learning Analytics</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Muy recomendable porque muchas instituciones usan Moodle. Permite trabajar con
+                            datos de acceso, participación, entregas, notas y actividad. Con plugins, reportes y
+                            conexión a Power BI, Python o R, predice riesgo académico.</p>
+                        <p><strong class="text-brand-dark">Uso:</strong> Universidades, institutos y colegios
+                            con aulas virtuales Moodle.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 5 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-purple-100 text-purple-800 border border-purple-200">LMS
+                        Anthology</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">🏫</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Anthology Illuminate / Blackboard
+                        </h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Puede servir si la institución usa Blackboard o soluciones Anthology. Está más orientada a
+                            analítica institucional, reportes y toma de decisiones con datos educativos.</p>
+                        <p>Solución para unificar datos institucionales y apoyar decisiones basadas en información
+                            educativa.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 6 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200">CRM
+                        SaaS</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">☁️</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Salesforce Education Cloud + Tableau
+                        </h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Sirve para instituciones con mayor presupuesto que quieren un ecosistema de seguimiento
+                            estudiantil, CRM educativo, alertas, segmentación y tableros.</p>
+                        <p><strong class="text-brand-dark">Uso ideal:</strong> Universidades privadas, institutos
+                            grandes o instituciones que ya usan Salesforce.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 7 -->
+                <div
+                    class="bg-brand-dark rounded-2xl p-6 border border-gray-700 hover:border-brand-accent hover:shadow-xl hover:shadow-brand-accent/20 transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-brand-accent text-brand-dark border border-yellow-400">Custom
+                        Dev</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">🐍</div>
+                        <h3 class="text-xl font-bold text-white leading-tight">Python / Jupyter + Scikit-learn + Power
+                            BI</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-300 flex-grow">
+                        <p>Es la opción más flexible y económica. Permite crear modelos propios usando datos
+                            institucionales: notas, asistencia, pagos, becas, retiros, participación virtual, encuestas
+                            y matrículas. Luego los resultados pueden mostrarse en Power BI.</p>
+                        <p><strong class="text-brand-accent">Uso:</strong> Muy viable para proyectos piloto,
+                            tesis, cursos de maestría o instituciones que no quieren pagar una plataforma SaaS
+                            especializada.</p>
+                    </div>
+                </div>
+
+                <!-- Herramienta 8 -->
+                <div
+                    class="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all relative group flex flex-col">
+                    <span
+                        class="absolute top-4 right-4 text-[10px] font-bold px-2 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">No-Code
+                        AI</span>
+                    <div class="flex items-center gap-3 mb-4 mt-4">
+                        <div class="text-2xl">🍊</div>
+                        <h3 class="text-xl font-bold text-brand-dark leading-tight">Orange Data Mining</h3>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-700 flex-grow">
+                        <p>Muy útil para fines educativos y demostrativos. Permite hacer predicciones sin programar
+                            demasiado, usando flujos visuales. Se puede usar para explicar clasificación de riesgo,
+                            predicción de aprobación, segmentación de estudiantes o detección de patrones.</p>
+                        <p><strong class="text-brand-dark">Uso:</strong> Ideal para docentes, talleres,
+                            laboratorios o demostraciones.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 16. Cierre / Footer -->
+    <footer class="bg-[#0b1120] text-gray-400 py-12 px-4 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <div class="flex items-center gap-2 justify-center md:justify-start mb-4">
+                    <div
+                        class="w-6 h-6 bg-brand-accent rounded flex items-center justify-center font-bold text-brand-dark text-xs">
+                        P</div>
+                    <span class="font-bold text-lg text-white">PredictEdu AR</span>
+                </div>
+                <p class="text-sm max-w-sm">Transformando datos en prevención. IA para potenciar la gestión educativa
+                    humana y ética.</p>
+            </div>
+
+            <div class="text-sm text-center md:text-right space-y-2">
+                <p>✓ IA como inteligencia aumentada</p>
+                <p>✓ Alertas para prevención, no sentencias algorítmicas</p>
+                <p>✓ Ética y privacidad por diseño</p>
+            </div>
+        </div>
+        <div class="mt-12 text-center text-xs border-t border-gray-800 pt-8 flex flex-col items-center">
+            <button onclick="window.scrollTo(0,0)"
+                class="mb-4 bg-gray-800 hover:bg-brand-accent hover:text-brand-dark text-white px-6 py-2 rounded-full transition-colors font-bold">
+                ↑ Volver al inicio
+            </button>
+            <p><span style="color: #ffffff;">
+                    Experiencia Interactiva. Fines educativos -©2026 - Luis Torrejón Arias
+                </span></p>
+        </div>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT -->
+    <script>
+        // -----------------------------------------
+        // UI Interactivity (Quiz Sec 5)
+        // -----------------------------------------
+        function checkAnswer(opt) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+
+            const buttons = document.querySelectorAll('#quiz-options button');
+            buttons.forEach(btn => btn.classList.remove('border-brand-accent', 'border-red-500'));
+
+            if (opt === 'B') {
+                feedback.classList.add('bg-green-100', 'text-green-800');
+                feedback.innerHTML = "<strong>¡Excelente Decisión!</strong> El análisis predictivo no es una condena, es una herramienta de empoderamiento. Usar los datos para activar tutores humanos es el verdadero objetivo de la IA en educación preventiva.";
+                event.target.classList.add('border-brand-accent');
+            } else {
+                feedback.classList.add('bg-red-100', 'text-red-800');
+                if (opt === 'A') feedback.innerHTML = "<strong>Demasiado tarde.</strong> La gestión reactiva (esperar a que repruebe) es costosa y desmotivadora. La IA te avisó a tiempo, ¡debes actuar!";
+                if (opt === 'C') feedback.innerHTML = "<strong>Peligro Ético.</strong> Ningún algoritmo debe automatizar decisiones que afecten el futuro de una persona sin revisión y apoyo humano.";
+                event.target.classList.add('border-red-500');
+            }
+        }
+
+        // -----------------------------------------
+        // Simulador de Casos Predictivos (Sec 6)
+        // -----------------------------------------
+        function loadProfile(name) {
+            const statusLabel = document.getElementById('case-status');
+            let a, l, e;
+
+            if (name === 'maria') {
+                a = 45; l = 85; e = 15;
+                statusLabel.innerHTML = "<strong class='text-blue-600'>Caso Cargado: María.</strong> Modifica la asistencia para ver si la intervención logra sacarla del riesgo.";
+            }
+            else if (name === 'carlos') {
+                a = 90; l = 15; e = 10;
+                statusLabel.innerHTML = "<strong class='text-purple-600'>Caso Cargado: Carlos.</strong> Su baja interacción digital está hundiendo su nota. Sube su LMS para simular que un tutor logró reconectarlo.";
+            }
+            else if (name === 'elena') {
+                a = 95; l = 95; e = 18;
+                statusLabel.innerHTML = "<strong class='text-green-600'>Caso Cargado: Elena.</strong> Perfil excelente. Mueve los valores a la baja para simular qué pasaría si sufre un percance a mitad de semestre.";
+            }
+
+            document.getElementById('sim-asis').value = a;
+            document.getElementById('sim-lms').value = l;
+            document.getElementById('sim-eval').value = e;
+
+            updateSimulation();
+        }
+
+        function updateSimulation() {
+            const asis = parseInt(document.getElementById('sim-asis').value);
+            const lms = parseInt(document.getElementById('sim-lms').value);
+            const eval = parseInt(document.getElementById('sim-eval').value);
+
+            document.getElementById('val-asis').innerText = asis + '%';
+            document.getElementById('val-lms').innerText = lms + '%';
+            document.getElementById('val-eval').innerText = eval + '/20';
+
+            // Fórmula predictiva simulada: Asistencia(25%), LMS(35%), Eval(40%)
+            const evalPercent = (eval / 20) * 100;
+            const prob = Math.round((asis * 0.25) + (lms * 0.35) + (evalPercent * 0.40));
+
+            const probEl = document.getElementById('sim-prob');
+            const bgEl = document.getElementById('sim-bg');
+            const riskEl = document.getElementById('sim-risk');
+            const actionEl = document.getElementById('sim-action');
+            const container = document.getElementById('sim-container');
+
+            probEl.innerText = prob + '%';
+
+            if (prob >= 75) {
+                bgEl.className = "absolute inset-0 opacity-20 transition-colors duration-500 bg-green-500";
+                probEl.className = "text-5xl font-black mb-2 tracking-tighter text-green-700";
+                riskEl.innerText = "RIESGO BAJO"; riskEl.className = "font-black text-lg text-green-600";
+                actionEl.innerText = "Monitoreo Estándar";
+                container.style.borderColor = "#22c55e";
+            } else if (prob >= 50) {
+                bgEl.className = "absolute inset-0 opacity-20 transition-colors duration-500 bg-yellow-400";
+                probEl.className = "text-5xl font-black mb-2 tracking-tighter text-yellow-600";
+                riskEl.innerText = "RIESGO MEDIO"; riskEl.className = "font-black text-lg text-yellow-600";
+                actionEl.innerText = "Alerta: Tutoría Sugerida";
+                container.style.borderColor = "#eab308";
+            } else {
+                bgEl.className = "absolute inset-0 opacity-20 transition-colors duration-500 bg-red-500";
+                probEl.className = "text-5xl font-black mb-2 tracking-tighter text-red-600";
+                riskEl.innerText = "RIESGO ALTO"; riskEl.className = "font-black text-lg text-red-600";
+                actionEl.innerText = "INTERVENCIÓN HUMANA URGENTE";
+                container.style.borderColor = "#ef4444";
+            }
+        }
+
+        // -----------------------------------------
+        // Chart.js Dashboard (Section 14)
+        // -----------------------------------------
+        let lineChart, doughnutChart;
+
+        function initCharts() {
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'],
+                    datasets: [
+                        {
+                            label: 'Riesgo Detectado (Algoritmo)',
+                            data: [15, 18, 28, 45, 55, 48, 38, 30],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Intervenciones Ejecutadas (Humanos)',
+                            data: [5, 10, 15, 40, 65, 70, 75, 80],
+                            borderColor: '#22c55e',
+                            borderWidth: 3,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            doughnutChart = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Riesgo Bajo (Seguros)', 'Riesgo Medio (En Observación)', 'Riesgo Alto (Críticos)'],
+                    datasets: [{
+                        data: [70, 20, 10],
+                        backgroundColor: ['#22c55e', '#eab308', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function updateCharts() {
+            const prog = document.getElementById('filter-programa').value;
+            const ciclo = document.getElementById('filter-ciclo').value;
+            let newDataRisk, newDataInt, newDataD, kpiR, kpiP, kpiA, kpiT;
+
+            if (ciclo === '2026-1') {
+                if (prog === 'ingenieria') {
+                    newDataRisk = [20, 30, 45, 60, 55, 45, 40, 35];
+                    newDataInt = [2, 5, 20, 50, 60, 65, 70, 70];
+                    newDataD = [50, 30, 20];
+                    kpiR = 180; kpiP = '72%'; kpiA = 110; kpiT = 240;
+                } else if (prog === 'negocios') {
+                    newDataRisk = [10, 12, 15, 25, 30, 25, 20, 15];
+                    newDataInt = [5, 8, 12, 30, 45, 50, 55, 60];
+                    newDataD = [75, 15, 10];
+                    kpiR = 85; kpiP = '85%'; kpiA = 45; kpiT = 150;
+                } else if (prog === 'salud') {
+                    newDataRisk = [5, 10, 12, 15, 18, 15, 12, 10];
+                    newDataInt = [1, 3, 5, 15, 25, 30, 35, 40];
+                    newDataD = [85, 10, 5];
+                    kpiR = 42; kpiP = '91%'; kpiA = 20; kpiT = 90;
+                } else {
+                    newDataRisk = [15, 18, 28, 45, 55, 48, 38, 30];
+                    newDataInt = [5, 10, 15, 40, 65, 70, 75, 80];
+                    newDataD = [70, 20, 10];
+                    kpiR = 142; kpiP = '78%'; kpiA = 85; kpiT = 210;
+                }
+            } else {
+                // Datos simulados para 2025-2
+                if (prog === 'ingenieria') {
+                    newDataRisk = [25, 35, 50, 65, 60, 50, 45, 40];
+                    newDataInt = [1, 2, 10, 30, 45, 50, 55, 60];
+                    newDataD = [40, 35, 25];
+                    kpiR = 210; kpiP = '68%'; kpiA = 135; kpiT = 180;
+                } else if (prog === 'negocios') {
+                    newDataRisk = [12, 15, 18, 30, 35, 30, 25, 20];
+                    newDataInt = [2, 5, 8, 20, 30, 35, 40, 45];
+                    newDataD = [65, 25, 10];
+                    kpiR = 105; kpiP = '81%'; kpiA = 60; kpiT = 110;
+                } else if (prog === 'salud') {
+                    newDataRisk = [8, 12, 15, 20, 22, 18, 15, 12];
+                    newDataInt = [0, 1, 2, 8, 15, 20, 25, 30];
+                    newDataD = [75, 15, 10];
+                    kpiR = 60; kpiP = '88%'; kpiA = 35; kpiT = 65;
+                } else {
+                    newDataRisk = [18, 22, 32, 50, 60, 52, 42, 35];
+                    newDataInt = [3, 6, 10, 25, 45, 50, 55, 60];
+                    newDataD = [60, 25, 15];
+                    kpiR = 175; kpiP = '74%'; kpiA = 115; kpiT = 165;
+                }
+            }
+
+            lineChart.data.datasets[0].data = newDataRisk;
+            lineChart.data.datasets[1].data = newDataInt;
+            lineChart.update();
+
+            doughnutChart.data.datasets[0].data = newDataD;
+            doughnutChart.update();
+
+            document.getElementById('kpi-riesgo').innerText = kpiR;
+            document.getElementById('kpi-prob').innerText = kpiP;
+            document.getElementById('kpi-asis').innerText = kpiA;
+            document.getElementById('kpi-tuto').innerText = kpiT;
+        }
+
+        // -----------------------------------------
+        // THREE.JS SIMULACIÓN "AR REAL" E INTERACTIVA
+        // -----------------------------------------
+        const btnStartAr = document.getElementById('btn-start-ar');
+        const arContainer = document.getElementById('ar-container');
+        const canvas = document.getElementById('ar-canvas');
+        const labelsContainer = document.getElementById('ar-labels-container');
+
+        let scene, camera, renderer, animationId, controls;
+        let dataLake, aiCore, tutorAura;
+        let dataNodes = [];
+        let nodeLabels = [];
+        let dataPackets = []; // Partículas de procesamiento
+        let currentArState = 'init';
+
+        const nodeNames = ['Notas LMS', 'Asistencia', 'Foros', 'Bienestar', 'Perfil Ingreso'];
+        const nodeColors = [0xef4444, 0x22c55e, 0xeab308, 0xa855f7, 0xec4899];
+
+        btnStartAr.addEventListener('click', async () => {
+            btnStartAr.style.display = 'none';
+            document.getElementById('ar-warning-text').style.display = 'none';
+            arContainer.style.display = 'block';
+
+            initThreeJS();
+
+            // Intento de activar cámara para AR Real (Fondo de Video)
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                const video = document.getElementById('ar-video-bg');
+                video.srcObject = stream;
+                video.style.display = 'block';
+                // El renderizador es transparente, por lo que el video se verá detrás del 3D
+            } catch (err) {
+                console.log("Cámara no disponible o permiso denegado. Usando modo 3D Oscuro.", err);
+                scene.background = new THREE.Color(0x0a0f1c); // Fallback si no hay cámara
+            }
+        });
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            // alpha:true permite ver el video de la cámara de fondo
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(arContainer.clientWidth, arContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            camera = new THREE.PerspectiveCamera(45, arContainer.clientWidth / arContainer.clientHeight, 0.1, 100);
+            camera.position.set(0, 4, 12);
+
+            // OrbitControls: permite al usuario arrastrar y rotar la escena 3D con mouse/tacto
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 20;
+            controls.minDistance = 5;
+
+            // Iluminación
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xeab308, 1.2, 20);
+            pointLight.position.set(0, 5, 0);
+            scene.add(pointLight);
+
+            // 1. Data Lake (Plataforma Base)
+            const lakeGeo = new THREE.CylinderGeometry(5, 5, 0.1, 64);
+            const lakeMat = new THREE.MeshPhongMaterial({ color: 0x1e3a8a, transparent: true, opacity: 0.8, wireframe: true });
+            dataLake = new THREE.Mesh(lakeGeo, lakeMat);
+            dataLake.position.y = -2;
+            scene.add(dataLake);
+
+            // Anillos internos del Data Lake
+            const ringGeo = new THREE.TorusGeometry(3, 0.05, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = -1.9;
+            scene.add(ring);
+
+            // 2. AI Core (Cerebro Digital)
+            const coreGeo = new THREE.IcosahedronGeometry(1.5, 1); // Más detalle
+            const coreMat = new THREE.MeshPhongMaterial({ color: 0x3b82f6, wireframe: true, transparent: true, opacity: 0.9 });
+            aiCore = new THREE.Mesh(coreGeo, coreMat);
+            aiCore.position.y = 1;
+            scene.add(aiCore);
+
+            // Aura protectora (Intervención)
+            const auraGeo = new THREE.SphereGeometry(2.5, 32, 32);
+            const auraMat = new THREE.MeshPhongMaterial({ color: 0x22c55e, transparent: true, opacity: 0, wireframe: false, side: THREE.BackSide });
+            tutorAura = new THREE.Mesh(auraGeo, auraMat);
+            tutorAura.position.y = 1;
+            scene.add(tutorAura);
+
+            // 3. Nodos de Datos y Etiquetas HTML
+            for (let i = 0; i < 5; i++) {
+                const geo = new THREE.SphereGeometry(0.4, 32, 32);
+                const mat = new THREE.MeshPhongMaterial({ color: nodeColors[i] });
+                const node = new THREE.Mesh(geo, mat);
+
+                const angle = (i / 5) * Math.PI * 2;
+                const radius = 6;
+                node.position.x = Math.cos(angle) * radius;
+                node.position.z = Math.sin(angle) * radius;
+                node.position.y = 1 + Math.sin(angle) * 1.5;
+
+                node.userData = { angle: angle, radius: radius, startY: node.position.y, isProcessing: false };
+                dataNodes.push(node);
+                scene.add(node);
+
+                // Crear etiqueta HTML sincronizada
+                const label = document.createElement('div');
+                label.className = 'node-label';
+                label.innerText = nodeNames[i];
+                labelsContainer.appendChild(label);
+                nodeLabels.push(label);
+            }
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                camera.aspect = arContainer.clientWidth / arContainer.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(arContainer.clientWidth, arContainer.clientHeight);
+            });
+
+            animateAR();
+        }
+
+        function createDataPacket(sourceNode) {
+            const geo = new THREE.SphereGeometry(0.1, 8, 8);
+            const mat = new THREE.MeshBasicMaterial({ color: 0xeab308 });
+            const packet = new THREE.Mesh(geo, mat);
+            packet.position.copy(sourceNode.position);
+            scene.add(packet);
+            dataPackets.push(packet);
+        }
+
+        function animateAR() {
+            animationId = requestAnimationFrame(animateAR);
+            const time = Date.now() * 0.001;
+
+            controls.update(); // Actualizar rotación del mouse
+
+            // Animar AI Core
+            if (aiCore) {
+                aiCore.rotation.x += 0.005;
+                aiCore.rotation.y += 0.01;
+                dataLake.rotation.y -= 0.002;
+
+                if (currentArState === 'alerta') {
+                    const scale = 1 + Math.sin(time * 8) * 0.15; // Latido rápido rojo
+                    aiCore.scale.set(scale, scale, scale);
+                } else if (currentArState === 'mejora') {
+                    const scale = 1 + Math.sin(time * 2) * 0.05; // Latido calmado verde
+                    aiCore.scale.set(scale, scale, scale);
+                }
+            }
+
+            // Aura animada
+            if (tutorAura && tutorAura.material.opacity > 0) {
+                tutorAura.rotation.y -= 0.01;
+                tutorAura.rotation.x += 0.005;
+                tutorAura.scale.setScalar(1 + Math.sin(time * 3) * 0.02);
+            }
+
+            // Animar Nodos y Sincronizar Etiquetas
+            dataNodes.forEach((node, i) => {
+                // Movimiento 3D
+                if (!node.userData.isProcessing) {
+                    node.userData.angle += 0.003;
+                    node.position.x = Math.cos(node.userData.angle) * node.userData.radius;
+                    node.position.z = Math.sin(node.userData.angle) * node.userData.radius;
+                    node.position.y = node.userData.startY + Math.sin(time + node.userData.angle) * 0.5;
+                }
+
+                // Sincronizar Etiqueta HTML con posición 3D
+                const vector = new THREE.Vector3();
+                node.getWorldPosition(vector);
+                vector.project(camera);
+
+                const x = (vector.x * .5 + .5) * arContainer.clientWidth;
+                const y = (vector.y * -.5 + .5) * arContainer.clientHeight;
+
+                // Mostrar solo si está en la pantalla (Z < 1)
+                if (vector.z < 1) {
+                    nodeLabels[i].style.left = `${x}px`;
+                    nodeLabels[i].style.top = `${y}px`;
+                    nodeLabels[i].style.opacity = '1';
+                } else {
+                    nodeLabels[i].style.opacity = '0';
+                }
+            });
+
+            // Animar partículas de procesamiento
+            for (let i = dataPackets.length - 1; i >= 0; i--) {
+                const p = dataPackets[i];
+                p.position.lerp(aiCore.position, 0.1); // Mover hacia el centro
+                if (p.position.distanceTo(aiCore.position) < 1.5) {
+                    scene.remove(p);
+                    dataPackets.splice(i, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Lógica interactiva de los botones AR
+        function arAction(action) {
+            const statusEl = document.getElementById('ar-status');
+            const detailEl = document.getElementById('ar-detail');
+            const riskPanel = document.getElementById('ar-risk-panel');
+            const riskScore = document.getElementById('ar-risk-score');
+
+            if (action === 'procesar') {
+                currentArState = 'procesar';
+                document.getElementById('btn-ar-procesar').disabled = true;
+
+                aiCore.material.color.setHex(0xeab308); // Centro Amarillo
+                statusEl.innerText = "Machine Learning Activo...";
+                statusEl.className = "text-sm font-bold text-yellow-400";
+                detailEl.innerText = "Ingestando miles de puntos de datos históricos y evaluando patrones actuales.";
+
+                // Generar paquetes de datos volando desde los nodos
+                const processInterval = setInterval(() => {
+                    dataNodes.forEach(node => createDataPacket(node));
+                }, 300);
+
+                setTimeout(() => {
+                    clearInterval(processInterval);
+                    document.getElementById('btn-ar-alerta').disabled = false;
+                    statusEl.innerText = "Algoritmo Completado";
+                    detailEl.innerText = "Patrón anómalo detectado en perfil de aprendizaje.";
+                    document.getElementById('btn-ar-alerta').classList.add('animate-pulse');
+                }, 3500);
+
+            } else if (action === 'alerta') {
+                currentArState = 'alerta';
+                document.getElementById('btn-ar-alerta').disabled = true;
+                document.getElementById('btn-ar-alerta').classList.remove('animate-pulse');
+
+                aiCore.material.color.setHex(0xef4444); // Núcleo Rojo
+                aiCore.material.wireframe = false; // Sólido e intenso
+
+                statusEl.innerText = "¡RIESGO INMINENTE!";
+                statusEl.className = "text-sm font-black text-red-500 animate-pulse";
+                detailEl.innerText = "El sistema predice un 85% de probabilidad de deserción este mes.";
+
+                riskPanel.classList.remove('opacity-0');
+
+                document.getElementById('btn-ar-intervenir').disabled = false;
+                document.getElementById('btn-ar-intervenir').classList.add('shadow-[0_0_15px_rgba(34,197,94,0.8)]');
+
+            } else if (action === 'intervencion') {
+                document.getElementById('ar-modal-intervencion').classList.remove('hidden');
+            }
+        }
+
+        function selectIntervention(type) {
+            document.getElementById('ar-modal-intervencion').classList.add('hidden');
+            document.getElementById('btn-ar-intervenir').disabled = true;
+            document.getElementById('btn-ar-intervenir').classList.remove('shadow-[0_0_15px_rgba(34,197,94,0.8)]');
+
+            currentArState = 'mejora';
+
+            // Visuales de la intervención protectora
+            aiCore.material.color.setHex(0x22c55e); // Núcleo Verde
+            aiCore.material.wireframe = true;
+            tutorAura.material.opacity = 0.3; // Escudo protector activo
+
+            const statusEl = document.getElementById('ar-status');
+            const detailEl = document.getElementById('ar-detail');
+            const riskScore = document.getElementById('ar-risk-score');
+            const riskLabel = document.getElementById('ar-risk-label');
+
+            statusEl.innerText = "Intervención Exitosa";
+            statusEl.className = "text-sm font-bold text-green-400";
+            detailEl.innerText = `El consejero aplicó: "${type}". El estudiante ha retomado su ruta de aprendizaje.`;
+
+            // Bajar score animado
+            let counter = 85;
+            const int = setInterval(() => {
+                counter -= 2;
+                riskScore.innerText = counter + '%';
+                if (counter <= 18) {
+                    clearInterval(int);
+                    riskScore.className = "text-4xl font-black text-green-400 my-1 drop-shadow-none";
+                    riskLabel.innerText = "RIESGO BAJO";
+                    riskLabel.className = "text-xs font-bold bg-green-500 text-white rounded px-2 py-1";
+                    document.getElementById('ar-risk-panel').classList.remove('border-red-500/50');
+                    document.getElementById('ar-risk-panel').classList.add('border-green-500/50');
+                }
+            }, 50);
+        }
+
+        // Init Data
+        window.onload = () => {
+            initCharts();
+            updateSimulation(); // Initialize Simulator values
+        };
+
+    </script>
+</body>
+
+</html>
