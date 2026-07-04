@@ -103,15 +103,15 @@
         class="sticky top-0 z-40 bg-slate-900/85 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <div
-                class="bg-gradient-to-tr from-cyan-500 to-indigo-500 p-2 rounded-xl text-slate-950 font-bold tracking-tight text-sm">
+                class="bg-gradient-to-tr from-cyan-500 to-indigo-500 p-2 rounded-xl text-slate-950 font-bold tracking-tight text-base">
 
             </div>
             <div>
                 <h1
-                    class="text-sm md:text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
+                    class="text-base md:text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
                     Gobernanza de IA Educativa
                 </h1>
-                <p class="text-[10px] md:text-xs text-cyan-400/80 font-medium tracking-wider">MÓDULO: TRANSPARENCIA Y
+                <p class="text-[10px] md:text-sm text-cyan-400/80 font-medium tracking-wider">MÓDULO: TRANSPARENCIA Y
                     EXPLICABILIDAD (XAI)</p>
             </div>
         </div>
@@ -119,28 +119,28 @@
         <!-- Navegación de Escritorio -->
         <nav class="hidden lg:flex items-center space-x-1" id="nav-desktop">
             <button onclick="showTab('inicio')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
                 data-tab="inicio">Inicio</button>
             <button onclick="showTab('mapa')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200"
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200"
                 data-tab="mapa">Áreas Aplicadas</button>
             <button onclick="showTab('ar')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200"
-                data-tab="ar">Laboratorio AR</button>
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200"
+                data-tab="ar">Anatomía del Algoritmo</button>
             <button onclick="showTab('casos')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200"
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200"
                 data-tab="casos">Casos de Estudio</button>
             <button onclick="showTab('simulador')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200"
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200"
                 data-tab="simulador">Simulador</button>
             <button onclick="showTab('actividades')"
-                class="tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200"
+                class="tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200"
                 data-tab="actividades">Reto Caja Negra</button>
         </nav>
 
         <!-- Indicador de sesión -->
         <div class="flex items-center space-x-3">
-            <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-400">
+            <div class="hidden sm:flex items-center space-x-1.5 text-sm text-slate-400">
                 <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="session-timer">Sesión Activa: 0m</span>
             </div>
@@ -148,7 +148,7 @@
     </header>
 
     <!-- === NAVEGACIÓN MÓVIL === -->
-    <div class="lg:hidden bg-slate-900 border-b border-slate-800 p-2 overflow-x-auto flex space-x-1 text-xs font-semibold"
+    <div class="lg:hidden bg-slate-900 border-b border-slate-800 p-2 overflow-x-auto flex space-x-1 text-sm font-semibold"
         id="nav-mobile">
         <button onclick="showTab('inicio')"
             class="mobile-tab-btn px-3 py-1.5 rounded bg-cyan-500 text-slate-950 transition-colors"
@@ -156,7 +156,7 @@
         <button onclick="showTab('mapa')" class="mobile-tab-btn px-3 py-1.5 rounded text-slate-400 transition-colors"
             data-tab="mapa">Áreas</button>
         <button onclick="showTab('ar')" class="mobile-tab-btn px-3 py-1.5 rounded text-slate-400 transition-colors"
-            data-tab="ar">Laboratorio AR</button>
+            data-tab="ar">Anatomía del Algoritmo</button>
         <button onclick="showTab('casos')" class="mobile-tab-btn px-3 py-1.5 rounded text-slate-400 transition-colors"
             data-tab="casos">Casos</button>
         <button onclick="showTab('simulador')"
@@ -187,7 +187,7 @@
 
                     <div class="max-w-2xl space-y-6">
                         <div
-                            class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-full text-xs font-semibold text-cyan-400">
+                            class="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-full text-sm font-semibold text-cyan-400">
                             <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -198,19 +198,17 @@
                         <h2 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">
                             ¿Cómo abrir la <span
                                 class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Caja
-                                Negra</span> de la IA en su Universidad?
+                                Negra</span> de la IA en su Institución?
                         </h2>
 
-                        <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                        <p class="text-slate-400 text-base md:text-base leading-relaxed">
                             Un modelo predictivo altamente preciso carece de valor pedagógico si sus decisiones operan
-                            bajo el dogma de la opacidad institucional. Bienvenidos al simulador directivo para
-                            maestrandos, diseñado para transformar predicciones opacas en flujos explicables, éticos y
-                            normativos.
+                            bajo el dogma de la opacidad institucional.
                         </p>
 
                         <div class="flex flex-wrap gap-4 pt-2">
                             <button onclick="showTab('mapa')"
-                                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-cyan-500/10 transition-all flex items-center space-x-2">
+                                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-base px-6 py-3.5 rounded-xl shadow-lg shadow-cyan-500/10 transition-all flex items-center space-x-2">
                                 <span>Explorar Áreas Reales</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -218,12 +216,12 @@
                                 </svg>
                             </button>
                             <button onclick="showTab('ar')"
-                                class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm px-6 py-3.5 rounded-xl transition flex items-center space-x-2">
+                                class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-base px-6 py-3.5 rounded-xl transition flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
-                                <span>Iniciar Laboratorio AR</span>
+                                <span>Iniciar Anatomía del Algoritmo</span>
                             </button>
                         </div>
                     </div>
@@ -240,7 +238,7 @@
                             </svg>
                             <span>El Dilema Ético</span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <p class="text-sm text-slate-200 leading-relaxed">
                             ¿Es correcto suspender una beca o calificar críticamente basándose únicamente en
                             recomendaciones de un algoritmo inescrutable?
                         </p>
@@ -254,7 +252,7 @@
                             </svg>
                             <span>Cumplimiento Legal</span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <p class="text-sm text-slate-200 leading-relaxed">
                             ¿Garantiza la universidad los derechos del estudiante a saber cuándo y para qué se está
                             ejecutando la analítica de IA sobre su perfil de aprendizaje?
                         </p>
@@ -268,7 +266,7 @@
                             </svg>
                             <span>Sinergia Docente</span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed">
+                        <p class="text-sm text-slate-200 leading-relaxed">
                             ¿Cómo configuramos la inteligencia artificial como un copiloto confiable que reduzca la
                             fatiga cognitiva del maestro sin sustituir la empatía humana?
                         </p>
@@ -279,17 +277,17 @@
                 <div
                     class="bg-gradient-to-r from-indigo-950/40 to-slate-950 border border-indigo-500/20 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
                     <div class="space-y-2">
-                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider block">Concepto Clave de
+                        <span class="text-sm font-bold text-indigo-400 uppercase tracking-wider block">Concepto Clave de
                             la </span>
                         <h3 class="text-xl font-bold">Transparencia vs. Explicabilidad (XAI)</h3>
-                        <p class="text-xs text-slate-400 max-w-xl leading-relaxed">
+                        <p class="text-sm text-slate-400 max-w-xl leading-relaxed">
                             La <strong class="text-slate-200">Transparencia</strong> cumple con informar que se usa un
                             sistema ("Usamos IA"). La <strong class="text-slate-200">Explicabilidad</strong> exige
                             justificar técnicamente el porqué ("El riesgo es por X e Y factor").
                         </p>
                     </div>
                     <div class="bg-indigo-500/10 border border-indigo-500/30 p-4 rounded-xl text-center md:text-right">
-                        <span class="text-xs text-indigo-300 block">Diferencia Operativa</span>
+                        <span class="text-sm text-indigo-300 block">Diferencia Operativa</span>
                         <span class="text-base font-bold text-indigo-400">Notificar uso vs Revelar razonamiento</span>
                     </div>
                 </div>
@@ -299,7 +297,7 @@
             <section id="tab-mapa" class="tab-content animate-fadeIn hidden space-y-8">
                 <div class="space-y-2">
                     <h2 class="text-2xl md:text-3xl font-black">Áreas Reales de Aplicación Universitaria</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl">
+                    <p class="text-slate-400 text-base max-w-2xl">
                         Descubra cómo las políticas de Transparencia y XAI se aplican a los distintos departamentos
                         estratégicos de una institución de educación superior real.
                     </p>
@@ -310,180 +308,226 @@
                 </div>
             </section>
 
-            <!-- 3. SECCIÓN LABORATORIO DE REALIDAD AUMENTADA -->
+            <!-- 3. SECCIÓN ANATOMÍA DEL ALGORITMO -->
             <section id="tab-ar" class="tab-content animate-fadeIn hidden space-y-8">
                 <div class="space-y-2">
-                    <h2 class="text-2xl md:text-3xl font-black">Laboratorio de Realidad Aumentada Web (Simulado)</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl">
-                        Interactúe con representaciones holográficas simuladas para comprender de forma inmersiva el
-                        flujo técnico de un algoritmo y desmontar la opacidad del sistema.
+                    <h2 class="text-2xl md:text-3xl font-black">Anatomía del Algoritmo: Caja Negra vs. Sistema
+                        Explicable</h2>
+                    <p class="text-slate-400 text-base max-w-2xl">
+                        Los mismos datos de una estudiante entran a dos sistemas distintos. Observe qué ocurre dentro de
+                        cada uno y decida cuál permitiría usted en su institución.
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Panel de Controles (Izquierda) -->
-                    <div class="lg:col-span-5 space-y-6">
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-                            <span
-                                class="text-xs font-bold text-cyan-400 uppercase tracking-wider block border-b border-slate-800 pb-2">Controles
-                                del Holograma 3D</span>
+                <!-- Caso Superior -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center shadow-lg">
+                    <p class="text-slate-300 text-base md:text-lg font-medium">
+                        <strong class="text-cyan-400">Estudiante: Ana Q.</strong> — Asistencia acumulada: 65% ·
+                        Promedio: 10.5 · Ingresos al Aula Virtual: en descenso las últimas 2 semanas
+                    </p>
+                </div>
 
-                            <!-- Botón de Escanear -->
-                            <div class="space-y-2">
-                                <p class="text-xs text-slate-400">Paso 1: Localice una superficie horizontal plana en el
-                                    laboratorio virtual para anclar el holograma.</p>
-                                <button onclick="triggerARScan()" id="btn-ar-scan"
-                                    class="w-full py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md">
-                                    <svg class="w-4 h-4 mr-1.5 animate-spin hidden" id="spinner-scan" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                            stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                    <span id="text-ar-scan">Escanear Superficie Física (AR)</span>
-                                </button>
-                            </div>
-
-                            <!-- Selector de Modelos -->
-                            <div class="space-y-3">
-                                <p class="text-xs text-slate-400">Paso 2: Al calibrar el giroscopio, elija la vista
-                                    lógica del modelo predictivo que desea analizar.</p>
-                                <div class="space-y-2">
-                                    <button onclick="selectARModel('blackbox')" id="btn-model-blackbox"
-                                        class="model-select-btn w-full p-3 rounded-xl border border-rose-500/40 text-rose-300 bg-rose-500/10 text-left flex items-center justify-between transition text-xs font-semibold">
-                                        <div class="flex items-center space-x-2.5">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-                                            <span>1. Caja Negra (Opacidad)</span>
-                                        </div>
-                                    </button>
-                                    <button onclick="selectARModel('xai')" id="btn-model-xai"
-                                        class="model-select-btn w-full p-3 rounded-xl border border-slate-800 text-slate-400 hover:border-slate-700 text-left flex items-center justify-between transition text-xs font-semibold">
-                                        <div class="flex items-center space-x-2.5">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
-                                            <span>2. Modelo XAI Transparente</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Panel de Detalle del Nodo Seleccionado -->
-                            <div id="ar-node-detail"
-                                class="bg-slate-950/80 p-4 border border-cyan-500/20 rounded-xl space-y-3 hidden animate-slideIn">
-                                <!-- Se llena dinámicamente -->
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- CAMINO 1: CAJA NEGRA -->
+                    <div
+                        class="bg-rose-950/20 border border-rose-900/30 rounded-2xl p-6 space-y-6 flex flex-col shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <svg class="w-24 h-24 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
                         </div>
-                    </div>
+                        <h3
+                            class="text-rose-500 font-black text-lg uppercase tracking-wider border-b border-rose-900/50 pb-2 relative z-10">
+                            CAMINO 1 — Caja Negra</h3>
 
-                    <!-- Visor de Realidad Aumentada (Derecha) -->
-                    <div class="lg:col-span-7">
                         <div
-                            class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden relative aspect-video flex flex-col justify-between p-4 shadow-inner min-h-[350px]">
-                            <!-- UI Superpuesta de Cámara -->
+                            class="text-center text-base font-bold text-slate-400 uppercase tracking-widest mt-2 relative z-10">
+                            Datos de Ana <span class="mx-2 text-rose-500">→</span> [ ? ] <span
+                                class="mx-2 text-rose-500">→</span> Decisión
+                        </div>
+
+                        <div
+                            class="bg-slate-950 p-8 rounded-xl border border-slate-800 flex items-center justify-center min-h-[220px] shadow-inner relative group cursor-not-allowed">
                             <div
-                                class="absolute inset-0 pointer-events-none z-10 border-4 border-slate-800 m-2 rounded-xl flex flex-col justify-between p-4">
-                                <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                                    <div class="flex items-center space-x-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                                        <span>REC [CÁM_AR_UPN]</span>
-                                    </div>
-                                    <span>XAI SINC: ACTIVO</span>
-                                </div>
-                                <div class="flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                                    <span>HOLOGRA_PERSPECTIVE</span>
-                                    <span>SALA_MAESTRÍA_1</span>
-                                </div>
+                                class="absolute inset-0 bg-rose-500/5 group-hover:bg-rose-500/10 transition-colors rounded-xl">
                             </div>
+                            <p class="text-slate-500 text-center font-mono text-base leading-relaxed z-10 px-4">"Proceso
+                                interno inaccesible. Nadie en la institución puede ver qué ocurrió aquí."</p>
+                        </div>
 
-                            <!-- Fondo de Cámara Virtual / Grid de anclaje -->
-                            <div class="absolute inset-0 z-0 bg-slate-950 opacity-95">
-                                <div
-                                    class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-35">
-                                </div>
+                        <div
+                            class="bg-rose-900/40 p-4 rounded-xl border border-rose-500/30 text-rose-200 mt-auto shadow-md relative z-10">
+                            <strong class="block text-rose-400 text-base uppercase mb-1">Salida:</strong>
+                            <p class="text-base font-semibold">"SISTEMA: Estudiante en RIESGO CRÍTICO. Beca: SUSPENDIDA
+                                preventivamente. Decisión inapelable."</p>
+                        </div>
 
-                                <!-- Estado 1: No Escaneado -->
-                                <div id="ar-state-unscanned"
-                                    class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4">
-                                    <p class="text-sm text-slate-400 font-medium">Giroscopio y Cámara AR virtuales en
-                                        espera de calibración.</p>
-                                    <button onclick="triggerARScan()"
-                                        class="bg-slate-800 hover:bg-slate-700 text-xs py-2 px-4 rounded-lg border border-slate-700 text-cyan-400 font-semibold transition">
-                                        Inicializar Visor
-                                    </button>
-                                </div>
+                        <p class="text-sm text-slate-500 italic text-center mt-2 relative z-10">
+                            Nota: Intente hacer clic dentro de la caja. No hay nada que inspeccionar — esa es
+                            exactamente la experiencia del tutor, del directivo y de Ana.
+                        </p>
+                    </div>
 
-                                <!-- Estado 2: Escaneando -->
-                                <div id="ar-state-scanning"
-                                    class="absolute inset-0 bg-cyan-500/5 flex flex-col items-center justify-center space-y-3 hidden">
-                                    <div
-                                        class="w-12 h-12 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin">
-                                    </div>
-                                    <span class="text-xs text-cyan-400 font-mono tracking-widest animate-pulse">MAPEA
-                                        MALLA TRIDIMENSIONAL DE LA MESA</span>
-                                </div>
+                    <!-- CAMINO 2: SISTEMA EXPLICABLE -->
+                    <div
+                        class="bg-cyan-950/20 border border-cyan-900/30 rounded-2xl p-6 space-y-6 flex flex-col shadow-xl">
+                        <h3
+                            class="text-cyan-400 font-black text-lg uppercase tracking-wider border-b border-cyan-900/50 pb-2">
+                            CAMINO 2 — Sistema Explicable</h3>
 
-                                <!-- Estado 3: Proyección Holograma -->
-                                <div id="ar-state-view"
-                                    class="absolute inset-0 flex items-center justify-center hidden">
-                                    <!-- Render de Caja Negra -->
-                                    <div id="ar-render-blackbox"
-                                        class="flex flex-col items-center justify-center space-y-4 animate-scaleUp">
-                                        <div
-                                            class="w-28 h-28 bg-slate-900 border-4 border-rose-600/80 shadow-2xl shadow-rose-950/30 rounded-2xl flex items-center justify-center relative">
-                                            <div class="absolute inset-0 bg-rose-600/10 animate-ping rounded-2xl"></div>
-                                            <span
-                                                class="text-3xl font-black text-rose-500 font-mono animate-pulse">?</span>
-                                        </div>
-                                        <div class="text-center">
-                                            <span class="text-xs font-bold text-rose-400 block uppercase">Caja Negra
-                                                Algorítmica</span>
-                                            <span class="text-[10px] text-slate-500 block">Opacidad Absoluta. Entrada ➔
-                                                Salida de Decisión Inauditable.</span>
-                                        </div>
-                                    </div>
+                        <p class="text-base text-slate-400 mb-2">Haga clic en cada paso del proceso para auditar la
+                            decisión:</p>
 
-                                    <!-- Render de Caja Transparente XAI -->
-                                    <div id="ar-render-xai"
-                                        class="hidden w-full h-full flex items-center justify-center animate-scaleUp">
-                                        <div
-                                            class="relative w-80 h-48 bg-slate-950/90 p-4 border border-slate-800 rounded-xl flex items-center justify-between">
-                                            <div
-                                                class="absolute inset-0 bg-cyan-500/[0.01] pointer-events-none rounded-xl">
-                                            </div>
-
-                                            <button onclick="inspectARNode('datos')"
-                                                class="w-14 h-14 bg-slate-900 border-2 border-cyan-500 hover:bg-cyan-500/10 text-slate-100 rounded-lg flex flex-col items-center justify-center space-y-1 transition text-[9px] font-bold">
-                                                <span>1. Datos</span>
-                                            </button>
-                                            <div class="h-0.5 w-8 bg-cyan-500/30"></div>
-                                            <button onclick="inspectARNode('algoritmo')"
-                                                class="w-14 h-14 bg-slate-900 border-2 border-indigo-500 hover:bg-indigo-500/10 text-slate-100 rounded-lg flex flex-col items-center justify-center space-y-1 transition text-[9px] font-bold">
-                                                <span>2. Motor</span>
-                                            </button>
-                                            <div class="h-0.5 w-8 bg-cyan-500/30"></div>
-                                            <button onclick="inspectARNode('capa')"
-                                                class="w-14 h-14 bg-slate-900 border-2 border-emerald-500 hover:bg-emerald-500/10 text-slate-100 rounded-lg flex flex-col items-center justify-center space-y-1 transition text-[9px] font-bold animate-pulse">
-                                                <span>3. XAI</span>
-                                            </button>
-                                            <div class="h-0.5 w-8 bg-cyan-500/30"></div>
-                                            <button onclick="inspectARNode('humano')"
-                                                class="w-14 h-14 bg-slate-900 border-2 border-cyan-500 hover:bg-cyan-500/10 text-slate-100 rounded-lg flex flex-col items-center justify-center space-y-1 transition text-[9px] font-bold">
-                                                <span>4. Humano</span>
-                                            </button>
-                                        </div>
+                        <!-- Pasos Clicables -->
+                        <div class="space-y-3 flex-1">
+                            <!-- Paso 1 -->
+                            <details
+                                class="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-md">
+                                <summary
+                                    class="p-4 bg-slate-800/40 text-cyan-400 font-bold text-base hover:bg-slate-800 transition outline-none flex justify-between items-center">
+                                    <span>Paso 1: ¿Qué datos entraron?</span>
+                                    <svg class="w-4 h-4 transform group-open:rotate-180 transition text-cyan-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </summary>
+                                <div class="p-4 bg-slate-950/60 text-base space-y-2.5 text-slate-300">
+                                    <p><strong class="text-cyan-400 font-semibold block mb-0.5">Qué hace:</strong>
+                                        Filtra la información antes de que llegue al motor: solo pasan asistencia, notas
+                                        y actividad en el Aula Virtual. Se excluyen datos personales sensibles
+                                        (dirección, situación económica, salud).</p>
+                                    <p><strong class="text-amber-400 font-semibold block mb-0.5">Qué previene:</strong>
+                                        Que el sistema discrimine por el origen o la condición socioeconómica de Ana.
+                                    </p>
+                                    <p><strong class="text-emerald-400 font-semibold block mb-0.5">Beneficio:</strong>
+                                        Equidad garantizada desde el origen.</p>
+                                    <p><strong class="text-rose-400 font-semibold block mb-0.5">Riesgo a
+                                            vigilar:</strong> Excluir demasiados datos puede reducir la precisión de la
+                                        alerta.</p>
+                                    <div class="pt-2 mt-2 border-t border-slate-800">
+                                        <p><strong
+                                                class="text-indigo-400 font-bold uppercase tracking-wider text-sm block mb-1">Decisión
+                                                directiva:</strong> Un Comité de Ética aprueba qué variables pueden
+                                            ingresar al sistema.</p>
                                     </div>
                                 </div>
-                            </div>
+                            </details>
 
-                            <div
-                                class="z-10 bg-slate-900/90 backdrop-blur p-2 rounded-xl text-center border border-slate-800">
-                                <span class="text-[10px] text-slate-400">Anclaje Holográfico: </span>
-                                <span id="ar-status-anchored" class="text-[10px] text-rose-500 font-bold">Sin
-                                    calibrar</span>
-                            </div>
+                            <!-- Paso 2 -->
+                            <details
+                                class="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-md">
+                                <summary
+                                    class="p-4 bg-slate-800/40 text-cyan-400 font-bold text-base hover:bg-slate-800 transition outline-none flex justify-between items-center">
+                                    <span>Paso 2: ¿Cómo se calculó el riesgo?</span>
+                                    <svg class="w-4 h-4 transform group-open:rotate-180 transition text-cyan-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </summary>
+                                <div class="p-4 bg-slate-950/60 text-base space-y-2.5 text-slate-300">
+                                    <p><strong class="text-cyan-400 font-semibold block mb-0.5">Qué hace:</strong> Usa
+                                        un modelo sencillo y legible que calcula el nivel de riesgo, en lugar de un
+                                        sistema complejo imposible de auditar.</p>
+                                    <p><strong class="text-amber-400 font-semibold block mb-0.5">Qué previene:</strong>
+                                        Decisiones arbitrarias que nadie puede justificar después.</p>
+                                    <p><strong class="text-emerald-400 font-semibold block mb-0.5">Beneficio:</strong>
+                                        Se puede saber exactamente qué variable disparó la alerta.</p>
+                                    <p><strong class="text-rose-400 font-semibold block mb-0.5">Riesgo a
+                                            vigilar:</strong> Un modelo muy simple puede no detectar casos atípicos.</p>
+                                    <div class="pt-2 mt-2 border-t border-slate-800">
+                                        <p><strong
+                                                class="text-indigo-400 font-bold uppercase tracking-wider text-sm block mb-1">Decisión
+                                                directiva:</strong> El área académica define el balance entre precisión
+                                            y claridad.</p>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- Paso 3 -->
+                            <details
+                                class="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-md">
+                                <summary
+                                    class="p-4 bg-slate-800/40 text-cyan-400 font-bold text-base hover:bg-slate-800 transition outline-none flex justify-between items-center">
+                                    <span>Paso 3: ¿Por qué esta alerta?</span>
+                                    <svg class="w-4 h-4 transform group-open:rotate-180 transition text-cyan-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </summary>
+                                <div class="p-4 bg-slate-950/60 text-base space-y-2.5 text-slate-300">
+                                    <p><strong class="text-cyan-400 font-semibold block mb-0.5">Qué hace:</strong>
+                                        Traduce el cálculo del sistema a lenguaje pedagógico: "El factor principal es la
+                                        caída del 30% en el ingreso al Aula Virtual".</p>
+                                    <p><strong class="text-amber-400 font-semibold block mb-0.5">Qué previene:</strong>
+                                        Que el tutor tenga que adivinar el motivo de la alerta.</p>
+                                    <p><strong class="text-emerald-400 font-semibold block mb-0.5">Beneficio:</strong>
+                                        Señala directamente el factor a abordar con la estudiante.</p>
+                                    <p><strong class="text-rose-400 font-semibold block mb-0.5">Riesgo a
+                                            vigilar:</strong> Saturar al docente con demasiados detalles técnicos.</p>
+                                    <div class="pt-2 mt-2 border-t border-slate-800">
+                                        <p><strong
+                                                class="text-indigo-400 font-bold uppercase tracking-wider text-sm block mb-1">Decisión
+                                                directiva:</strong> Los reportes muestran solo los factores de mayor
+                                            influencia.</p>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- Paso 4 -->
+                            <details
+                                class="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-md">
+                                <summary
+                                    class="p-4 bg-slate-800/40 text-cyan-400 font-bold text-base hover:bg-slate-800 transition outline-none flex justify-between items-center">
+                                    <span>Paso 4: ¿Quién decide al final?</span>
+                                    <svg class="w-4 h-4 transform group-open:rotate-180 transition text-cyan-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </summary>
+                                <div class="p-4 bg-slate-950/60 text-base space-y-2.5 text-slate-300">
+                                    <p><strong class="text-cyan-400 font-semibold block mb-0.5">Qué hace:</strong> La
+                                        alerta llega a un docente, que valida el contexto humano (¿fue falla de
+                                        internet? ¿una emergencia familiar?) antes de cualquier acción.</p>
+                                    <p><strong class="text-amber-400 font-semibold block mb-0.5">Qué previene:</strong>
+                                        Sanciones automáticas injustas por errores del sistema.</p>
+                                    <p><strong class="text-emerald-400 font-semibold block mb-0.5">Beneficio:</strong>
+                                        Combina el análisis masivo de datos con la empatía del docente.</p>
+                                    <p><strong class="text-rose-400 font-semibold block mb-0.5">Riesgo a
+                                            vigilar:</strong> Que las alertas se acumulen sin que nadie las revise.</p>
+                                    <div class="pt-2 mt-2 border-t border-slate-800">
+                                        <p><strong
+                                                class="text-indigo-400 font-bold uppercase tracking-wider text-sm block mb-1">Decisión
+                                                directiva:</strong> Ninguna alerta es vinculante sin la firma de un
+                                            docente o tutor.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div
+                            class="bg-cyan-900/30 p-4 rounded-xl border border-cyan-500/30 text-cyan-100 mt-auto shadow-md">
+                            <strong class="block text-cyan-400 text-base uppercase mb-1">Salida:</strong>
+                            <p class="text-base font-semibold">"Alerta: riesgo estimado de 55%, principalmente por la
+                                caída de asistencia al Aula Virtual en las últimas 2 semanas (confianza: 92%). El tutor
+                                asignado revisará el caso esta semana. Ana puede solicitar revisión del reporte."</p>
                         </div>
                     </div>
+                </div>
+
+                <!-- Cierre de la sección -->
+                <div
+                    class="bg-gradient-to-r from-indigo-900/40 to-cyan-900/40 border border-indigo-500/30 p-6 rounded-2xl shadow-lg mt-6">
+                    <p class="text-slate-200 text-base md:text-lg leading-relaxed text-center font-medium">
+                        La diferencia no es tecnológica, es de gobernanza: ambos sistemas usan los mismos datos y
+                        detectan el mismo riesgo. Pero solo uno permite auditar, corregir y proteger los derechos de la
+                        estudiante. <strong class="text-cyan-400 block mt-2">Esa elección no la hace el algoritmo — la
+                            hace usted.</strong>
+                    </p>
                 </div>
             </section>
 
@@ -491,7 +535,7 @@
             <section id="tab-casos" class="tab-content animate-fadeIn hidden space-y-8">
                 <div class="space-y-2">
                     <h2 class="text-2xl md:text-3xl font-black">Casos Reales y Escenarios Prácticos</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl">
+                    <p class="text-slate-400 text-base max-w-2xl">
                         Aprenda del análisis y lecciones aprendidas de instituciones reales que superaron el dilema de
                         la opacidad mediante capas de explicabilidad algorítmica.
                     </p>
@@ -506,8 +550,8 @@
             <section id="tab-simulador" class="tab-content animate-fadeIn hidden space-y-8">
                 <div class="space-y-2">
                     <h2 class="text-2xl md:text-3xl font-black">Simulador Directivo: IA-Gobernanza</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl">
-                        Tome decisiones de compra y diseño para el nuevo módulo de retención de la universidad. Balancee
+                    <p class="text-slate-400 text-base max-w-2xl">
+                        Tome decisiones de compra y diseño para el nuevo módulo de retención de la Institución. Balancee
                         sus recursos financieros, la confianza del claustro docente y el estricto cumplimiento legal.
                     </p>
                 </div>
@@ -517,7 +561,7 @@
                     <div class="lg:col-span-4">
                         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
                             <span
-                                class="text-xs font-bold text-cyan-400 uppercase tracking-wider block border-b border-slate-800 pb-2">Estatuto
+                                class="text-sm font-bold text-cyan-400 uppercase tracking-wider block border-b border-slate-800 pb-2">Estatuto
                                 de Viabilidad </span>
 
                             <div class="space-y-4" id="sim-metrics-container">
@@ -526,7 +570,7 @@
 
                             <div id="sim-reset-container" class="pt-4 border-t border-slate-800 hidden">
                                 <button onclick="resetSimulator()"
-                                    class="w-full bg-slate-850 hover:bg-slate-800 border border-slate-700 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center text-slate-300">
+                                    class="w-full bg-slate-850 hover:bg-slate-800 border border-slate-700 py-2.5 rounded-xl text-sm font-bold transition flex items-center justify-center text-slate-300">
                                     <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15.172" />
@@ -549,141 +593,172 @@
 
             <!-- 6. SECCIÓN RETO DE LA CAJA NEGRA (ACTIVIDAD CENTRAL) -->
             <section id="tab-actividades" class="tab-content animate-fadeIn hidden space-y-8">
-                <div class="space-y-2">
-                    <h2 class="text-2xl md:text-3xl font-black">Actividad Práctica: Desmontaje de la Caja Negra</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl">
-                        Construya una comunicación ética de alertas académicas utilizando los **5 Pilares de
-                        Explicabilidad XAI**. Diseñe la notificación para un alumno y obtenga retroalimentación.
-                    </p>
+                <div class="space-y-4">
+                    <h2 class="text-2xl md:text-3xl font-black">Reto Final: Reescriba la Caja Negra</h2>
+                    <div class="bg-rose-950/20 border border-rose-500/20 p-5 rounded-2xl space-y-3">
+                        <p class="text-slate-300 text-base leading-relaxed">
+                            Esta notificación llegó ayer al correo de un estudiante de su institución:
+                        </p>
+                        <div
+                            class="bg-rose-950/40 p-4 rounded-xl font-mono text-sm text-rose-300 border border-rose-900/30">
+                            "SISTEMA: Estudiante ID-4929 categorizado en RIESGO CRÍTICO de deserción. Becas: RECHAZADO
+                            preventivamente. Proceso inapelable."
+                        </div>
+                        <p class="text-slate-300 text-base leading-relaxed">
+                            Su tarea como directivo: reescribirla para que sea ética, explicable y respetuosa de los
+                            derechos del estudiante. Responda las 5 preguntas y observe cómo se construye la nueva carta
+                            en tiempo real.
+                        </p>
+                        <div
+                            class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg text-amber-300 text-sm flex items-start space-x-2">
+                            <span class="text-lg">⚠</span>
+                            <p><strong>Cuidado:</strong> algunas opciones parecen razonables pero esconden problemas
+                                éticos o legales. Elija con criterio.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Panel del Diseñador (Izquierda) -->
                     <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
                         <span
-                            class="text-xs font-bold text-cyan-400 uppercase tracking-wider block border-b border-slate-800 pb-2">Diseñador
-                            de Comunicación Ética</span>
+                            class="text-sm font-bold text-cyan-400 uppercase tracking-wider block border-b border-slate-800 pb-2">Construya
+                            la Nueva Comunicación</span>
 
-                        <div class="space-y-4">
-                            <!-- Select 1: Datos -->
+                        <div class="space-y-4" id="reto-form">
                             <div class="space-y-2">
-                                <label class="text-[11px] text-slate-300 font-bold block uppercase">1. Datos Utilizados
-                                    (Justificación Objetiva)</label>
+                                <label class="text-xs text-slate-300 font-bold block uppercase">1. ¿Qué información
+                                    respalda esta alerta?</label>
                                 <select id="reto-select-data" onchange="updateRetoPreview()"
-                                    class="w-full bg-slate-950 border border-slate-800 text-xs p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
-                                    <option value="">Seleccione el flujo de datos...</option>
+                                    class="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
+                                    <option value="">Elija una opción...</option>
                                     <option value="asistencia_notas">"Asistencia acumulada del 65% y promedio de notas
                                         de 10.5 en el trimestre."</option>
-                                    <option value="codigo_postal">"Residencia del estudiante en código postal periférico
-                                        de altos índices de abandono."</option>
-                                    <option value="ninguno">"Variables complejas de performance no parametrizadas por
+                                    <option value="codigo_postal">"Residencia del estudiante en una zona con altos
+                                        índices de abandono."</option>
+                                    <option value="ninguno">"Variables internas del sistema, no especificadas por
                                         confidencialidad."</option>
                                 </select>
                             </div>
 
-                            <!-- Select 2: Factores -->
                             <div class="space-y-2">
-                                <label class="text-[11px] text-slate-300 font-bold block uppercase">2. Factores de
-                                    Influencia (Contexto)</label>
+                                <label class="text-xs text-slate-300 font-bold block uppercase">2. ¿Qué fue lo que
+                                    disparó el riesgo?</label>
                                 <select id="reto-select-factor" onchange="updateRetoPreview()"
-                                    class="w-full bg-slate-950 border border-slate-800 text-xs p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
-                                    <option value="">Seleccione el factor de influencia...</option>
-                                    <option value="caida_asistencia">"Caída del 30% en los registros de acceso al Aula
-                                        Virtual (LMS) estas dos semanas."</option>
-                                    <option value="historial_pagos">"Atraso temporal en los pagos de pensiones del ciclo
+                                    class="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
+                                    <option value="">Elija una opción...</option>
+                                    <option value="caida_asistencia">"Caída del 30% en los ingresos al Aula Virtual en
+                                        las últimas dos semanas."</option>
+                                    <option value="historial_pagos">"Atrasos en los pagos de pensiones del ciclo
                                         académico vigente."</option>
                                 </select>
                             </div>
 
-                            <!-- Select 3: Confianza -->
                             <div class="space-y-2">
-                                <label class="text-[11px] text-slate-300 font-bold block uppercase">3. Nivel de
-                                    Confianza (Score)</label>
+                                <label class="text-xs text-slate-300 font-bold block uppercase">3. ¿Cuánta certeza tiene
+                                    el sistema?</label>
                                 <select id="reto-select-score" onchange="updateRetoPreview()"
-                                    class="w-full bg-slate-950 border border-slate-800 text-xs p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
-                                    <option value="">Seleccione la precisión de predicción...</option>
-                                    <option value="confianza_92">"El algoritmo estimó la consistencia del patrón con un
-                                        92% de precisión técnica."</option>
+                                    class="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
+                                    <option value="">Elija una opción...</option>
+                                    <option value="confianza_92">"El sistema estimó esta alerta con un 92% de precisión,
+                                        por lo que puede haber margen de error."</option>
                                     <option value="infalible">"La decisión cuenta con garantía absoluta de infalibilidad
-                                        algorítmica."</option>
+                                        del algoritmo."</option>
                                 </select>
                             </div>
 
-                            <!-- Select 4: Acción -->
                             <div class="space-y-2">
-                                <label class="text-[11px] text-slate-300 font-bold block uppercase">4. Protocolo de
-                                    Acción Docente</label>
+                                <label class="text-xs text-slate-300 font-bold block uppercase">4. ¿Qué hará la
+                                    universidad al respecto?</label>
                                 <select id="reto-select-action" onchange="updateRetoPreview()"
-                                    class="w-full bg-slate-950 border border-slate-800 text-xs p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
-                                    <option value="">Seleccione la acción correctiva...</option>
-                                    <option value="intervencion_tutoria">"Se programa una tutoría personalizada para
-                                        coordinar acompañamiento psicopedagógico."</option>
-                                    <option value="suspension">"Retiro o suspensión de los beneficios de matrícula de
-                                        forma preventiva."</option>
+                                    class="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
+                                    <option value="">Elija una opción...</option>
+                                    <option value="intervencion_tutoria">"Programar una tutoría personalizada para
+                                        coordinar acompañamiento académico."</option>
+                                    <option value="suspension">"Retirar o suspender preventivamente los beneficios de
+                                        matrícula."</option>
                                 </select>
                             </div>
 
-                            <!-- Select 5: Derechos -->
                             <div class="space-y-2">
-                                <label class="text-[11px] text-slate-300 font-bold block uppercase">5. Derechos del
-                                    Alumno (Apelación)</label>
+                                <label class="text-xs text-slate-300 font-bold block uppercase">5. ¿Qué derechos tiene
+                                    el estudiante?</label>
                                 <select id="reto-select-right" onchange="updateRetoPreview()"
-                                    class="w-full bg-slate-950 border border-slate-800 text-xs p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
-                                    <option value="">Seleccione el recurso legal...</option>
-                                    <option value="derecho_apelacion">"El estudiante tiene derecho a apelar y solicitar
-                                        una revisión humana en un plazo de 5 días."</option>
-                                    <option value="inapelable">"Las decisiones lógicas de la plataforma de retención son
-                                        definitivas e inapelables."</option>
+                                    class="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl focus:border-cyan-500/50 text-slate-200 outline-none">
+                                    <option value="">Elija una opción...</option>
+                                    <option value="derecho_apelacion">"Derecho a apelar y solicitar una revisión humana
+                                        en un plazo de 5 días."</option>
+                                    <option value="inapelable">"Ninguno: las decisiones del sistema son definitivas e
+                                        inapelables."</option>
                                 </select>
                             </div>
 
-                            <div class="flex space-x-3 pt-2">
+                            <div class="flex flex-wrap gap-3 pt-2" id="reto-actions">
                                 <button onclick="checkReto()"
-                                    class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-slate-950 font-extrabold text-xs py-3.5 rounded-xl transition shadow">
-                                    Auditar Plantilla XAI
+                                    class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-slate-950 font-extrabold text-sm py-3.5 rounded-xl transition shadow">
+                                    Evaluar mi comunicación
                                 </button>
                                 <button onclick="resetReto()"
-                                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold text-xs px-4 rounded-xl transition">
-                                    Limpiar
+                                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold text-sm px-6 py-3.5 rounded-xl transition">
+                                    Empezar de nuevo
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Panel de Previsualización (Derecha) -->
-                    <div class="lg:col-span-6 space-y-6">
-                        <div class="bg-rose-950/20 border border-rose-500/20 p-5 rounded-2xl space-y-2">
-                            <span class="text-[10px] font-extrabold text-rose-400 uppercase tracking-wider block">Antes:
-                                Notificación de Caja Negra (Opaca)</span>
-                            <div
-                                class="bg-rose-950/40 p-4 rounded-xl font-mono text-xs text-rose-300 border border-rose-900/30">
-                                "SISTEMA: Estudiante ID-4929 categorizado en RIESGO CRÍTICO de deserción. Becas:
-                                RECHAZADO preventivamente. Proceso inapelable."
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4 shadow-xl">
+                    <div class="lg:col-span-6 space-y-6 flex flex-col">
+                        <div
+                            class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-xl flex-1 flex flex-col">
                             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                                <span
-                                    class="text-[10px] font-extrabold text-cyan-400 uppercase tracking-wider block">Después:
-                                    Notificación Transparente </span>
+                                <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider block">Su Nueva
+                                    Carta</span>
                                 <span id="reto-badge"
-                                    class="text-xs font-bold px-2 py-0.5 rounded bg-slate-950 text-slate-450 hidden">Score:
+                                    class="text-sm font-bold px-2 py-0.5 rounded bg-slate-950 text-slate-450 hidden">Score:
                                     -</span>
                             </div>
 
                             <div
-                                class="bg-slate-950 p-4 rounded-xl text-xs leading-relaxed space-y-3 min-h-[160px] border border-slate-850 text-slate-300">
-                                <p>Estimado Estudiante,</p>
-                                <p id="preview-text">
-                                    Utilice las selecciones del panel izquierdo para reconstruir la notificación ética
-                                    bajo estándares XAI de manera responsable.
+                                class="bg-slate-950 p-6 rounded-xl text-base leading-relaxed space-y-4 flex-1 border border-slate-850 text-slate-300 shadow-inner">
+                                <p>Estimado estudiante:</p>
+                                <p>
+                                    El sistema de análisis académico de la institución ha generado una alerta sobre tu
+                                    situación, basada en: <span id="preview-1"
+                                        class="inline-block min-w-[200px] border-b-2 border-dashed border-slate-700 text-cyan-400 font-medium px-1">[respuesta
+                                        1: ¿qué información?]</span>
                                 </p>
+                                <p>
+                                    El factor principal que activó esta alerta fue: <span id="preview-2"
+                                        class="inline-block min-w-[200px] border-b-2 border-dashed border-slate-700 text-cyan-400 font-medium px-1">[respuesta
+                                        2: ¿qué la disparó?]</span>, con un nivel de certeza de: <span id="preview-3"
+                                        class="inline-block min-w-[200px] border-b-2 border-dashed border-slate-700 text-indigo-400 font-medium px-1">[respuesta
+                                        3: ¿cuánta confianza?]</span>
+                                </p>
+                                <p>
+                                    Como siguiente paso, la universidad procederá a: <span id="preview-4"
+                                        class="inline-block min-w-[200px] border-b-2 border-dashed border-slate-700 text-emerald-400 font-medium px-1">[respuesta
+                                        4: ¿qué acción?]</span>
+                                </p>
+                                <p>
+                                    Finalmente, te recordamos que cuentas con: <span id="preview-5"
+                                        class="inline-block min-w-[200px] border-b-2 border-dashed border-slate-700 text-indigo-300 font-medium px-1">[respuesta
+                                        5: ¿qué derechos?]</span>
+                                </p>
+                                <div class="pt-4">
+                                    <p>Atentamente,</p>
+                                    <p class="font-bold">Dirección Académica</p>
+                                </div>
                             </div>
+                        </div>
 
-                            <div id="reto-feedback" class="p-4 rounded-xl text-xs leading-relaxed hidden">
+                        <div id="reto-feedback-container" class="hidden space-y-4">
+                            <div id="reto-feedback" class="p-6 rounded-2xl text-sm md:text-base leading-relaxed">
                                 <!-- Feedback de JS -->
                             </div>
+                            <button id="btn-corregir" onclick="corregirReto()"
+                                class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/50 font-bold text-sm px-6 py-3.5 rounded-xl transition shadow">
+                                Corregir mis respuestas
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -694,10 +769,8 @@
     </main>
 
     <!-- === PIE DE PÁGINA === -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 Universidad Privada del Norte () - Todos los derechos reservados.</p>
-        <p class="text-[10px] text-slate-600 mt-1">Laboratorio de Gobernanza y Explicabilidad (XAI) de Inteligencia
-            Artificial para Escenarios Educativos.</p>
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 text-center text-sm text-slate-200">
+        <p style="font-size: 14px;">Experiencia Interactiva. Fines educativos - ©2026 - Luis Torrejón Arias</p>
     </footer>
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
@@ -708,8 +781,10 @@
                 {
                     id: 'tutoria',
                     titulo: 'Tutoría y Alerta de Deserción',
-                    problema: 'El sistema predice alumnos en "Riesgo Alto" de deserción sin desglosar causales, induciendo a error de contexto al tutor académico.',
-                    aplicacion: 'Modelos predictivos equipados con capas explicables (SHAP/LIME) que detallan las razones pedagógicas subyacentes.',
+                    problema: 'La tutora Carmen recibe el lunes una alerta: "Estudiante ID-4929: RIESGO ALTO". Nada más. ¿Lo llama por problemas económicos? ¿Por notas? ¿Por desmotivación? No sabe por dónde empezar.',
+                    sinXAI: 'Riesgo Alto. Intervenir.',
+                    conXAI: 'Riesgo por caída del 30% en asistencia y baja de notas en el último mes → agendar tutoría enfocada en esos dos puntos.',
+                    aplicacion: 'Modelos predictivos equipados con capas de explicación que traducen la alerta en razones pedagógicas comprensibles.',
                     datos: 'Frecuencia en LMS (ingresos, entrega de tareas), porcentaje de asistencia, calificaciones del primer trimestre.',
                     beneficio: 'Permite al tutor diseñar planes de acompañamiento específicos y empáticos según las fallas exactas identificadas.',
                     riesgo: 'Ignorar falsos positivos ocasionados por problemas sistémicos de conectividad o emergencias familiares puntuales.',
@@ -718,7 +793,9 @@
                 {
                     id: 'evaluacion',
                     titulo: 'Evaluación Formativa Automatizada',
-                    problema: 'Modelos de NLP asignan puntajes a ensayos críticos de posgrado. Si las rúbricas lógicas son opacas, se vulnera el derecho al feedback.',
+                    problema: 'El alumno Luis recibe su ensayo calificado: "45/100 - Deficiente". Revisa su texto y le parece correcto, pero el sistema no le indica qué falló, generándole frustración y nula oportunidad de aprendizaje.',
+                    sinXAI: 'Calificación: 45/100.',
+                    conXAI: 'Calificación: 45/100. Puntos restados por falta de referencias APA (20%) y baja coherencia argumental en el párrafo 3 (35%).',
                     aplicacion: 'Mapeo transparente de variables de peso semántico estructuradas bajo rúbricas académicas explícitas.',
                     datos: 'Análisis de coherencia argumental, estructuración de tesis, referenciación bibliográfica (APA 7ma Ed.).',
                     beneficio: 'Optimiza la fatiga cognitiva del docente y entrega mapas detallados de mejora a miles de estudiantes.',
@@ -728,7 +805,9 @@
                 {
                     id: 'admision',
                     titulo: 'Admisión y Asignación de Becas',
-                    problema: 'Uso de variables correlacionadas (proxies ocultos de ingresos como código postal) que perpetúan sesgos históricos de exclusión.',
+                    problema: 'El comité revisa el caso de Ana. Su puntaje es excelente, pero el sistema la clasifica como "No apta para beca". Nadie nota que el algoritmo la descartó silenciosamente por el código postal de su barrio.',
+                    sinXAI: 'Candidato rechazado por bajo score general.',
+                    conXAI: 'Candidato rechazado. El modelo penalizó fuertemente la variable "Código Postal", evidenciando un sesgo geográfico que debe auditarse.',
                     aplicacion: 'Modelos de clasificación auditados proactivamente mediante métricas de equidad algorítmica (Fairness metrics).',
                     datos: 'Rendimiento académico neto, resultados de evaluaciones de aptitud objetivas, portafolio de logros.',
                     beneficio: 'Garantiza igualdad de oportunidades, eliminando sesgos humanos conscientes o inconscientes en el cribado inicial.',
@@ -738,7 +817,9 @@
                 {
                     id: 'gestion',
                     titulo: 'Optimización y Gestión Logística',
-                    problema: 'Rechazo automático o asignación ineficiente de laboratorios "Tech" y aulas sin explicaciones audtables para el cuerpo docente.',
+                    problema: 'El profesor de Robótica solicita el laboratorio A3, pero el sistema rechaza su pedido y se lo asigna a otra clase sin justificación. El profesor siente que la decisión es arbitraria y se queja formalmente.',
+                    sinXAI: 'Solicitud de laboratorio denegada.',
+                    conXAI: 'Solicitud denegada. El laboratorio A3 fue asignado prioritariamente al curso X por requerir accesibilidad física para estudiantes en silla de ruedas.',
                     aplicacion: 'Sistemas inteligentes de RPA (Automatización de Procesos) con bitácoras públicas de decisión algorítmica.',
                     datos: 'Aforo solicitado (>40), equipamiento requerido, prioridades acreditadas de accesibilidad física.',
                     beneficio: 'Distribución óptima de recursos físicos institucionales fundamentada en evidencia verificable, evitando conflictos de interés.',
@@ -748,10 +829,10 @@
             ],
             casos: [
                 {
-                    titulo: 'Caso : Alertas Tempranas con Explicabilidad SHAP',
+                    titulo: 'Caso: Alertas Tempranas Explicables',
                     contexto: 'Escenario simulado de aprendizaje - Perú.',
                     problema: 'El modelo predictivo identificaba un 15% de riesgo de deserción, pero los tutores ignoraban los reportes porque no sabían qué factor abordar (¿economía, falta de bases académicas?).',
-                    solucion: 'Integración de una capa post-hoc de explicabilidad SHAP (Shapley Additive exPlanations) en el dashboard de Power BI del área de retención.',
+                    solucion: 'Integración de una capa de explicación que muestra qué factores influyeron en cada alerta, integrada al dashboard de Power BI del área de retención.',
                     datos: 'Frecuencia de accesos al Aula Virtual, entrega de evaluaciones formativas e interacción con foros académicos.',
                     beneficios: 'Se redujo la deserción real en un 4.5% en el primer ciclo debido a que los tutores intervenían conociendo la causa exacta.',
                     riesgos: 'La inclusión inicial de variables socioeconómicas generaba sesgos de exclusión injustificados en los tutores.',
@@ -759,59 +840,30 @@
                 },
                 {
                     titulo: 'Caso Minerva EdTech: Evaluación Formativa con Rúbrica Abierta',
-                    contexto: 'Modelo Aplicado de Calificación Formativa.',
+                    contexto: 'Escenario simulado - Modelo Aplicado de Calificación Formativa.',
                     problema: 'Estudiantes de posgrado reportaban ansiedad por recibir retroalimentación parcial generada por IA sin desglose de criterios de evaluación.',
-                    solucion: 'Desarrollo de un sistema que asocia fragmentos de texto calificados por NLP con pesos e indicadores de rúbricas predefinidas.',
+                    solucion: 'Desarrollo de un sistema que asocia fragmentos de texto calificados por la IA con pesos e indicadores de rúbricas predefinidas.',
                     datos: 'Sintaxis del texto del estudiante, cantidad de referencias válidas y su correspondencia temática.',
                     beneficios: 'Aumento de un 35% en la satisfacción estudiantil con el feedback formativo digital y reducción del 50% en apelaciones.',
                     riesgos: 'El motor tendía a premiar la extensión sobre la calidad conceptual en los primeros prototipos de prueba.',
                     leccion: 'Abrir la caja de evaluación de la IA faculta al estudiante para corregir de forma autónoma su propio proceso cognitivo.'
                 }
             ],
-            arNodes: {
-                datos: {
-                    title: 'Nodo de Datos Mapeados',
-                    practica: 'Filtra variables sensibles y proxies. Registra asistencia y notas.',
-                    problema: 'Previene la discriminación socioeconómica directa o indirecta.',
-                    beneficio: 'Garantiza equidad operativa desde el origen del flujo.',
-                    riesgo: 'Eliminar excesivos datos puede reducir sutilmente la precisión predictiva.',
-                    decision: 'Comité de Ética aprueba el set de variables que ingresa a la máquina.'
-                },
-                algoritmo: {
-                    title: 'Motor Predictivo e Inferencia',
-                    practica: 'Árboles de decisión o regresión lineal altamente legibles que calculan el score.',
-                    problema: 'Evita decisiones arbitrarias e inexplicables típicas de las redes profundas.',
-                    beneficio: 'Permite comprender exactamente qué variable matemática disparó la alerta.',
-                    riesgo: 'Modelos excesivamente sencillos pueden no detectar patrones complejos de conducta.',
-                    decision: 'El departamento académico define el balance correcto entre precisión y explicabilidad.'
-                },
-                capa: {
-                    title: 'Capa Explicable (SHAP/LIME)',
-                    practica: 'Traduce los pesos lógicos incomprensibles de la máquina a explicaciones en español pedagógico.',
-                    problema: 'Elimina las conjeturas de los tutores sobre las alertas predictivas.',
-                    beneficio: 'Apunta directamente al factor desencadenante (ej. baja en foros académicos).',
-                    riesgo: 'Saturación de explicaciones complejas para usuarios no técnicos.',
-                    decision: 'Diseñar visualmente los dashboards integrando solo factores de alta influencia.'
-                },
-                humano: {
-                    title: 'Human-in-the-Loop (Decisión Humana)',
-                    practica: 'Interfaz de usuario para que el docente asigne tutorías o apruebe becas basándose en la alerta.',
-                    problema: 'Evita penalizaciones directas injustas provocadas por fallas del algoritmo.',
-                    beneficio: 'Combina el procesamiento masivo analítico con la empatía indiscutible del docente.',
-                    riesgo: 'Posible inacción o lentitud humana en revisar las alertas.',
-                    decision: 'Se reglamenta que ninguna alerta del algoritmo es vinculante si no tiene firma de un docente o tutor.'
-                }
-            }
+
         };
 
         // === ESTADOS DE LA APLICACIÓN ===
         let currentTab = 'inicio';
         let sessionMinutes = 0;
 
+        let userProgress = { explorerCompleted: false, arCompleted: false, simCompleted: false };
+        function saveProgress() { }
+        function updateProgressUI() { }
+
         let arScanState = 'unscanned'; // 'unscanned' | 'scanning' | 'view'
         let arModelType = 'blackbox'; // 'blackbox' | 'xai'
 
-        let simStage = 1;
+        let simStage = 0;
         let simMetrics = { academic: 50, economic: 70, trust: 40, legal: 50 };
         let simHistory = [];
         let simDecisions = {};
@@ -844,9 +896,9 @@
             // Actualizar botones de escritorio
             document.querySelectorAll('#nav-desktop .tab-btn').forEach(btn => {
                 if (btn.getAttribute('data-tab') === tabId) {
-                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
+                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
                 } else {
-                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200";
+                    btn.className = "tab-btn px-3 py-1.5 rounded-lg text-base font-medium transition text-slate-400 hover:text-slate-200";
                 }
             });
 
@@ -878,18 +930,40 @@
                             <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded-full font-bold">DEPARTAMENTO</span>
                         </div>
                         
-                        <div class="space-y-2 text-xs">
-                            <p class="text-slate-400 leading-relaxed"><strong class="text-amber-500/90 block uppercase tracking-wider mb-0.5">Problema Real:</strong> ${area.problema}</p>
-                            <p class="text-slate-300 leading-relaxed"><strong class="text-cyan-400 block uppercase tracking-wider mb-0.5">Aplicación de IA (XAI):</strong> ${area.aplicacion}</p>
-                            <p class="text-slate-400 leading-relaxed"><strong class="text-indigo-400 block uppercase tracking-wider mb-0.5">Datos Sensibles:</strong> ${area.datos}</p>
-                            <p class="text-emerald-400/90 leading-relaxed"><strong class="text-emerald-500 block uppercase tracking-wider mb-0.5">Beneficios:</strong> ${area.beneficio}</p>
-                            <p class="text-rose-400/90 leading-relaxed"><strong class="text-rose-500 block uppercase tracking-wider mb-0.5">Riesgos Éticos:</strong> ${area.riesgo}</p>
-                        </div>
-                    </div>
+                        <div class="space-y-4 text-sm">
+                            <div class="space-y-1">
+                                <strong class="text-amber-500/90 block uppercase tracking-wider text-[10px] mb-1">¿Qué pasa hoy sin explicación?</strong>
+                                <p class="text-slate-300 italic text-[13px] border-l-2 border-slate-600 pl-3 py-1">"${area.problema}"</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-[11px]">
+                                <div class="bg-rose-950/20 border border-rose-900/30 p-3 rounded-lg flex flex-col justify-center">
+                                    <span class="text-rose-500 font-bold block mb-1">❌ Sin XAI:</span>
+                                    <span class="text-rose-200/70 leading-relaxed">"${area.sinXAI}"</span>
+                                </div>
+                                <div class="bg-emerald-950/20 border border-emerald-900/30 p-3 rounded-lg flex flex-col justify-center">
+                                    <span class="text-emerald-500 font-bold block mb-1">✓ Con XAI:</span>
+                                    <span class="text-emerald-200/70 leading-relaxed">"${area.conXAI}"</span>
+                                </div>
+                            </div>
 
-                    <div class="pt-4 border-t border-slate-800/80 mt-4 bg-slate-950/40 p-3.5 rounded-xl border border-indigo-500/10">
-                        <span class="text-xs font-bold text-indigo-400 block uppercase tracking-wider mb-1">Gobernanza Directiva:</span>
-                        <p class="text-xs text-slate-300 leading-relaxed font-medium">${area.decision}</p>
+                            <details class="group mt-4 border border-slate-800 rounded-xl overflow-hidden">
+                                <summary class="bg-slate-800/40 p-3 cursor-pointer text-cyan-400 font-semibold hover:bg-slate-800/80 transition flex items-center justify-between outline-none">
+                                    <span>Ver análisis completo</span>
+                                    <svg class="w-4 h-4 transform group-open:rotate-180 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </summary>
+                                <div class="p-4 space-y-3 bg-slate-950/50 text-sm">
+                                    <p class="text-slate-300 leading-relaxed"><strong class="text-cyan-400 block uppercase tracking-wider mb-0.5">¿Cómo lo resuelve la explicación?</strong> ${area.aplicacion}</p>
+                                    <p class="text-slate-400 leading-relaxed"><strong class="text-indigo-400 block uppercase tracking-wider mb-0.5">¿Qué información usa el sistema?</strong> ${area.datos}</p>
+                                    <p class="text-emerald-400/90 leading-relaxed"><strong class="text-emerald-500 block uppercase tracking-wider mb-0.5">¿Qué gana el docente?</strong> ${area.beneficio}</p>
+                                    <p class="text-rose-400/90 leading-relaxed"><strong class="text-rose-500 block uppercase tracking-wider mb-0.5">¿Qué puede salir mal?</strong> ${area.riesgo}</p>
+                                    <div class="pt-3 border-t border-slate-800/80 mt-3">
+                                        <strong class="text-indigo-400 block uppercase tracking-wider mb-1">¿Qué debe decidir usted como directivo?</strong>
+                                        <p class="text-slate-300 leading-relaxed font-medium">${area.decision}</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -907,14 +981,14 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-extrabold text-sm md:text-base text-slate-100">${caso.titulo}</h3>
+                                <h3 class="font-extrabold text-base md:text-base text-slate-100">${caso.titulo}</h3>
                                 <p class="text-[10px] text-cyan-400 font-semibold tracking-wider uppercase">${caso.contexto}</p>
                             </div>
                         </div>
 
-                        <div class="space-y-3 text-xs leading-relaxed">
+                        <div class="space-y-3 text-sm leading-relaxed">
                             <p class="text-slate-400"><strong class="text-rose-500 block uppercase tracking-wider mb-0.5">Problema Inicial:</strong> ${caso.problema}</p>
-                            <p class="text-slate-300"><strong className="text-cyan-400 block uppercase tracking-wider mb-0.5">Solución de XAI:</strong> ${caso.solucion}</p>
+                            <p class="text-slate-300"><strong class="text-cyan-400 block uppercase tracking-wider mb-0.5">Solución de XAI:</strong> ${caso.solucion}</p>
                             <p class="text-slate-450"><strong class="text-indigo-400 block uppercase tracking-wider mb-0.5">Variables Involucradas:</strong> ${caso.datos}</p>
                             <p class="text-emerald-400"><strong class="text-emerald-500 block uppercase tracking-wider mb-0.5">Beneficios:</strong> ${caso.beneficios}</p>
                             <p class="text-rose-400"><strong class="text-rose-500 block uppercase tracking-wider mb-0.5">Riesgos Identificados:</strong> ${caso.riesgos}</p>
@@ -922,109 +996,18 @@
                     </div>
 
                     <div class="pt-4 border-t border-slate-800 bg-slate-950/40 p-4 rounded-xl border border-indigo-500/10 mt-4">
-                        <span class="text-xs font-bold text-indigo-400 block uppercase tracking-wider mb-1">Lección de Gobernanza Directiva:</span>
-                        <p class="text-xs text-slate-300 leading-relaxed font-semibold italic">"${caso.leccion}"</p>
+                        <span class="text-sm font-bold text-indigo-400 block uppercase tracking-wider mb-1">Lección de Gobernanza Directiva:</span>
+                        <p class="text-sm text-slate-300 leading-relaxed font-semibold italic">"${caso.leccion}"</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        // === SIMULADOR DE REALIDAD AUMENTADA ===
-        function triggerARScan() {
-            arScanState = 'scanning';
-            updateARUI();
-
-            setTimeout(() => {
-                arScanState = 'view';
-                if (!userProgress.arCompleted) {
-                    userProgress.arCompleted = true;
-                    saveProgress();
-                    updateProgressUI();
-                }
-                updateARUI();
-            }, 2500);
-        }
-
-        function selectARModel(type) {
-            arModelType = type;
-            document.getElementById('ar-node-detail').classList.add('hidden');
-
-            document.querySelectorAll('.model-select-btn').forEach(btn => {
-                btn.className = "model-select-btn w-full p-3 rounded-xl border border-slate-800 text-slate-400 hover:border-slate-700 text-left flex items-center justify-between transition text-xs font-semibold";
-            });
-
-            if (type === 'blackbox') {
-                document.getElementById('btn-model-blackbox').className = "model-select-btn w-full p-3 rounded-xl border border-rose-500/40 text-rose-300 bg-rose-500/10 text-left flex items-center justify-between transition text-xs font-semibold";
-            } else {
-                document.getElementById('btn-model-xai').className = "model-select-btn w-full p-3 rounded-xl border border-cyan-500/40 text-cyan-300 bg-cyan-500/10 text-left flex items-center justify-between transition text-xs font-semibold";
-            }
-
-            updateARUI();
-        }
-
-        function inspectARNode(nodeId) {
-            const data = database.arNodes[nodeId];
-            const detailContainer = document.getElementById('ar-node-detail');
-
-            detailContainer.innerHTML = `
-                <div class="flex justify-between items-start border-b border-slate-800 pb-1.5">
-                    <h4 class="font-bold text-xs text-cyan-400">${data.title}</h4>
-                    <button onclick="document.getElementById('ar-node-detail').classList.add('hidden')" class="text-slate-500 hover:text-slate-300 text-xs">✕</button>
-                </div>
-                <div class="text-[11px] space-y-1.5 leading-relaxed text-slate-300">
-                    <p><strong>Uso Práctico:</strong> ${data.practica}</p>
-                    <p><strong>Problema Resuelto:</strong> ${data.problema}</p>
-                    <p class="text-emerald-400"><strong>Beneficio:</strong> ${data.beneficio}</p>
-                    <p class="text-rose-400"><strong>Riesgo:</strong> ${data.riesgo}</p>
-                    <p class="text-indigo-300 font-medium"><strong>Gobernanza Directiva:</strong> ${data.decision}</p>
-                </div>
-            `;
-            detailContainer.classList.remove('hidden');
-        }
-
-        function updateARUI() {
-            // Ocultar todos los subestados de AR
-            document.getElementById('ar-state-unscanned').classList.add('hidden');
-            document.getElementById('ar-state-scanning').classList.add('hidden');
-            document.getElementById('ar-state-view').classList.add('hidden');
-            document.getElementById('spinner-scan').classList.add('hidden');
-
-            const textScan = document.getElementById('text-ar-scan');
-            const btnScan = document.getElementById('btn-ar-scan');
-            const statusText = document.getElementById('ar-status-anchored');
-
-            if (arScanState === 'unscanned') {
-                document.getElementById('ar-state-unscanned').classList.remove('hidden');
-                textScan.textContent = "Escanear Superficie Física (AR)";
-                btnScan.className = "w-full py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md";
-                statusText.textContent = "Sin calibrar";
-                statusText.className = "text-[10px] text-rose-500 font-bold";
-            } else if (arScanState === 'scanning') {
-                document.getElementById('ar-state-scanning').classList.remove('hidden');
-                document.getElementById('spinner-scan').classList.remove('hidden');
-                textScan.textContent = "Mapeando mesa de aula...";
-                btnScan.className = "w-full py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 bg-slate-800 text-cyan-400 border border-cyan-500/20";
-                statusText.textContent = "Mapeando...";
-                statusText.className = "text-[10px] text-cyan-400 font-bold animate-pulse";
-            } else if (arScanState === 'view') {
-                document.getElementById('ar-state-view').classList.remove('hidden');
-                textScan.textContent = "✓ Espacio de Mesa Sincronizado";
-                btnScan.className = "w-full py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
-                statusText.textContent = "✓ Anclaje Holográfico Calibrado";
-                statusText.className = "text-[10px] text-emerald-400 font-bold";
-
-                // Mostrar render según modelo seleccionado
-                if (arModelType === 'blackbox') {
-                    document.getElementById('ar-render-blackbox').classList.remove('hidden');
-                    document.getElementById('ar-render-xai').classList.add('hidden');
-                } else {
-                    document.getElementById('ar-render-blackbox').classList.add('hidden');
-                    document.getElementById('ar-render-xai').classList.remove('hidden');
-                }
-            }
-        }
 
         // === SIMULADOR DIRECTIVO ===
+        let showingConsequence = false;
+        let consequenceData = null;
+
         function renderSimMetrics() {
             const container = document.getElementById('sim-metrics-container');
 
@@ -1035,20 +1018,23 @@
             };
 
             const metrics = [
-                { name: 'Precisión Académica', value: simMetrics.academic },
-                { name: 'Viabilidad Presupuestaria', value: simMetrics.economic },
-                { name: 'Confianza Social', value: simMetrics.trust },
-                { name: 'Cumplimiento Legal (LOPDGDD)', value: simMetrics.legal }
+                { name: 'Precisión Académica', desc: 'Qué tan bien el sistema detecta a los estudiantes en riesgo real.', value: simMetrics.academic },
+                { name: 'Viabilidad Presupuestaria', desc: 'Recursos financieros disponibles para el proyecto.', value: simMetrics.economic },
+                { name: 'Confianza Social', desc: 'Qué tanto docentes y estudiantes aceptan y usan el sistema.', value: simMetrics.trust },
+                { name: 'Cumplimiento Legal (Ley de Protección de Datos)', desc: 'Riesgo de sanciones, demandas o reclamos por derechos de datos.', value: simMetrics.legal }
             ];
 
             container.innerHTML = metrics.map(m => `
-                <div class="space-y-2">
-                    <div class="flex justify-between text-xs font-semibold">
+                <div class="space-y-1">
+                    <div class="flex justify-between text-sm font-semibold">
                         <span>${m.name}</span>
                         <span class="${getMetricColor(m.value)}">${m.value}%</span>
                     </div>
-                    <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-                        <div class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full transition-all duration-500" style="width: ${m.value}%"></div>
+                    <p class="text-xs text-slate-400">${m.desc}</p>
+                    <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden relative border border-slate-800 mt-1">
+                        <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-rose-500/50 z-10"></div>
+                        <div class="absolute left-1/2 top-0 bottom-0 text-[8px] text-rose-500/80 font-bold -ml-8 flex items-center">umbral mínimo</div>
+                        <div class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full transition-all duration-500 relative z-0" style="width: ${m.value}%"></div>
                     </div>
                 </div>
             `).join('');
@@ -1057,79 +1043,171 @@
         function renderSimStage() {
             const container = document.getElementById('sim-stage-content');
 
+            if (simStage === 0) {
+                container.innerHTML = `
+                    <div class="space-y-6 flex flex-col justify-center h-full">
+                        <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider block">Su Nuevo Cargo: Dirección Académica</span>
+                        <div class="space-y-4">
+                            <p class="text-base text-slate-300 leading-relaxed">
+                                Usted acaba de asumir la Dirección Académica de la institución. El Consejo Directivo le encargó implementar un sistema de Inteligencia Artificial para reducir la deserción estudiantil.
+                            </p>
+                            <p class="text-base text-slate-300 leading-relaxed">
+                                Tomará 4 decisiones sobre el diseño del sistema. Cada una afectará su Tablero de Gestión.
+                            </p>
+                            <p class="text-base text-slate-300 leading-relaxed font-semibold text-rose-200 bg-rose-950/20 p-4 border border-rose-900/50 rounded-xl">
+                                Su misión: que al finalizar, ninguna métrica caiga por debajo del 50%. Si la Confianza Social o el Cumplimiento Legal colapsan, el proyecto será cancelado y su gestión quedará cuestionada.
+                            </p>
+                            <p class="text-base text-slate-400 italic">
+                                No hay opciones perfectas. Hay decisiones con consecuencias.
+                            </p>
+                        </div>
+                        <button onclick="startSimulator()" class="mt-4 w-full md:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-slate-950 font-extrabold text-base px-8 py-3.5 rounded-xl transition shadow flex items-center justify-center space-x-2">
+                            <span>Asumir el cargo</span>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (showingConsequence) {
+                const deltaFormat = (val) => val > 0 ? `<span class="text-emerald-400">+${val}</span>` : val < 0 ? `<span class="text-rose-400">${val}</span>` : `<span class="text-slate-400\">0</span>`;
+
+                container.innerHTML = `
+                    <span class="text-sm font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 py-1 px-2.5 rounded-full block w-fit mb-4">Consecuencia de su Decisión</span>
+                    <div class="space-y-6 flex flex-col justify-center h-full">
+                        <p class="text-lg text-slate-200 leading-relaxed italic border-l-4 border-amber-500/50 pl-4 py-2">
+                            "${consequenceData.text}"
+                        </p>
+                        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-wrap gap-4 text-sm font-bold justify-between">
+                            <div>Precisión: ${deltaFormat(consequenceData.delta.academic)}</div>
+                            <div>Presupuesto: ${deltaFormat(consequenceData.delta.economic)}</div>
+                            <div>Confianza: ${deltaFormat(consequenceData.delta.trust)}</div>
+                            <div>Legal: ${deltaFormat(consequenceData.delta.legal)}</div>
+                        </div>
+                        <button onclick="nextSimStage()" class="mt-4 w-full md:w-auto bg-slate-800 hover:bg-slate-700 text-white font-bold text-base px-8 py-3.5 rounded-xl transition flex items-center justify-center space-x-2">
+                            <span>Continuar</span>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const progressDots = [1, 2, 3, 4].map(i => i === simStage ? '●' : i < simStage ? '○' : '○').join(' ');
+
             if (simStage === 1) {
                 container.innerHTML = `
-                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 1: Arquitectura de IA</span>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 1 de 4</span>
+                        <span class="text-slate-500 tracking-[0.2em]">${progressDots}</span>
+                    </div>
                     <div class="space-y-2">
-                        <h3 class="text-lg md:text-xl font-bold">¿Qué modelo implementará para la detección temprana de deserción en la ?</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">El área técnica de ingeniería ofrece tres opciones metodológicas con diferentes niveles de interpretabilidad.</p>
+                        <h3 class="text-xl md:text-2xl font-bold">Arquitectura de IA</h3>
+                        <p class="text-base text-slate-400 leading-relaxed">¿Qué modelo implementará para la detección temprana de deserción?</p>
                     </div>
                     <div class="space-y-3">
-                        <button onclick="makeSimDecision('model', 'A', { academic: 25, economic: 15, trust: -25, legal: -25 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-rose-400 block font-bold text-sm">Opción A: Deep Learning Complejo (Caja Negra)</strong>
-                            <span class="text-slate-400 block leading-relaxed">Máxima precisión de predicción (96%). Opacidad absoluta: el tutor no tiene acceso a por qué se generó la alerta. Bajo costo inicial, alta fatiga ética de apelación.</span>
+                        <button onclick="makeSimDecision('model', 'A', { academic: 25, economic: 15, trust: -25, legal: -25 }, 'Tres meses después: las alertas son precisas, pero los tutores no pueden explicarlas. Los estudiantes reclaman decisiones que nadie sabe justificar.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-rose-400 block font-bold text-lg mb-2">Opción A: Sistema Complejo (Caja Negra)</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Máxima precisión (96%) y bajo costo inicial</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Nadie podrá explicar por qué se generó una alerta</p>
+                            </div>
                         </button>
-                        <button onclick="makeSimDecision('model', 'B', { academic: 20, economic: -15, trust: 25, legal: 25 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-cyan-400 block font-bold text-sm">Opción B: Modelo Híbrido con Capa SHAP/LIME (XAI)</strong>
-                            <span class="text-slate-400 block leading-relaxed">Alta precisión (92%). Traduce el razonamiento lógico de la red neuronal a variables interpretables por el tutor. Requiere presupuesto adicional para desarrollo.</span>
+                        <button onclick="makeSimDecision('model', 'B', { academic: 20, economic: -15, trust: 25, legal: 25 }, 'El desarrollo tomó más presupuesto del previsto, pero cada alerta llega con sus razones. Los tutores empiezan a confiar en el sistema.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-cyan-400 block font-bold text-lg mb-2">Opción B: Modelo con Capa de Explicación (XAI)</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Alta precisión (92%) y cada alerta llega traducida a razones comprensibles</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Requiere presupuesto adicional de desarrollo</p>
+                            </div>
                         </button>
-                        <button onclick="makeSimDecision('model', 'C', { academic: -15, economic: 10, trust: 20, legal: 15 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-emerald-400 block font-bold text-sm">Opción C: Árboles de Decisión Simples</strong>
-                            <span class="text-slate-400 block leading-relaxed">Modelo intrínsecamente transparente y de fácil comprensión inmediata. Precisión modesta (75%) que puede generar falsos positivos en alumnos atípicos.</span>
+                        <button onclick="makeSimDecision('model', 'C', { academic: -15, economic: 10, trust: 20, legal: 15 }, 'El sistema es comprensible para todos, pero se le escapan casos complejos y genera falsos positivos que irritan a algunos tutores.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-emerald-400 block font-bold text-lg mb-2">Opción C: Modelo Simple y Transparente</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Cualquier docente entiende cómo funciona de inmediato</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Precisión modesta (75%): más falsos positivos en alumnos atípicos</p>
+                            </div>
                         </button>
                     </div>
                 `;
             } else if (simStage === 2) {
                 container.innerHTML = `
-                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 2: Gobernanza de Datos y Sesgos</span>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 2 de 4</span>
+                        <span class="text-slate-500 tracking-[0.2em]">${progressDots}</span>
+                    </div>
                     <div class="space-y-2">
-                        <h3 class="text-lg md:text-xl font-bold">¿Qué campos de datos alimentarán el algoritmo para optimizar la predicción?</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">La selección de variables define la equidad algorítmica y mitiga proxies ocultos discriminatorios.</p>
+                        <h3 class="text-xl md:text-2xl font-bold">Datos del Sistema</h3>
+                        <p class="text-base text-slate-400 leading-relaxed">¿Qué información alimentará al algoritmo?</p>
                     </div>
                     <div class="space-y-3">
-                        <button onclick="makeSimDecision('data', 'A', { academic: 15, economic: 15, trust: -30, legal: -30 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-rose-400 block font-bold text-sm">Opción A: Datos Absolutos (Incluye Código Postal y Colegio de procedencia)</strong>
-                            <span class="text-slate-400 block leading-relaxed">Aumenta la precisión predictiva al correlacionar variables socioeconómicas brutas de los históricos universitarios, generando discriminación geográfica indirecta.</span>
+                        <button onclick="makeSimDecision('data', 'A', { academic: 15, economic: 15, trust: -30, legal: -30 }, 'Auditoría interna detecta que el sistema penaliza sistemáticamente a estudiantes de distritos periféricos. El caso llega a oídos de la prensa universitaria.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-rose-400 block font-bold text-lg mb-2">Opción A: Todos los datos disponibles</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Mayor precisión al incluir código postal y colegio de procedencia</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Esas variables reflejan el nivel socioeconómico: riesgo de discriminación indirecta</p>
+                            </div>
                         </button>
-                        <button onclick="makeSimDecision('data', 'B', { academic: 10, economic: -5, trust: 25, legal: 25 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-cyan-400 block font-bold text-sm">Opción B: Filtrado de Variables Sensibles y Proxies</strong>
-                            <span class="text-slate-400 block leading-relaxed">Se excluyen por diseño variables demográficas sensibles. El algoritmo se entrena estrictamente con comportamiento académico (asistencia, calificaciones y LMS).</span>
+                        <button onclick="makeSimDecision('data', 'B', { academic: 10, economic: -5, trust: 25, legal: 25 }, 'El comité de ética aprueba el diseño. El sistema pierde algo de capacidad predictiva, pero ninguna alerta puede atribuirse al origen del estudiante.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-cyan-400 block font-bold text-lg mb-2">Opción B: Solo comportamiento académico</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Asistencia, notas y actividad en el Aula Virtual; sin variables sensibles</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Pierde algo de precisión predictiva</p>
+                            </div>
                         </button>
                     </div>
                 `;
             } else if (simStage === 3) {
                 container.innerHTML = `
-                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 3: Transparencia Operativa</span>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 3 de 4</span>
+                        <span class="text-slate-500 tracking-[0.2em]">${progressDots}</span>
+                    </div>
                     <div class="space-y-2">
-                        <h3 class="text-lg md:text-xl font-bold">¿Cómo informará a la comunidad estudiantil sobre el uso de la IA?</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">La comunicación ética previene la desconfianza y asegura el consentimiento informado de la LOPDGDD.</p>
+                        <h3 class="text-xl md:text-2xl font-bold">Comunicación a los Estudiantes</h3>
+                        <p class="text-base text-slate-400 leading-relaxed">¿Cómo informará sobre el uso de la IA?</p>
                     </div>
                     <div class="space-y-3">
-                        <button onclick="makeSimDecision('transparency', 'A', { academic: 10, economic: 15, trust: -35, legal: -35 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-rose-400 block font-bold text-sm">Opción A: Implementación Silenciosa / Opaca</strong>
-                            <span class="text-slate-400 block leading-relaxed">Evita que los estudiantes modifiquen artificialmente su conducta académica para eludir la IA. Vulneración seria de las normativas de derechos digitales básicos.</span>
+                        <button onclick="makeSimDecision('transparency', 'A', { academic: 10, economic: 15, trust: -35, legal: -35 }, 'Un estudiante descubre por casualidad que su perfil era analizado sin su conocimiento. Presenta un reclamo formal por sus derechos de datos y otros lo siguen.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-rose-400 block font-bold text-lg mb-2">Opción A: Implementación silenciosa</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Los estudiantes no alteran su conducta para &quot;engañar&quot; al sistema</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Se vulnera su derecho a saber que son analizados</p>
+                            </div>
                         </button>
-                        <button onclick="makeSimDecision('transparency', 'B', { academic: 5, economic: -5, trust: 30, legal: 30 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-cyan-400 block font-bold text-sm">Opción B: Panel de Transparencia Activa y Aviso Visible</strong>
-                            <span class="text-slate-400 block leading-relaxed">Aviso explícito en matrícula, consentimiento informado del alumno y panel visible donde el estudiante puede auditar su propio nivel de riesgo de deserción calculado.</span>
+                        <button onclick="makeSimDecision('transparency', 'B', { academic: 5, economic: -5, trust: 30, legal: 30 }, 'La transparencia genera confianza: los estudiantes consultan su propio panel y varios buscan apoyo antes de que el sistema los alerte.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-cyan-400 block font-bold text-lg mb-2">Opción B: Aviso visible y consentimiento</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Aviso en matrícula y panel donde cada estudiante ve su propio reporte</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Algunos estudiantes podrían modificar su comportamiento</p>
+                            </div>
                         </button>
                     </div>
                 `;
             } else if (simStage === 4) {
                 container.innerHTML = `
-                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 4: Protocolo de Intervención Docente</span>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="text-sm font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 py-1 px-2.5 rounded-full">Decisión 4 de 4</span>
+                        <span class="text-slate-500 tracking-[0.2em]">${progressDots}</span>
+                    </div>
                     <div class="space-y-2">
-                        <h3 class="text-lg md:text-xl font-bold">¿Cómo se procesarán las alertas generadas por el sistema inteligente?</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">Defina el balance ético de responsabilidades entre el docente y la automatización robótica de procesos.</p>
+                        <h3 class="text-xl md:text-2xl font-bold">¿Quién ejecuta las alertas?</h3>
+                        <p class="text-base text-slate-400 leading-relaxed">Defina el protocolo cuando el sistema detecta riesgo alto.</p>
                     </div>
                     <div class="space-y-3">
-                        <button onclick="makeSimDecision('process', 'A', { academic: 15, economic: 20, trust: -30, legal: -30 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-rose-400 block font-bold text-sm">Opción A: Automatización Completa Ciega</strong>
-                            <span class="text-slate-400 block leading-relaxed">Si la IA categoriza "Riesgo Alto", se retira al alumno, suspende la beca y emite la carta disciplinaria automáticamente sin revisión humana.</span>
+                        <button onclick="makeSimDecision('process', 'A', { academic: 15, economic: 20, trust: -30, legal: -30 }, 'El sistema suspendió la beca de una estudiante cuya inactividad era una hospitalización. La familia inicia acciones legales y el caso se hace público.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-rose-400 block font-bold text-lg mb-2">Opción A: Automatización total</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> Respuesta inmediata sin carga de trabajo para los docentes</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> El sistema suspende becas y emite cartas sin que nadie revise el contexto</p>
+                            </div>
                         </button>
-                        <button onclick="makeSimDecision('process', 'B', { academic: 10, economic: -5, trust: 35, legal: 25 })" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-xs space-y-1 block">
-                            <strong class="text-cyan-400 block font-bold text-sm">Opción B: Sinergia Estratégica (Human-in-the-loop)</strong>
-                            <span class="text-slate-400 block leading-relaxed">La máquina alerta al tutor con las causales, éste analiza fallas de conectividad o desgano, interviene de forma humana y decide de manera responsable la acción.</span>
+                        <button onclick="makeSimDecision('process', 'B', { academic: 10, economic: -5, trust: 35, legal: 25 }, 'Los tutores validan cada alerta con contexto humano. Detectan dos falsos positivos por fallas de conectividad y una emergencia familiar. El sistema se percibe como apoyo, no como amenaza.')" class="w-full p-4 rounded-xl border border-slate-800 bg-slate-950 text-left hover:border-cyan-500/30 transition text-sm space-y-1 block">
+                            <strong class="text-cyan-400 block font-bold text-lg mb-2">Opción B: Validación docente (Human-in-the-loop)</strong>
+                            <div class="text-slate-300 space-y-1.5">
+                                <p class="flex items-start"><span class="text-emerald-400 mr-2\">✓</span> La IA alerta con las causas; un docente valida antes de actuar</p>
+                                <p class="flex items-start"><span class="text-rose-400 mr-2\">⚠</span> Requiere tiempo docente y las alertas podrían acumularse</p>
+                            </div>
                         </button>
                     </div>
                 `;
@@ -1142,24 +1220,24 @@
 
                 if (hasCriticalIssue) {
                     dictamenHTML = `
-                        <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl text-rose-300 space-y-2">
+                        <div class="bg-rose-500/10 border border-rose-500/30 p-5 rounded-xl text-rose-300 space-y-3">
                             <div class="flex items-center space-x-2">
-                                <span class="text-lg">🚨</span>
-                                <strong class="font-extrabold text-sm">Riesgo Crítico de Gobernanza Directiva</strong>
+                                <span class="text-2xl">🚨</span>
+                                <strong class="font-extrabold text-lg">Proyecto Cancelado por el Consejo</strong>
                             </div>
-                            <p class="text-xs leading-relaxed">
+                            <p class="text-base leading-relaxed">
                                 Sus decisiones priorizaron en exceso la eficiencia técnica y la automatización silenciosa. Ha implementado una solución "Caja Negra" vulnerable a demandas legales y con fuerte rechazo estudiantil. Debe replantear su gobernanza hacia una "IA Explicable" con un enfoque centrado en las personas.
                             </p>
                         </div>
                     `;
                 } else {
                     dictamenHTML = `
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-emerald-300 space-y-2">
+                        <div class="bg-emerald-500/10 border border-emerald-500/30 p-5 rounded-xl text-emerald-300 space-y-3">
                             <div class="flex items-center space-x-2">
-                                <span class="text-lg">✓</span>
-                                <strong class="font-extrabold text-sm">Gobernanza Ética Exitosa</strong>
+                                <span class="text-2xl">✓</span>
+                                <strong class="font-extrabold text-lg">Gestión Reconocida: IA Ética y Auditable</strong>
                             </div>
-                            <p class="text-xs leading-relaxed">
+                            <p class="text-base leading-relaxed">
                                 ¡Felicitaciones Directivo! Ha logrado un diseño robusto bajo los principios de ética por diseño, transparencia operativa y "Human-in-the-loop". Su sistema es auditable, legalmente sólido y cuenta con la confianza de docentes y alumnos.
                             </p>
                         </div>
@@ -1167,21 +1245,21 @@
                 }
 
                 container.innerHTML = `
-                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 py-1 px-2.5 rounded-full">Dictamen Técnico Emitido</span>
+                    <span class="text-sm font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 py-1 px-2.5 rounded-full block w-fit mb-4">Dictamen Técnico Emitido</span>
                     <div class="space-y-2">
-                        <h3 class="text-lg md:text-2xl font-black">Reporte Final de la Simulación</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">Análisis de viabilidad institucional de sus elecciones políticas para la .</p>
+                        <h3 class="text-xl md:text-3xl font-black">Reporte Final de la Simulación</h3>
+                        <p class="text-base text-slate-400 leading-relaxed">Análisis de viabilidad institucional de sus elecciones de política institucional.</p>
                     </div>
 
                     ${dictamenHTML}
 
-                    <div class="space-y-2 pt-2 border-t border-slate-800">
-                        <h4 class="text-xs font-bold text-slate-300">Bitácora de Decisiones:</h4>
-                        <div class="space-y-1.5 max-h-[150px] overflow-y-auto pr-1 text-[10px] text-slate-400 leading-relaxed">
+                    <div class="space-y-3 pt-4 border-t border-slate-800 mt-4">
+                        <h4 class="text-base font-bold text-slate-300">Bitácora de Decisiones:</h4>
+                        <div class="space-y-2 max-h-[200px] overflow-y-auto pr-2 text-xs text-slate-400 leading-relaxed">
                             ${simHistory.map((h, i) => `
-                                <div class="bg-slate-950 p-2 rounded border border-slate-850">
-                                    <strong class="text-cyan-400 block">${i + 1}. ${h.category}:</strong>
-                                    <span>${h.decision}</span>
+                                <div class="bg-slate-950 p-3 rounded-lg border border-slate-850">
+                                    <strong class="text-cyan-400 block text-sm mb-1">${i + 1}. ${h.category}:</strong>
+                                    <span class="text-sm">${h.decision}</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -1190,7 +1268,12 @@
             }
         }
 
-        function makeSimDecision(category, option, metricsChange) {
+        function startSimulator() {
+            simStage = 1;
+            renderSimStage();
+        }
+
+        function makeSimDecision(category, option, metricsChange, consequenceText) {
             simDecisions[category] = option;
 
             // Actualizar métricas
@@ -1201,31 +1284,47 @@
 
             // Guardar historial
             const optionLabels = {
-                model: option === 'A' ? 'Deep Learning (Caja Negra)' : option === 'B' ? 'Híbrido (XAI SHAP/LIME)' : 'Árbol de Decisión (Simple)',
-                data: option === 'A' ? 'Datos Absolutos (Con proxies)' : 'Filtrado Ético de Datos',
-                transparency: option === 'A' ? 'Implementación Silenciosa' : 'Transparencia Operativa Activa',
-                process: option === 'A' ? 'Automatización Ciega' : 'Sinergia (Human-in-the-loop)'
+                model: option === 'A' ? 'Sistema Complejo (Caja Negra)' : option === 'B' ? 'Modelo con Capa de Explicación (XAI)' : 'Modelo Simple y Transparente',
+                data: option === 'A' ? 'Todos los datos disponibles' : 'Solo comportamiento académico',
+                transparency: option === 'A' ? 'Implementación silenciosa' : 'Aviso visible y consentimiento',
+                process: option === 'A' ? 'Automatización total' : 'Validación docente (Human-in-the-loop)'
             };
 
             simHistory.push({
-                category: category === 'model' ? 'Arquitectura' : category === 'data' ? 'Gobernanza de Datos' : category === 'transparency' ? 'Transparencia' : 'Ciclo de Decisión',
+                category: category === 'model' ? 'Arquitectura de IA' : category === 'data' ? 'Datos del Sistema' : category === 'transparency' ? 'Comunicación a los Estudiantes' : '¿Quién ejecuta las alertas?',
                 decision: optionLabels[category]
             });
 
-            simStage++;
-
-            if (simStage === 5) {
-                userProgress.simCompleted = true;
-                saveProgress();
-                updateProgressUI();
-            }
+            // Preparar consecuencia
+            consequenceData = {
+                text: consequenceText,
+                delta: metricsChange
+            };
+            showingConsequence = true;
 
             renderSimMetrics();
             renderSimStage();
         }
 
+        function nextSimStage() {
+            showingConsequence = false;
+            simStage++;
+
+            if (simStage === 5) {
+                // Prevent crash if userProgress isn't fully defined yet, though we patched it
+                if (typeof userProgress !== 'undefined') {
+                    userProgress.simCompleted = true;
+                    if (typeof saveProgress === 'function') saveProgress();
+                    if (typeof updateProgressUI === 'function') updateProgressUI();
+                }
+            }
+
+            renderSimStage();
+        }
+
         function resetSimulator() {
-            simStage = 1;
+            simStage = 0;
+            showingConsequence = false;
             simMetrics = { academic: 50, economic: 70, trust: 40, legal: 50 };
             simHistory = [];
             document.getElementById('sim-reset-container').classList.add('hidden');
@@ -1241,24 +1340,47 @@
             const actionVal = document.getElementById('reto-select-action').value;
             const rightVal = document.getElementById('reto-select-right').value;
 
-            const previewText = document.getElementById('preview-text');
+            const p1 = document.getElementById('preview-1');
+            const p2 = document.getElementById('preview-2');
+            const p3 = document.getElementById('preview-3');
+            const p4 = document.getElementById('preview-4');
+            const p5 = document.getElementById('preview-5');
 
-            if (!dataVal && !factorVal && !scoreVal && !actionVal && !rightVal) {
-                previewText.innerHTML = "Utilice las selecciones del panel izquierdo para reconstruir la notificación ética bajo estándares XAI de manera responsable.";
-                return;
-            }
+            const setPreview = (el, val, map, defaultText) => {
+                if (val && map[val]) {
+                    el.textContent = map[val];
+                    el.classList.remove('border-dashed', 'border-slate-700', 'text-slate-500');
+                } else {
+                    el.textContent = defaultText;
+                    el.classList.add('border-dashed', 'border-slate-700', 'text-slate-500');
+                }
+            };
 
-            const dataStr = dataVal === 'asistencia_notas' ? '"Asistencia acumulada del 65% y promedio de notas de 10.5"' : dataVal === 'codigo_postal' ? '"Residencia del estudiante en código postal periférico"' : dataVal === 'ninguno' ? '"Variables no especificadas"' : '[Seleccione]';
-            const factorStr = factorVal === 'caida_asistencia' ? '"Caída del 30% en los accesos al Aula Virtual"' : factorVal === 'historial_pagos' ? '"Atrasos en los pagos de pensiones"' : '[Seleccione]';
-            const scoreStr = scoreVal === 'confianza_92' ? '"92% de precisión técnica"' : scoreVal === 'infalible' ? '"100% de infalibilidad"' : '[Seleccione]';
-            const actionStr = actionVal === 'intervencion_tutoria' ? '"coordinar una tutoría personalizada para acompañamiento psicopedagógico"' : actionVal === 'suspension' ? '"suspender provisionalmente los beneficios de matrícula"' : '[Seleccione]';
-            const rightStr = rightVal === 'derecho_apelacion' ? '"el derecho a apelar y solicitar una revisión humana en un plazo de 5 días"' : rightVal === 'inapelable' ? '"una decisión definitiva e inapelable del algoritmo"' : '[Seleccione]';
+            setPreview(p1, dataVal, {
+                'asistencia_notas': 'asistencia acumulada del 65% y promedio de notas de 10.5 en el trimestre.',
+                'codigo_postal': 'residencia en una zona con altos índices de abandono.',
+                'ninguno': 'variables internas del sistema (confidenciales).'
+            }, '[respuesta 1: ¿qué información?]');
 
-            previewText.innerHTML = `
-                El sistema de analítica de la  ha generado una alerta para su perfil de aprendizaje basado en: <strong class="text-cyan-400">${dataStr}</strong>.<br><br>
-                Identificamos como principal factor de correlación la <strong class="text-cyan-400">${factorStr}</strong>, estimando esta alerta con un nivel de <strong class="text-indigo-400">${scoreStr}</strong>.<br><br>
-                Como protocolo de apoyo, la universidad procederá a: <strong class="text-emerald-400">${actionStr}</strong>. Recuerde que usted cuenta con <strong class="text-indigo-300">${rightStr}</strong>.
-            `;
+            setPreview(p2, factorVal, {
+                'caida_asistencia': 'la caída del 30% en los ingresos al Aula Virtual en las últimas dos semanas',
+                'historial_pagos': 'los atrasos en los pagos de pensiones del ciclo académico vigente'
+            }, '[respuesta 2: ¿qué la disparó?]');
+
+            setPreview(p3, scoreVal, {
+                'confianza_92': 'un 92% de precisión (sujeto a margen de error).',
+                'infalible': 'garantía absoluta de infalibilidad algorítmica.'
+            }, '[respuesta 3: ¿cuánta confianza?]');
+
+            setPreview(p4, actionVal, {
+                'intervencion_tutoria': 'programar una tutoría personalizada para coordinar acompañamiento académico.',
+                'suspension': 'retirar o suspender preventivamente los beneficios de matrícula.'
+            }, '[respuesta 4: ¿qué acción?]');
+
+            setPreview(p5, rightVal, {
+                'derecho_apelacion': 'el derecho a apelar y solicitar una revisión humana en un plazo de 5 días.',
+                'inapelable': 'ningún recurso, al ser decisiones definitivas e inapelables.'
+            }, '[respuesta 5: ¿qué derechos?]');
         }
 
         function checkReto() {
@@ -1269,62 +1391,121 @@
             const rightVal = document.getElementById('reto-select-right').value;
 
             if (!dataVal || !factorVal || !scoreVal || !actionVal || !rightVal) {
-                alert("Por favor, seleccione todos los pilares antes de proceder con la auditoría.");
+                alert("Por favor, responda las 5 preguntas antes de evaluar.");
                 return;
             }
 
             let score = 0;
-            let feedback = '';
+            let feedbackItems = [];
 
-            if (dataVal === 'asistencia_notas') score += 20;
-            else feedback += '• <strong>Datos Utilizados:</strong> Ha seleccionado proxies de exclusión indirecta (geográficos) o inaudibles. Priorice el rendimiento académico neto.<br>';
+            // 1. Información
+            if (dataVal === 'asistencia_notas') {
+                score += 20;
+                feedbackItems.push('<p class="text-emerald-400"><span class="font-bold">✓ Información: Correcto</span> — usaste evidencia académica verificable, no datos que discriminan por origen.</p>');
+            } else {
+                feedbackItems.push('<p class="text-amber-400"><span class="font-bold">✗ Información:</span> La zona de residencia es un indicador indirecto del nivel socioeconómico — usarla discrimina sin decirlo. Y ocultar las variables "por confidencialidad" es exactamente la caja negra que intentamos desmontar.</p>');
+            }
 
-            if (factorVal === 'caida_asistencia') score += 20;
-            else feedback += '• <strong>Factores de Influencia:</strong> Evite utilizar factores de sesgo presupuestario/pagos para diagnosticar deserción estudiantil académica.<br>';
+            // 2. Factor
+            if (factorVal === 'caida_asistencia') {
+                score += 20;
+                feedbackItems.push('<p class="text-emerald-400"><span class="font-bold">✓ Factor: Correcto</span> — señalaste una causa académica concreta que el tutor puede abordar.</p>');
+            } else {
+                feedbackItems.push('<p class="text-amber-400"><span class="font-bold">✗ Factor:</span> Los atrasos de pago describen la economía familiar, no el compromiso académico. Mezclarlo estigmatiza al estudiante.</p>');
+            }
 
-            if (scoreVal === 'confianza_92') score += 20;
-            else feedback += '• <strong>Nivel de Confianza:</strong> Declarar infalibilidad absoluta de la IA es poco ético e inviable tecnológicamente.<br>';
+            // 3. Certeza
+            if (scoreVal === 'confianza_92') {
+                score += 20;
+                feedbackItems.push('<p class="text-emerald-400"><span class="font-bold">✓ Certeza: Correcto</span> — reconocer el margen de error es honesto y legalmente prudente.</p>');
+            } else {
+                feedbackItems.push('<p class="text-amber-400"><span class="font-bold">✗ Certeza:</span> Ningún sistema es infalible. Prometer certeza absoluta es falso y deja a la institución sin defensa cuando el sistema se equivoque.</p>');
+            }
 
-            if (actionVal === 'intervencion_tutoria') score += 20;
-            else feedback += '• <strong>Protocolo de Acción:</strong> Las medidas de IA deben ser de acompañamiento formativo, jamás punitivas directas (ej. suspensiones).<br>';
+            // 4. Acción
+            if (actionVal === 'intervencion_tutoria') {
+                score += 20;
+                feedbackItems.push('<p class="text-emerald-400"><span class="font-bold">✓ Acción: Correcto</span> — la respuesta institucional es de acompañamiento, no de castigo.</p>');
+            } else {
+                feedbackItems.push('<p class="text-amber-400"><span class="font-bold">✗ Acción:</span> Una alerta predictiva es una probabilidad, no un veredicto. Castigar (suspender la beca) en base a una predicción es la falla ética más grave de este ejercicio.</p>');
+            }
 
-            if (rightVal === 'derecho_apelacion') score += 20;
-            else feedback += '• <strong>Derechos del Alumno:</strong> Es mandatorio garantizar explícitamente el derecho a una revisión por seres humanos frente a algoritmos.<br>';
+            // 5. Derechos
+            if (rightVal === 'derecho_apelacion') {
+                score += 20;
+                feedbackItems.push('<p class="text-emerald-400"><span class="font-bold">✓ Derechos: Correcto</span> — garantizaste la revisión humana, el pilar central de la IA responsable.</p>');
+            } else {
+                feedbackItems.push('<p class="text-amber-400"><span class="font-bold">✗ Derechos:</span> Toda decisión asistida por IA debe poder apelarse ante un ser humano. "Inapelable" vulnera derechos básicos del estudiante.</p>');
+            }
 
-            // Renderizar feedback
             const feedbackBox = document.getElementById('reto-feedback');
+            const feedbackContainer = document.getElementById('reto-feedback-container');
             const badge = document.getElementById('reto-badge');
+            const btnCorregir = document.getElementById('btn-corregir');
 
             badge.textContent = `Score: ${score}/100`;
             badge.classList.remove('hidden');
-            feedbackBox.classList.remove('hidden');
+            feedbackContainer.classList.remove('hidden');
+
+            let headerHTML = '';
 
             if (score === 100) {
-                badge.className = "text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400";
-                feedbackBox.className = "p-4 rounded-xl text-xs leading-relaxed bg-emerald-500/10 text-emerald-300 border border-emerald-500/20";
-                feedbackBox.innerHTML = "<strong>¡Felicidades Directivo!</strong> Su comunicación cumple de manera brillante con los estándares XAI de transparencia, equidad y respeto de los derechos digitales estudiantiles.";
+                badge.className = "text-sm font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400";
+                feedbackBox.className = "p-6 rounded-2xl text-sm md:text-base leading-relaxed bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-lg space-y-3";
+                headerHTML = "<p class='font-semibold text-lg text-emerald-400 mb-4'>🎓 Comunicación aprobada. Tu carta cumple los 5 pilares: evidencia legítima, causa concreta, honestidad sobre el margen de error, acción de apoyo y derecho a revisión humana. Compárala con la notificación original de arriba: mismos datos, misma alerta — pero una destruye la confianza y la otra la construye.</p>";
+                btnCorregir.classList.add('hidden'); // Ocultar si está perfecto
 
+                // Deshabilitar selects
+                ['data', 'factor', 'score', 'action', 'right'].forEach(id => {
+                    document.getElementById(`reto-select-${id}`).disabled = true;
+                });
             } else {
-                badge.className = "text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400";
-                feedbackBox.className = "p-4 rounded-xl text-xs leading-relaxed bg-amber-500/10 text-amber-300 border border-amber-500/20";
-                feedbackBox.innerHTML = `<strong>Su diseño presenta brechas éticas/legales:</strong><br><br>${feedback}`;
+                badge.className = "text-sm font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400";
+                feedbackBox.className = "p-6 rounded-2xl text-sm md:text-base leading-relaxed bg-slate-900 border border-slate-700 shadow-lg space-y-3";
+                headerHTML = `<p class='font-semibold text-lg text-slate-200 mb-4'>Tu carta aún tiene brechas éticas o legales (${score}/100). Revisa los puntos marcados y usa "Corregir mis respuestas" para ajustar solo lo necesario.</p>`;
+                btnCorregir.classList.remove('hidden');
+
+                // Deshabilitar selects temporalmente
+                ['data', 'factor', 'score', 'action', 'right'].forEach(id => {
+                    document.getElementById(`reto-select-${id}`).disabled = true;
+                });
             }
+
+            feedbackBox.innerHTML = headerHTML + '<div class="space-y-3 p-4 bg-slate-950 rounded-xl border border-slate-800">' + feedbackItems.join('') + '</div>';
+
+            // Scroll al feedback
+            setTimeout(() => {
+                feedbackContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function corregirReto() {
+            document.getElementById('reto-feedback-container').classList.add('hidden');
+
+            // Rehabilitar selects
+            ['data', 'factor', 'score', 'action', 'right'].forEach(id => {
+                document.getElementById(`reto-select-${id}`).disabled = false;
+            });
+
+            // Scroll arriba
+            document.getElementById('reto-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function resetReto() {
-            document.getElementById('reto-select-data').value = "";
-            document.getElementById('reto-select-factor').value = "";
-            document.getElementById('reto-select-score').value = "";
-            document.getElementById('reto-select-action').value = "";
-            document.getElementById('reto-select-right').value = "";
+            ['data', 'factor', 'score', 'action', 'right'].forEach(id => {
+                const el = document.getElementById(`reto-select-${id}`);
+                el.value = "";
+                el.disabled = false;
+            });
 
             document.getElementById('reto-badge').classList.add('hidden');
-            document.getElementById('reto-feedback').classList.add('hidden');
+            document.getElementById('reto-feedback-container').classList.add('hidden');
 
             updateRetoPreview();
+            document.getElementById('reto-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+
 
     </script>
 </body>
-
 </html>
