@@ -883,15 +883,19 @@
       const regEl = document.getElementById('regulatory-status');
       const govEl = document.getElementById('governance-level');
 
-      if (etica >= 65) {
-        regEl.textContent = '✓ Conforme a Ley 29733';
-        regEl.className = 'text-xs text-emerald-400 leading-relaxed font-mono';
-      } else {
-        regEl.textContent = '⚠️ Alerta de Sanción ANPD';
-        regEl.className = 'text-xs text-red-400 leading-relaxed font-mono';
+      if (regEl) {
+        if (etica >= 65) {
+          regEl.textContent = '✓ Conforme a Ley 29733';
+          regEl.className = 'text-xs text-emerald-400 leading-relaxed font-mono';
+        } else {
+          regEl.textContent = '⚠️ Alerta de Sanción ANPD';
+          regEl.className = 'text-xs text-red-400 leading-relaxed font-mono';
+        }
       }
 
-      govEl.textContent = `Cumplimiento ético general: Nivel ${Math.round((etica + confianza) / 2)}%`;
+      if (govEl) {
+        govEl.textContent = `Cumplimiento ético general: Nivel ${Math.round((etica + confianza) / 2)}%`;
+      }
     }
 
     function renderAllTabs() {
