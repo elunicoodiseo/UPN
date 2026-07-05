@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Impacto de IA Educativa</title>
+
+    <!-- Fuentes -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS (CDN para archivo único) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Configuración de Tailwind para paleta de colores -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'edu-blue': '#1a365d', // Azul oscuro
+                        'edu-blue-light': '#2a4c7e',
+                        'edu-terra': '#c2410c', // Terracota
+                        'edu-terra-hover': '#9a340a',
+                        'edu-beige': '#f5f5dc', // Beige suave
+                        'edu-gray': '#f3f4f6', // Gris claro
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'heading': ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Librerías de Visualización y 3D -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ocultar scrollbar para paneles pero permitir scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animación de Fusión para la Matriz */
+        .matrix-col {
+            transition: all 1s ease-in-out;
+        }
+
+        .matrix-merged .matrix-col {
+            transform: scale(0.95);
+            opacity: 0.8;
+            filter: blur(2px);
+        }
+
+        .matrix-center-result {
+            opacity: 0;
+            transform: scale(0.8) translate(-50%, -50%);
+            transition: all 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        .matrix-merged .matrix-center-result {
+            opacity: 1;
+            transform: scale(1) translate(-50%, -50%);
+            pointer-events: auto;
+        }
+
+        /* 3D Canvas Container */
+        #canvas-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #ffffff 0%, #e5e7eb 100%);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+            cursor: grab;
+        }
+
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        /* Animación del Ciclo */
+        .cycle-step {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cycle-step.active {
+            transform: scale(1.1);
+            font-weight: bold;
+            border-color: #c2410c;
+            background-color: #fffaf0;
+        }
+    </style>
+</head>
+
+<body class="antialiased text-gray-800">
+
+    <!-- 1. Pantalla inicial inmersiva -->
+    <header class="relative min-h-screen flex items-center justify-center bg-edu-blue overflow-hidden px-4">
+        <div class="absolute inset-0 opacity-20">
+            <!-- Patrón de fondo sutil -->
+            <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+        </div>
+
+        <div
+            class="z-10 text-center max-w-4xl bg-white/10 backdrop-blur-md p-8 md:p-16 rounded-3xl border border-white/20 shadow-2xl">
+            <div
+                class="inline-block px-4 py-1 rounded-full bg-edu-terra text-white text-sm font-semibold mb-6 tracking-wide">
+                Módulo de Maestría
+            </div>
+            <h1 class="text-4xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight">
+                Evaluación de Impacto de la IA <br>
+                <span class="text-edu-beige">en el Aprendizaje y la Gestión</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+                Del dato a la decisión: cómo saber si una solución de IA realmente mejora la experiencia educativa.
+            </p>
+            <div class="bg-white/20 p-6 rounded-2xl mb-10 border-l-4 border-edu-terra">
+                <p class="text-xl md:text-2xl text-white font-medium italic">
+                    "La tecnología sirve a la pedagogía, no al revés."
+                </p>
+                <p class="text-white mt-2 text-sm">
+                    Antes de implementar IA, una Institución educativa debe definir qué significa éxito.
+                </p>
+            </div>
+            <a href="#ancla"
+                class="inline-flex items-center gap-3 bg-edu-terra hover:bg-edu-terra-hover text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105 shadow-lg">
+                Iniciar exploración <i class="fa-solid fa-arrow-down"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Sección interactiva: El ancla de la implementación -->
+    <section id="ancla" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-edu-blue mb-4">El ancla de la implementación
+            </h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                Nunca se debe implementar una solución de IA sin definir previamente objetivos, indicadores y métodos de
+                recolección de datos.
+            </p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row items-center justify-center gap-12">
+            <!-- Representación visual del Ancla -->
+            <div class="relative w-64 h-64 flex-shrink-0 flex justify-center items-center">
+                <i class="fa-solid fa-anchor text-9xl text-edu-blue opacity-20 absolute"></i>
+                <div class="z-10 space-y-4 w-full">
+                    <button onclick="showAnchorInfo('obj')"
+                        class="w-full bg-white border-2 border-edu-blue text-edu-blue font-bold py-3 px-6 rounded-xl shadow-md hover:bg-edu-blue hover:text-white transition-colors duration-300 flex justify-between items-center">
+                        <span>Objetivos</span> <i class="fa-solid fa-bullseye"></i>
+                    </button>
+                    <button onclick="showAnchorInfo('ind')"
+                        class="w-full bg-white border-2 border-edu-blue text-edu-blue font-bold py-3 px-6 rounded-xl shadow-md hover:bg-edu-blue hover:text-white transition-colors duration-300 flex justify-between items-center">
+                        <span>Indicadores</span> <i class="fa-solid fa-chart-line"></i>
+                    </button>
+                    <button onclick="showAnchorInfo('met')"
+                        class="w-full bg-white border-2 border-edu-blue text-edu-blue font-bold py-3 px-6 rounded-xl shadow-md hover:bg-edu-blue hover:text-white transition-colors duration-300 flex justify-between items-center">
+                        <span>Métodos</span> <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel de información del Ancla -->
+            <div id="anchor-panel"
+                class="flex-1 glass-card p-8 rounded-2xl min-h-[250px] flex flex-col justify-center border-t-4 border-edu-terra">
+                <div class="text-center text-gray-500">
+                    <i class="fa-solid fa-hand-pointer text-4xl mb-4"></i>
+                    <p>Selecciona un elemento del ancla para explorar su significado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Los dos pilares del impacto educativo -->
+    <section class="py-24 bg-edu-beige px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-center text-edu-blue mb-16">Los dos pilares del
+                impacto educativo</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Pilar 1 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift group cursor-pointer"
+                    onclick="togglePilar('pilar1')">
+                    <div class="bg-edu-blue p-6 text-white text-center transition-colors group-hover:bg-edu-blue-light">
+                        <i class="fa-solid fa-brain text-5xl mb-4 text-edu-terra"></i>
+                        <h3 class="text-2xl font-bold">Impacto en el Aprendizaje</h3>
+                        <p class="text-sm mt-2 font-light">Toca para explorar el impacto pedagógico</p>
+                    </div>
+                    <div class="p-8">
+                        <ul class="space-y-3 mb-6 text-gray-700">
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Rendimiento académico.</li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Desarrollo de habilidades.</li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Participación y autonomía.</li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Calidad de la retroalimentación.
+                            </li>
+                        </ul>
+                        <div id="pilar1-ejemplo"
+                            class="hidden bg-blue-50 border-l-4 border-edu-blue p-4 rounded text-sm text-gray-800">
+                            <strong>Ejemplo real:</strong> Un tutor conversacional de matemáticas usado por estudiantes
+                            de educación básica mostró mejoras significativas cuando se usó de forma guiada, con
+                            sesiones frecuentes y acompañamiento pedagógico. La herramienta no reemplazó la enseñanza,
+                            ofreció práctica personalizada.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pilar 2 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift group cursor-pointer"
+                    onclick="togglePilar('pilar2')">
+                    <div class="bg-edu-blue p-6 text-white text-center transition-colors group-hover:bg-edu-blue-light">
+                        <i class="fa-solid fa-building-columns text-5xl mb-4 text-edu-terra"></i>
+                        <h3 class="text-2xl font-bold">Impacto en la Gestión</h3>
+                        <p class="text-sm mt-2 font-light">Toca para explorar el impacto institucional</p>
+                    </div>
+                    <div class="p-8">
+                        <ul class="space-y-3 mb-6 text-gray-700">
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Reducción de tiempos operativos.
+                            </li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Optimización de recursos y costos.
+                            </li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Disminución de errores.</li>
+                            <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Retención y satisfacción de
+                                usuarios.</li>
+                        </ul>
+                        <div id="pilar2-ejemplo"
+                            class="hidden bg-orange-50 border-l-4 border-edu-terra p-4 rounded text-sm text-gray-800">
+                            <strong>Ejemplo real:</strong> Un chatbot de acompañamiento estudiantil en procesos de
+                            matrícula ayudó a reducir la deserción antes de clases. Su valor no fue solo responder, sino
+                            ofrecer orientación oportuna y apoyo permanente.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4 y 5. Paneles analíticos (Aprendizaje y Gestión) -->
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-center text-edu-blue mb-4">Paneles Analíticos de
+            Decisión</h2>
+        <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Visualización interactiva de indicadores clave.
+            Observa cómo los datos guían la evaluación de impacto en la institución educativa.</p>
+
+        <!-- Dashboard Aprendizaje -->
+        <div class="mb-20">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-blue-100 rounded-lg text-edu-blue"><i class="fa-solid fa-book-open text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-edu-blue">Indicadores de Aprendizaje</h3>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Gráfica 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Mejora de Competencias</h4>
+                    <div class="relative h-48 w-full"><canvas id="chartCompetencias"></canvas></div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p class="mb-2"><strong>Explicación:</strong> Compara el nivel de dominio antes y después de
+                            usar la IA como apoyo cognitivo.</p>
+                        <p class="italic text-edu-terra">¿El incremento refleja verdadero aprendizaje o dependencia de
+                            la herramienta?</p>
+                    </div>
+                </div>
+                <!-- Gráfica 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Nivel de Autonomía</h4>
+                    <div class="relative h-48 w-full"><canvas id="chartAutonomia"></canvas></div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p class="mb-2"><strong>Explicación:</strong> Mide si el estudiante requiere menos ayuda del
+                            tutor de IA con el paso del tiempo.</p>
+                        <p class="italic text-edu-terra">Si la dependencia aumenta, ¿la herramienta está anulando el
+                            esfuerzo cognitivo?</p>
+                    </div>
+                </div>
+                <!-- Gráfica 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-4">Participación Significativa</h4>
+                        <div class="flex items-end gap-2 mb-2">
+                            <span class="text-4xl font-bold text-edu-blue">68%</span>
+                            <span class="text-green-500 text-sm font-bold"><i class="fa-solid fa-arrow-up"></i>
+                                12%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                            <div class="bg-edu-blue h-2 rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p class="mb-2"><strong>Explicación:</strong> No basta con saber si el estudiante ingresó.
+                            Analizamos si interactuó, revisó retroalimentación y aplicó mejoras.</p>
+                        <p class="italic text-edu-terra">¿La interacción frecuente se traduce en mejores entregas?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Gestión -->
+        <div>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="p-3 bg-orange-100 rounded-lg text-edu-terra"><i
+                        class="fa-solid fa-network-wired text-2xl"></i></div>
+                <h3 class="text-2xl font-bold text-edu-blue">Indicadores de Gestión</h3>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Gráfica 4 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Tiempos de Respuesta</h4>
+                    <div class="relative h-48 w-full"><canvas id="chartTiempos"></canvas></div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p class="mb-2"><strong>Explicación:</strong> Compara horas de atención humana vs asistencia de
+                            IA en trámites.</p>
+                        <p class="italic text-edu-blue">¿El ahorro de tiempo afecta la percepción de empatía
+                            institucional?</p>
+                    </div>
+                </div>
+                <!-- Gráfica 5 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Retención Estudiantil</h4>
+                    <div class="relative h-48 w-full flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fa-solid fa-users text-5xl text-gray-300 mb-2"></i>
+                            <div class="text-3xl font-bold text-edu-blue">89.5%</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Cohorte Actual</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600 border-t pt-4">
+                        <p class="mb-2"><strong>Explicación:</strong> Alertas tempranas generadas por analítica
+                            predictiva.</p>
+                        <p class="italic text-edu-blue">Identificar el riesgo no basta, ¿qué acciones humanas
+                            acompañaron la alerta?</p>
+                    </div>
+                </div>
+                <!-- Gráfica 6 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2">Tipos de Consultas (Chatbot)</h4>
+                    <div class="relative h-48 w-full"><canvas id="chartConsultas"></canvas></div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p class="mb-2"><strong>Explicación:</strong> Mide si la IA resuelve o escala los problemas
+                            administrativos.</p>
+                        <p class="italic text-edu-blue">¿La derivación a humanos es por error del bot o por complejidad
+                            del caso?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Matriz de recolección de datos mixtos -->
+    <section class="py-24 bg-gray-900 text-white px-6 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10" id="matrix-container">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-center mb-4">Matriz de Evidencia Mixta</h2>
+            <p class="text-center text-gray-400 mb-12">La evaluación robusta no elige entre números o narrativas; usa
+                ambos.</p>
+
+            <div class="flex flex-col md:flex-row gap-8 relative">
+                <!-- Centro de Fusión (Oculto inicialmente) -->
+                <div
+                    class="absolute top-1/2 left-1/2 matrix-center-result text-center bg-white text-gray-900 p-8 rounded-full shadow-[0_0_50px_rgba(255,255,255,0.3)] w-80 h-80 flex flex-col items-center justify-center z-20">
+                    <i class="fa-solid fa-eye text-4xl text-edu-terra mb-2"></i>
+                    <h3 class="text-xl font-bold text-edu-blue mb-2">Visión Holística</h3>
+                    <p class="text-sm">"Los números muestran la tendencia; las voces explican la causa."</p>
+                    <button onclick="resetMatrix()" class="mt-4 text-xs underline text-edu-blue">Separar datos</button>
+                </div>
+
+                <!-- Columna Cuantitativa -->
+                <div class="matrix-col flex-1 bg-white/10 p-8 rounded-2xl border border-white/20 backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-edu-beige mb-2"><i class="fa-solid fa-hashtag mr-2"></i>Datos
+                        Cuantitativos</h3>
+                    <p class="text-sm text-gray-300 mb-6 border-b border-white/20 pb-4">Responden al "qué" y al
+                        "cuánto".</p>
+                    <ul class="space-y-3 font-light">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-edu-terra rounded-full mr-3"></span> Notas
+                            y tasas de aprobación</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-edu-terra rounded-full mr-3"></span>
+                            Tiempo de uso y respuesta</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-edu-terra rounded-full mr-3"></span>
+                            Costos y ahorros operativos</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-edu-terra rounded-full mr-3"></span>
+                            Número de errores</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-edu-terra rounded-full mr-3"></span>
+                            Cantidad de interacciones</li>
+                    </ul>
+                </div>
+
+                <!-- Columna Cualitativa -->
+                <div class="matrix-col flex-1 bg-white/10 p-8 rounded-2xl border border-white/20 backdrop-blur-sm">
+                    <h3 class="text-2xl font-bold text-edu-beige mb-2"><i class="fa-solid fa-quote-left mr-2"></i>Datos
+                        Cualitativos</h3>
+                    <p class="text-sm text-gray-300 mb-6 border-b border-white/20 pb-4">Responden al "por qué" y al
+                        "cómo".</p>
+                    <ul class="space-y-3 font-light">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                            Entrevistas y grupos focales</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                            Encuestas de percepción</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                            Reflexiones docentes</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                            Observaciones de clase</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                            Bitácoras de implementación</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-12 relative z-30">
+                <button onclick="mergeMatrix()"
+                    class="bg-edu-terra hover:bg-edu-terra-hover text-white px-8 py-3 rounded-full font-bold transition shadow-lg">
+                    Fusionar visión de datos <i class="fa-solid fa-compress ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Experiencia de realidad aumentada (Simulada en 3D Canvas) -->
+    <section class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-edu-blue mb-4">Explora el impacto (Vista 3D
+                Interactiva)</h2>
+            <p class="text-lg text-gray-600">Pirámide de evaluación inspirada en el modelo Kirkpatrick adaptado a
+                IA.<br> <strong>Interactúa con el modelo 3D usando el ratón o tacto. Haz clic en los niveles.</strong>
+            </p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8 bg-white p-4 md:p-8 rounded-3xl shadow-xl border border-gray-100">
+            <!-- Canvas Container -->
+            <div class="lg:w-1/2 relative">
+                <div id="canvas-container"></div>
+                <div
+                    class="absolute top-4 left-4 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-600 flex items-center shadow-sm">
+                    <i class="fa-solid fa-cube mr-2"></i> Modelo 3D Interactivo
+                </div>
+                <div class="absolute bottom-4 left-0 w-full text-center text-xs text-gray-500 pointer-events-none">
+                    Arrastra para rotar. Haz clic en un nivel.
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="lg:w-1/2 flex flex-col justify-center">
+                <div id="pyramid-info"
+                    class="p-6 bg-gray-50 rounded-2xl h-full border-l-4 border-gray-300 transition-all duration-300">
+                    <div class="text-center text-gray-400 py-12">
+                        <i class="fa-solid fa-hand-pointer text-5xl mb-4"></i>
+                        <p class="text-lg">Toca un nivel de la pirámide 3D para ver su detalle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. El filtro ético -->
+    <section class="py-24 bg-edu-beige px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-center text-edu-blue mb-6">El filtro ético:
+                condición indispensable</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto mb-16 font-medium">
+                “Una herramienta puede ser muy usada, pero si recopila datos sin claridad, discrimina o entrega
+                información incorrecta, su impacto no es positivo.”
+            </p>
+
+            <!-- Tubería Visual -->
+            <div class="relative mb-16 overflow-x-auto pb-8 no-scrollbar">
+                <div class="flex items-center min-w-[800px] justify-between relative px-8">
+                    <!-- Linea conectora -->
+                    <div class="absolute top-1/2 left-10 right-10 h-2 bg-gray-300 -translate-y-1/2 z-0 rounded-full">
+                    </div>
+
+                    <!-- Nodos -->
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer group"
+                        onclick="showEthics('datos')">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gray-400 text-white flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition border-4 border-white">
+                            <i class="fa-solid fa-database"></i></div>
+                        <span class="mt-3 font-bold text-gray-600">Datos Brutos</span>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right text-2xl text-gray-400 relative z-10"></i>
+
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer group"
+                        onclick="showEthics('privacidad')">
+                        <div
+                            class="w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition border-4 border-white">
+                            <i class="fa-solid fa-user-shield"></i></div>
+                        <span class="mt-3 font-bold text-edu-blue">Privacidad</span>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right text-2xl text-gray-400 relative z-10"></i>
+
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer group"
+                        onclick="showEthics('equidad')">
+                        <div
+                            class="w-16 h-16 rounded-full bg-purple-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition border-4 border-white">
+                            <i class="fa-solid fa-scale-balanced"></i></div>
+                        <span class="mt-3 font-bold text-edu-blue">Equidad</span>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right text-2xl text-gray-400 relative z-10"></i>
+
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer group"
+                        onclick="showEthics('transparencia')">
+                        <div
+                            class="w-16 h-16 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition border-4 border-white">
+                            <i class="fa-solid fa-eye"></i></div>
+                        <span class="mt-3 font-bold text-edu-blue">Transparencia</span>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right text-2xl text-gray-400 relative z-10"></i>
+
+                    <div class="relative z-10 flex flex-col items-center cursor-pointer group"
+                        onclick="showEthics('decision')">
+                        <div
+                            class="w-16 h-16 rounded-full bg-green-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg group-hover:scale-110 transition border-4 border-white">
+                            <i class="fa-solid fa-flag-checkered"></i></div>
+                        <span class="mt-3 font-bold text-green-700">Decisión</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de detalle ético -->
+            <div id="ethics-panel"
+                class="bg-white p-8 rounded-2xl shadow-md border-l-4 border-gray-400 max-w-4xl mx-auto min-h-[150px]">
+                <p class="text-gray-500 text-center"><i class="fa-solid fa-info-circle mr-2"></i> Haz clic en los nodos
+                    del flujo para ver las condiciones éticas de la implementación.</p>
+            </div>
+
+            <!-- Ejemplo Real -->
+            <div class="mt-12 bg-white/50 p-6 rounded-xl border border-gray-200 max-w-4xl mx-auto">
+                <p class="text-sm text-gray-800">
+                    <strong class="text-edu-terra">Ejemplo en Aula:</strong> En experiencias de tutoría con IA
+                    generativa, se ha observado que cuando los estudiantes usan la herramienta sin guía pedagógica,
+                    pueden depender de respuestas automáticas y aprender menos. Por eso, toda implementación debe
+                    incluir límites, orientación docente y revisión humana.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Casos reales adaptados para explorar -->
+    <section class="py-24 px-6 max-w-4xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-center text-edu-blue mb-4">Análisis de Casos Reales
+        </h2>
+        <p class="text-center text-gray-600 mb-12">Explora situaciones reales de implementación. Analiza riesgos y
+            buenas prácticas. (Sin calificación).</p>
+
+        <div class="space-y-4">
+            <!-- Caso 1 -->
+            <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                <button
+                    class="w-full px-6 py-4 text-left font-bold text-lg text-edu-blue flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition"
+                    onclick="toggleCase('case1')">
+                    <span>1. Chatbot de acompañamiento estudiantil</span>
+                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="icon-case1"></i>
+                </button>
+                <div id="case1" class="hidden px-6 py-6 border-t border-gray-100">
+                    <p class="mb-3"><strong>Contexto:</strong> Una Institución educativa usa un chatbot para orientar a
+                        estudiantes antes del inicio de clases, resolver dudas frecuentes y enviar recordatorios.</p>
+                    <div class="bg-blue-50 p-4 rounded mb-3 text-sm">
+                        <strong>Indicadores clave:</strong> Reducción de estudiantes que no completan matrícula,
+                        cantidad de consultas resueltas, tiempo de respuesta, satisfacción, casos derivados a humanos.
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="border-l-4 border-red-400 pl-3">
+                            <strong class="text-red-700">Riesgo:</strong> Medir solo cantidad de mensajes y no verificar
+                            si el estudiante recibió ayuda efectiva.
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-3">
+                            <strong class="text-green-700">Buena práctica:</strong> Combinar chatbot con apoyo humano y
+                            seguimiento de casos críticos.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 2 -->
+            <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                <button
+                    class="w-full px-6 py-4 text-left font-bold text-lg text-edu-blue flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition"
+                    onclick="toggleCase('case2')">
+                    <span>2. Analítica predictiva para retención</span>
+                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="icon-case2"></i>
+                </button>
+                <div id="case2" class="hidden px-6 py-6 border-t border-gray-100">
+                    <p class="mb-3"><strong>Contexto:</strong> Uso de datos de interacción, entregas, rendimiento y
+                        participación para identificar estudiantes en riesgo.</p>
+                    <div class="bg-blue-50 p-4 rounded mb-3 text-sm">
+                        <strong>Indicadores clave:</strong> Retención, aprobación, efectividad de alertas tempranas,
+                        intervenciones realizadas, mejora tras acompañamiento.
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="border-l-4 border-red-400 pl-3">
+                            <strong class="text-red-700">Riesgo:</strong> Etiquetar estudiantes como “en riesgo” sin
+                            acompañamiento humano o sin revisar sesgos algorítmicos.
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-3">
+                            <strong class="text-green-700">Buena práctica:</strong> Usar datos para activar apoyo
+                            temprano, tutoría y seguimiento personalizado.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 3 -->
+            <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                <button
+                    class="w-full px-6 py-4 text-left font-bold text-lg text-edu-blue flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition"
+                    onclick="toggleCase('case3')">
+                    <span>3. Tutor de IA para matemáticas</span>
+                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="icon-case3"></i>
+                </button>
+                <div id="case3" class="hidden px-6 py-6 border-t border-gray-100">
+                    <p class="mb-3"><strong>Contexto:</strong> Sistema conversacional que ayuda a practicar mediante
+                        preguntas, pistas y retroalimentación.</p>
+                    <div class="bg-blue-50 p-4 rounded mb-3 text-sm">
+                        <strong>Indicadores clave:</strong> Mejora en pruebas diagnósticas, tiempo de práctica,
+                        persistencia, tipo de errores, nivel de autonomía.
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="border-l-4 border-red-400 pl-3">
+                            <strong class="text-red-700">Riesgo:</strong> Que la herramienta entregue respuestas
+                            directas y reduzca el esfuerzo cognitivo.
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-3">
+                            <strong class="text-green-700">Buena práctica:</strong> Diseñar el tutor para dar pistas,
+                            pedir razonamiento paso a paso y mantener al docente como mediador.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 4 -->
+            <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                <button
+                    class="w-full px-6 py-4 text-left font-bold text-lg text-edu-blue flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition"
+                    onclick="toggleCase('case4')">
+                    <span>4. Tutor generativo para redacción</span>
+                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="icon-case4"></i>
+                </button>
+                <div id="case4" class="hidden px-6 py-6 border-t border-gray-100">
+                    <p class="mb-3"><strong>Contexto:</strong> Herramienta de IA que acompaña tareas de escritura,
+                        gramática o argumentación.</p>
+                    <div class="bg-blue-50 p-4 rounded mb-3 text-sm">
+                        <strong>Indicadores clave:</strong> Mejora en calidad de redacción, entregas, retroalimentación
+                        recibida, revisión posterior, uso transparente de IA.
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="border-l-4 border-red-400 pl-3">
+                            <strong class="text-red-700">Riesgo:</strong> Que el estudiante copie respuestas sin
+                            desarrollar habilidades propias de escritura.
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-3">
+                            <strong class="text-green-700">Buena práctica:</strong> Diseñar actividades donde el
+                            estudiante explique decisiones, compare versiones y declare cómo usó la IA.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso 5 -->
+            <div class="border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm">
+                <button
+                    class="w-full px-6 py-4 text-left font-bold text-lg text-edu-blue flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition"
+                    onclick="toggleCase('case5')">
+                    <span>5. IA sin control pedagógico</span>
+                    <i class="fa-solid fa-chevron-down text-gray-400 transition-transform" id="icon-case5"></i>
+                </button>
+                <div id="case5" class="hidden px-6 py-6 border-t border-gray-100">
+                    <p class="mb-3"><strong>Contexto:</strong> Una Institución educativa permite el uso libre de IA
+                        generativa para resolver ejercicios sin lineamientos.</p>
+                    <div class="bg-blue-50 p-4 rounded mb-3 text-sm">
+                        <strong>Indicadores clave:</strong> Resultado en práctica vs resultado sin IA, dependencia de la
+                        herramienta, calidad del razonamiento.
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div class="border-l-4 border-red-400 pl-3">
+                            <strong class="text-red-700">Riesgo:</strong> Los estudiantes rinden mejor durante la
+                            práctica asistida, pero rinden peor en evaluaciones autónomas.
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-3">
+                            <strong class="text-green-700">Buena práctica:</strong> Usar IA con andamiaje, límites,
+                            prompts pedagógicos definidos y momentos de trabajo sin asistencia.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 10. Simulador de decisiones post-impacto -->
+    <section class="py-24 bg-edu-blue text-white px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-center mb-4">Simulador de Decisiones
+                Institucionales</h2>
+            <p class="text-center text-gray-300 mb-12 max-w-2xl mx-auto">Basado en los resultados de evaluación, ¿qué
+                decisión tomarías? Selecciona una acción para cada escenario y observa la recomendación institucional
+                basada en evidencia.</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Escenario A -->
+                <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+                    <h3 class="font-bold text-xl mb-3 text-edu-beige">Escenario A</h3>
+                    <p class="text-sm font-light mb-4">Alto impacto en aprendizaje y gestión. Alto cumplimiento ético y
+                        aceptación.</p>
+                    <select class="w-full bg-white text-gray-900 p-3 rounded-lg mb-4 outline-none"
+                        onchange="simular(this, 'res-a')">
+                        <option value="">-- Elige una decisión --</option>
+                        <option value="escalar">Escalar progresivamente</option>
+                        <option value="mantener">Mantener el piloto</option>
+                        <option value="redisenar">Rediseñar solución</option>
+                        <option value="suspender">Suspender herramienta</option>
+                    </select>
+                    <div id="res-a" class="hidden p-3 rounded-lg bg-green-900/50 border border-green-500 text-sm">
+                        <strong>Recomendación validada:</strong> Escalar progresivamente. Los datos justifican la
+                        inversión y ampliación, manteniendo el monitoreo ético.
+                    </div>
+                </div>
+
+                <!-- Escenario B -->
+                <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+                    <h3 class="font-bold text-xl mb-3 text-edu-beige">Escenario B</h3>
+                    <p class="text-sm font-light mb-4">Impacto estable, usuarios conformes, pero la herramienta requiere
+                        supervisión manual frecuente.</p>
+                    <select class="w-full bg-white text-gray-900 p-3 rounded-lg mb-4 outline-none"
+                        onchange="simular(this, 'res-b')">
+                        <option value="">-- Elige una decisión --</option>
+                        <option value="escalar">Escalar progresivamente</option>
+                        <option value="mantener">Mantener el piloto</option>
+                        <option value="redisenar">Rediseñar solución</option>
+                        <option value="suspender">Suspender herramienta</option>
+                    </select>
+                    <div id="res-b" class="hidden p-3 rounded-lg bg-blue-900/50 border border-blue-400 text-sm">
+                        <strong>Recomendación validada:</strong> Mantener el piloto y capacitar más. No está listo para
+                        escalarse por la carga de soporte, pero tiene potencial.
+                    </div>
+                </div>
+
+                <!-- Escenario C -->
+                <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+                    <h3 class="font-bold text-xl mb-3 text-edu-beige">Escenario C</h3>
+                    <p class="text-sm font-light mb-4">La herramienta es funcional, pero existe baja adopción docente y
+                        errores menores de usabilidad.</p>
+                    <select class="w-full bg-white text-gray-900 p-3 rounded-lg mb-4 outline-none"
+                        onchange="simular(this, 'res-c')">
+                        <option value="">-- Elige una decisión --</option>
+                        <option value="escalar">Escalar progresivamente</option>
+                        <option value="mantener">Mantener el piloto</option>
+                        <option value="redisenar">Rediseñar solución</option>
+                        <option value="suspender">Suspender herramienta</option>
+                    </select>
+                    <div id="res-c" class="hidden p-3 rounded-lg bg-orange-900/50 border border-orange-500 text-sm">
+                        <strong>Recomendación validada:</strong> Rediseñar la herramienta, ajustar procesos o mejorar la
+                        formación docente antes de avanzar.
+                    </div>
+                </div>
+
+                <!-- Escenario D -->
+                <div class="bg-white/10 p-6 rounded-2xl border border-white/20">
+                    <h3 class="font-bold text-xl mb-3 text-edu-beige">Escenario D</h3>
+                    <p class="text-sm font-light mb-4">Alta adopción, pero se detecta recolección de datos no consentida
+                        y sesgos en las respuestas.</p>
+                    <select class="w-full bg-white text-gray-900 p-3 rounded-lg mb-4 outline-none"
+                        onchange="simular(this, 'res-d')">
+                        <option value="">-- Elige una decisión --</option>
+                        <option value="escalar">Escalar progresivamente</option>
+                        <option value="mantener">Mantener el piloto</option>
+                        <option value="redisenar">Rediseñar solución</option>
+                        <option value="suspender">Suspender herramienta</option>
+                    </select>
+                    <div id="res-d" class="hidden p-3 rounded-lg bg-red-900/50 border border-red-500 text-sm">
+                        <strong>Recomendación validada:</strong> Suspender la solución. El alto riesgo ético anula
+                        cualquier beneficio operativo. Debe corregirse de raíz.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. Ciclo de mejora continua -->
+    <section class="py-24 bg-white px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-edu-blue mb-4">El Ciclo de Impacto</h2>
+            <p class="text-lg text-gray-600 mb-12">"La evaluación de impacto no es una auditoría final; es el sistema
+                nervioso que permite mejorar la vida útil de una solución de IA."</p>
+
+            <div class="flex flex-col md:flex-row gap-6 mb-12">
+                <!-- Fases Interactivas -->
+                <div class="w-full md:w-1/3 flex flex-col gap-3">
+                    <div class="cycle-step p-4 border-2 border-gray-200 rounded-xl text-left bg-gray-50 hover:bg-gray-100"
+                        onclick="showCycle(1, this)">
+                        <span class="font-bold text-edu-terra mr-2">1.</span> Planificación de indicadores
+                    </div>
+                    <div class="cycle-step p-4 border-2 border-gray-200 rounded-xl text-left bg-gray-50 hover:bg-gray-100"
+                        onclick="showCycle(2, this)">
+                        <span class="font-bold text-edu-terra mr-2">2.</span> Despliegue y recolección
+                    </div>
+                    <div class="cycle-step p-4 border-2 border-gray-200 rounded-xl text-left bg-gray-50 hover:bg-gray-100"
+                        onclick="showCycle(3, this)">
+                        <span class="font-bold text-edu-terra mr-2">3.</span> Evaluación de impacto
+                    </div>
+                    <div class="cycle-step p-4 border-2 border-gray-200 rounded-xl text-left bg-gray-50 hover:bg-gray-100"
+                        onclick="showCycle(4, this)">
+                        <span class="font-bold text-edu-terra mr-2">4.</span> Auditoría ética
+                    </div>
+                    <div class="cycle-step p-4 border-2 border-gray-200 rounded-xl text-left bg-gray-50 hover:bg-gray-100"
+                        onclick="showCycle(5, this)">
+                        <span class="font-bold text-edu-terra mr-2">5.</span> Decisión institucional
+                    </div>
+                </div>
+
+                <!-- Display de Información del Ciclo -->
+                <div
+                    class="w-full md:w-2/3 bg-edu-beige rounded-2xl p-8 flex flex-col justify-center items-center shadow-inner relative overflow-hidden">
+                    <i class="fa-solid fa-arrows-rotate text-9xl absolute -right-4 -bottom-4 text-white opacity-40"></i>
+                    <div id="cycle-content" class="relative z-10 w-full text-left">
+                        <div class="text-center text-gray-500 py-10">
+                            <i class="fa-solid fa-hand-pointer text-4xl mb-4 text-edu-terra"></i>
+                            <p>Selecciona una fase del ciclo para explorar su detalle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. Cierre reflexivo -->
+    <footer class="py-24 bg-gray-900 text-center px-6 relative">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h2 class="text-4xl font-heading font-bold text-white mb-10">La métrica debe orientar la decisión</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12 text-left">
+                <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+                    <i class="fa-solid fa-graduation-cap text-3xl text-edu-terra mb-4"></i>
+                    <p class="text-gray-300 text-sm">No toda herramienta usada frecuentemente genera aprendizaje
+                        profundo o transferencia de conocimientos.</p>
+                </div>
+                <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+                    <i class="fa-solid fa-scale-unbalanced text-3xl text-edu-terra mb-4"></i>
+                    <p class="text-gray-300 text-sm">No todo ahorro operativo en la gestión justifica una mala práctica
+                        ética o el uso indebido de datos.</p>
+                </div>
+                <div class="bg-white/10 p-6 rounded-xl border border-white/10">
+                    <i class="fa-solid fa-chart-pie text-3xl text-edu-terra mb-4"></i>
+                    <p class="text-gray-300 text-sm">El verdadero impacto se demuestra con datos, voces, evidencia
+                        pedagógica y constante supervisión humana.</p>
+                </div>
+            </div>
+
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                class="bg-edu-terra hover:bg-edu-terra-hover text-white font-bold py-4 px-10 rounded-full transition shadow-[0_0_20px_rgba(194,65,12,0.4)]">
+                <i class="fa-solid fa-arrow-up mr-2"></i> Volver a explorar
+            </button>
+        </div>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT -->
+    <script>
+        // --- 1. Lógica del Ancla ---
+        const anchorData = {
+            obj: { title: "Objetivos", icon: "fa-bullseye", text: "¿Qué se espera mejorar?", items: ["Aprendizaje", "Enseñanza", "Gestión y eficiencia", "Retención", "Satisfacción"], example: "Una Institución educativa implementa un asistente de IA. El objetivo no es 'tener IA', sino 'reducir tiempos de respuesta en soporte técnico'." },
+            ind: { title: "Indicadores", icon: "fa-chart-line", text: "¿Qué datos permitirán saber si hubo mejora?", items: ["Rendimiento académico", "Participación", "Tiempo de respuesta", "Costos u horas ahorradas", "Tasa de errores"], example: "Para el asistente, no medimos cuántos lo usan, sino si la tasa de tickets resueltos en menos de 1 hora aumentó." },
+            met: { title: "Métodos", icon: "fa-magnifying-glass-chart", text: "¿Cómo se recogerá la evidencia?", items: ["Datos cuantitativos (logs)", "Entrevistas estructuradas", "Encuestas de percepción", "Observación directa", "Bitácoras de implementación"], example: "Se cruzan los logs de la plataforma (cuantitativo) con entrevistas a estudiantes (cualitativo) para asegurar que la rapidez no afectó la calidad del trato." }
+        };
+
+        function showAnchorInfo(type) {
+            const panel = document.getElementById('anchor-panel');
+            const data = anchorData[type];
+            panel.innerHTML = `
+                <div class="animate-[fadeIn_0.5s_ease-out]">
+                    <h3 class="text-2xl font-bold text-edu-blue mb-2"><i class="fa-solid ${data.icon} text-edu-terra mr-2"></i> ${data.title}</h3>
+                    <p class="font-semibold text-gray-700 mb-4">${data.text}</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${data.items.map(item => `<span class="bg-gray-100 text-xs text-gray-600 px-3 py-1 rounded-full border border-gray-200">${item}</span>`).join('')}
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-edu-blue p-4 rounded mt-4 text-sm text-gray-800">
+                        <strong>Ejemplo aplicado:</strong> ${data.example}
+                    </div>
+                </div>
+            `;
+            // Cambiar color de borde dinámicamente
+            panel.className = "flex-1 glass-card p-8 rounded-2xl min-h-[250px] flex flex-col justify-center transition-all " +
+                (type === 'obj' ? 'border-t-4 border-red-500' : type === 'ind' ? 'border-t-4 border-blue-500' : 'border-t-4 border-green-500');
+        }
+
+        // --- 2. Lógica de Pilares ---
+        function togglePilar(id) {
+            const el = document.getElementById(id + '-ejemplo');
+            el.classList.toggle('hidden');
+        }
+
+        // --- 3. Gráficos Chart.js ---
+        document.addEventListener('DOMContentLoaded', function () {
+            // Configuración común
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.color = '#666';
+
+            // Gráfico 1: Competencias (Radar o Bar)
+            new Chart(document.getElementById('chartCompetencias'), {
+                type: 'bar',
+                data: {
+                    labels: ['Sem 1', 'Sem 4', 'Sem 8', 'Sem 12'],
+                    datasets: [{
+                        label: 'Nivel Promedio',
+                        data: [45, 60, 78, 85],
+                        backgroundColor: '#1a365d',
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            // Gráfico 2: Autonomía (Line)
+            new Chart(document.getElementById('chartAutonomia'), {
+                type: 'line',
+                data: {
+                    labels: ['Inicio', 'Mes 1', 'Mes 2', 'Mes 3'],
+                    datasets: [{
+                        label: 'Consultas a la IA por tarea',
+                        data: [15, 12, 8, 4],
+                        borderColor: '#c2410c',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(194, 65, 12, 0.1)'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            // Gráfico 3: Tiempos Gestión (Bar horizontal)
+            new Chart(document.getElementById('chartTiempos'), {
+                type: 'bar',
+                data: {
+                    labels: ['Matrícula', 'Soporte TI', 'Certificados'],
+                    datasets: [
+                        { label: 'Antes (h)', data: [48, 24, 72], backgroundColor: '#9ca3af' },
+                        { label: 'Con IA (h)', data: [12, 2, 24], backgroundColor: '#2a4c7e' }
+                    ]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+            });
+
+            // Gráfico 4: Tipos de Consultas (Doughnut)
+            new Chart(document.getElementById('chartConsultas'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Resueltas por IA', 'Derivadas (Error)', 'Derivadas (Complejas)'],
+                    datasets: [{
+                        data: [75, 10, 15],
+                        backgroundColor: ['#2a4c7e', '#ef4444', '#c2410c']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            });
+        });
+
+        // --- 4. Matriz Fusión ---
+        function mergeMatrix() {
+            document.getElementById('matrix-container').classList.add('matrix-merged');
+        }
+        function resetMatrix() {
+            document.getElementById('matrix-container').classList.remove('matrix-merged');
+        }
+
+        // --- 5. Lógica Filtro Ético ---
+        const ethicsData = {
+            datos: { title: "Datos Brutos", text: "La institución recopila interacciones, tiempos, errores y calificaciones del sistema.", color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-400" },
+            privacidad: { title: "Filtro 1: Privacidad", text: "¿Se protege la identidad? Aplica minimización de datos (recoger solo lo necesario), anonimización, almacenamiento seguro y consentimiento explícito del usuario.", color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-500" },
+            equidad: { title: "Filtro 2: Equidad", text: "¿El algoritmo favorece a ciertos perfiles? Se evalúa la ausencia de sesgos, garantizando inclusión, accesibilidad y no discriminación en las respuestas de la IA.", color: "text-purple-700", bg: "bg-purple-50", border: "border-purple-500" },
+            transparencia: { title: "Filtro 3: Transparencia", text: "¿Se entiende cómo la IA toma decisiones? Requiere explicabilidad del modelo, claridad de que se interactúa con una máquina y supervisión humana en el lazo (Human-in-the-loop).", color: "text-orange-700", bg: "bg-orange-50", border: "border-orange-500" },
+            decision: { title: "Decisión Institucional", text: "Solo si la herramienta supera los filtros éticos se debe considerar su impacto operativo o pedagógico como válido. La ética es habilitante, no opcional.", color: "text-green-700", bg: "bg-green-50", border: "border-green-600" }
+        };
+
+        function showEthics(key) {
+            const data = ethicsData[key];
+            document.getElementById('ethics-panel').innerHTML = `
+                <div class="animate-[fadeIn_0.3s_ease-out] ${data.bg} p-6 rounded-xl border-l-4 ${data.border}">
+                    <h3 class="text-2xl font-bold ${data.color} mb-3">${data.title}</h3>
+                    <p class="text-gray-800 text-lg leading-relaxed">${data.text}</p>
+                </div>
+            `;
+            document.getElementById('ethics-panel').className = `bg-white p-2 rounded-2xl shadow-md max-w-4xl mx-auto min-h-[150px] transition-all`;
+        }
+
+        // --- 6. Casos (Acordeón) ---
+        function toggleCase(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // --- 7. Simulador ---
+        function simular(select, divId) {
+            const div = document.getElementById(divId);
+            if (select.value !== "") {
+                div.classList.remove('hidden');
+                // Efecto visual simple
+                div.animate([{ opacity: 0, transform: 'translateY(-10px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 300, fill: 'forwards' });
+            } else {
+                div.classList.add('hidden');
+            }
+        }
+
+        // --- 8. Ciclo de Mejora ---
+        const cycleData = [
+            { title: "Planificación de indicadores", action: "Definir qué significa éxito antes de usar la IA.", evidence: "Matriz de objetivos (KPIs y métricas pedagógicas).", error: "Comprar la herramienta sin saber qué problema resuelve.", example: "Establecer que el éxito de un tutor de IA es reducir el error en ecuaciones en un 20%." },
+            { title: "Despliegue y recolección mixta", action: "Implementar en un piloto controlado y medir.", evidence: "Logs del sistema y entrevistas a usuarios.", error: "Medir solo el número de clics o accesos.", example: "Cruzar el tiempo de uso del chatbot con encuestas de satisfacción del estudiante." },
+            { title: "Evaluación de impacto con niveles", action: "Aplicar la pirámide (Reacción, Aprendizaje, Comportamiento, Resultados).", evidence: "Análisis pre y post intervención.", error: "Quedarse en el Nivel 1 (Si a la gente le gustó).", example: "Demostrar que los docentes cambiaron su forma de evaluar (Comportamiento) gracias a la IA." },
+            { title: "Auditoría ética", action: "Revisar privacidad, sesgos y transparencia.", evidence: "Reporte de protección de datos y análisis de sesgos.", error: "Asumir que el proveedor externo ya hizo esto.", example: "Detectar que el sistema de alertas tempranas marcaba más a minorías y corregir el modelo." },
+            { title: "Decisión institucional", action: "Mantener, rediseñar, escalar o suspender.", evidence: "Dashboard integral de evaluación.", error: "Escalar una herramienta ineficiente solo por presión innovadora.", example: "Decidir suspender un piloto porque el costo cognitivo (dependencia) superó al beneficio del aprendizaje." }
+        ];
+
+        function showCycle(index, el) {
+            // Reset active class
+            document.querySelectorAll('.cycle-step').forEach(step => step.classList.remove('active'));
+            el.classList.add('active');
+
+            const data = cycleData[index - 1];
+            document.getElementById('cycle-content').innerHTML = `
+                <div class="animate-[fadeIn_0.3s_ease-out]">
+                    <h3 class="text-2xl font-bold text-edu-blue mb-4">Fase ${index}: ${data.title}</h3>
+                    <div class="space-y-3 text-sm">
+                        <p><strong class="text-gray-800"><i class="fa-solid fa-gear text-edu-terra mr-2"></i> Qué se hace:</strong> ${data.action}</p>
+                        <p><strong class="text-gray-800"><i class="fa-solid fa-file-contract text-blue-600 mr-2"></i> Evidencia necesaria:</strong> ${data.evidence}</p>
+                        <p><strong class="text-gray-800"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i> Error a evitar:</strong> ${data.error}</p>
+                        <div class="mt-4 bg-white p-4 rounded border-l-4 border-edu-terra shadow-sm">
+                            <strong class="block mb-1 text-edu-blue">Ejemplo breve:</strong> ${data.example}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 9. Three.js: Pirámide 3D Interactiva ---
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+
+            // Cámara
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 3, 12);
+
+            // Renderer
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Luces
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+
+            // Grupo para la pirámide
+            const pyramidGroup = new THREE.Group();
+            scene.add(pyramidGroup);
+
+            // Datos de la Pirámide (Kirkpatrick)
+            const levels = [
+                { id: 4, name: 'Resultados', color: 0x1a365d, yOffset: -1.5, radiusTop: 2.5, radiusBottom: 3.5, height: 1, info: "<strong>Nivel 4: Resultados</strong><br>¿Mejoró la calidad educativa, eficiencia o retención?<br><em>Mide impacto institucional, sostenibilidad y retorno (ROI/ROE).</em>" },
+                { id: 3, name: 'Comportamiento', color: 0x2a4c7e, yOffset: -0.4, radiusTop: 1.5, radiusBottom: 2.5, height: 1, info: "<strong>Nivel 3: Comportamiento</strong><br>¿Cambió la forma de enseñar, aprender o gestionar?<br><em>Mide transferencia a la práctica y cambios en rutinas.</em>" },
+                { id: 2, name: 'Aprendizaje', color: 0xc2410c, yOffset: 0.7, radiusTop: 0.5, radiusBottom: 1.5, height: 1, info: "<strong>Nivel 2: Aprendizaje</strong><br>¿Los estudiantes aprendieron más o mejor?<br><em>Mide adquisición de conocimientos y competencias.</em>" },
+                { id: 1, name: 'Reacción', color: 0xe76f51, yOffset: 1.8, radiusTop: 0.0, radiusBottom: 0.5, height: 1, info: "<strong>Nivel 1: Reacción</strong><br>¿Los usuarios valoraron positivamente la herramienta?<br><em>Mide satisfacción, facilidad de uso y aceptación.</em>" }
+            ];
+
+            const meshes = [];
+
+            // Crear capas (Frustums usando CylinderGeometry con 4 segmentos)
+            levels.forEach(level => {
+                const geometry = new THREE.CylinderGeometry(level.radiusTop, level.radiusBottom, level.height, 4);
+                // Rotar para que sea cuadrada
+                geometry.rotateY(Math.PI / 4);
+
+                const material = new THREE.MeshPhongMaterial({
+                    color: level.color,
+                    flatShading: true,
+                    shininess: 50,
+                    transparent: true,
+                    opacity: 0.9
+                });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.y = level.yOffset;
+                mesh.userData = { info: level.info, defaultColor: level.color }; // Guardar info
+
+                // Bordes para resaltar
+                const edges = new THREE.EdgesGeometry(geometry);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 }));
+                mesh.add(line);
+
+                pyramidGroup.add(mesh);
+                meshes.push(mesh);
+            });
+
+            // Inclinación inicial
+            pyramidGroup.rotation.x = 0.2;
+
+            // Interacción (Raycaster)
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            function onMouseClick(event) {
+                const rect = renderer.domElement.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(meshes);
+
+                if (intersects.length > 0) {
+                    // Resetear colores
+                    meshes.forEach(m => m.material.color.setHex(m.userData.defaultColor));
+                    // Resaltar seleccionado
+                    intersects[0].object.material.color.setHex(0xffd700); // Dorado
+
+                    // Mostrar info
+                    const infoPanel = document.getElementById('pyramid-info');
+                    infoPanel.innerHTML = `
+                        <div class="animate-[fadeIn_0.3s_ease-out]">
+                            <div class="text-4xl text-edu-terra mb-4"><i class="fa-solid fa-cube"></i></div>
+                            <h3 class="text-2xl font-bold text-edu-blue mb-2">Nivel Seleccionado</h3>
+                            <p class="text-gray-700 text-lg leading-relaxed">${intersects[0].object.userData.info}</p>
+                        </div>
+                    `;
+                }
+            }
+            container.addEventListener('click', onMouseClick);
+            // Touch support
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    e.clientX = e.touches[0].clientX;
+                    e.clientY = e.touches[0].clientY;
+                    onMouseClick(e);
+                }
+            }, { passive: true });
+
+            // Rotación manual por arrastre
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            container.addEventListener('mousedown', () => { isDragging = true; });
+            container.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+                    pyramidGroup.rotation.y += deltaMove.x * 0.01;
+                    pyramidGroup.rotation.x += deltaMove.y * 0.01;
+                }
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+
+            // Touch arrastre
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }, { passive: true });
+            container.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const deltaMove = { x: e.touches[0].clientX - previousMousePosition.x, y: e.touches[0].clientY - previousMousePosition.y };
+                    pyramidGroup.rotation.y += deltaMove.x * 0.01;
+                    pyramidGroup.rotation.x += deltaMove.y * 0.01;
+                }
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }, { passive: true });
+            window.addEventListener('touchend', () => { isDragging = false; });
+
+
+            // Animación
+            function animate() {
+                requestAnimationFrame(animate);
+                // Rotación suave automática si no se arrastra
+                if (!isDragging) {
+                    pyramidGroup.rotation.y += 0.005;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Resize handle
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        // Iniciar Three.js en carga
+        window.addEventListener('load', () => {
+            init3D();
+
+            // Definir keyframes en JS para tailwind (fadeIn)
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+
+</html>
