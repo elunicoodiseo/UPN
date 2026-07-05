@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liderazgo Pedagógico en IA</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Three.js y dependencias para 3D/AR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Configuración de Tailwind y Estilos Personalizados -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a', // Slate 900
+                            light: '#fdf6e3', // Beige
+                            accent: '#ea580c', // Orange 600
+                            card: '#ffffff',
+                            muted: '#64748b' // Slate 500
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdf6e3;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+
+        .delay-200 {
+            animation-delay: 200ms;
+        }
+
+        .delay-300 {
+            animation-delay: 300ms;
+        }
+
+        /* Tarjetas interactivas expandibles */
+        .card-expand {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card-expand:hover {
+            transform: translateY(-4px);
+        }
+
+        .expandable-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+            border-top: 1px solid transparent;
+        }
+
+        .card-expand.expanded .expandable-content {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-color: #f3f4f6;
+            /* color gris claro */
+        }
+
+        /* Efecto de cristal (Glassmorphism) para superposiciones */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Ocultar barra de desplazamiento */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #fdf6e3;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Tooltip para 3D */
+        #tooltip-3d {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+            margin-top: -15px;
+            z-index: 50;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- 1. Pantalla inicial inmersiva -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-dark text-white">
+        <!-- Decoración de fondo -->
+        <div
+            class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-accent via-brand-dark to-brand-dark">
+        </div>
+        <div class="absolute inset-0"
+            style="background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center animate-fade-in">
+            <span
+                class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-brand-light text-sm font-medium mb-6 backdrop-blur-sm">
+                Inteligencia Artificial Aplicada a las Instituciones Educativas
+            </span>
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Liderazgo pedagógico para la adopción docente de la IA
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-light mb-12 max-w-3xl mx-auto">
+                "La tecnología no transforma por sí sola; el liderazgo pedagógico orienta el cambio."
+            </p>
+
+            <a href="#modulo-desafio"
+                class="inline-flex items-center gap-2 px-8 py-4 bg-brand-accent hover:bg-orange-500 text-white rounded-full font-semibold transition-all shadow-[0_0_20px_rgba(234,88,12,0.4)] hover:shadow-[0_0_30px_rgba(234,88,12,0.6)] transform hover:-translate-y-1">
+                Iniciar experiencia interactiva
+                <i class="ph ph-arrow-down text-xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. Módulo interactivo: El desafío del liderazgo -->
+    <section id="modulo-desafio" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-4">El Desafío del Liderazgo</h2>
+            <p class="text-lg text-brand-muted max-w-2xl mx-auto">Explora las tres ideas clave para una integración con
+                propósito.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Tarjeta Visión -->
+            <div class="card-expand bg-white rounded-2xl shadow-soft p-6 md:p-8 cursor-pointer flex flex-col justify-between group border-t-4 border-transparent hover:border-brand-accent hover:shadow-lg"
+                onclick="toggleCard(this)">
+                <div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="ph ph-eye text-3xl"></i></div>
+                        <h3 class="text-xl font-bold text-brand-dark group-hover:text-brand-accent transition-colors">
+                            Visión</h3>
+                    </div>
+                    <p class="text-brand-muted font-medium">Comprender el sentido pedagógico de la IA antes de
+                        implementarla.</p>
+
+                    <div class="expandable-content">
+                        <p class="text-sm text-gray-600 italic border-l-4 border-brand-accent pl-4">
+                            <strong>Ejemplo aplicado:</strong> Una institución educativa define que la IA no se usará
+                            para calificar automáticamente ensayos reflexivos, sino como un "tutor socrático" que ayuda
+                            al alumno a estructurar sus ideas antes de la entrega final.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-6 flex justify-end items-center text-sm font-semibold text-brand-accent group-[.expanded]:hidden transition-colors">
+                    Clic para expandir <i class="ph ph-caret-down ml-1"></i>
+                </div>
+                <div
+                    class="mt-6 hidden justify-end items-center text-sm font-semibold text-brand-muted group-[.expanded]:flex transition-colors">
+                    Ocultar <i class="ph ph-caret-up ml-1"></i>
+                </div>
+            </div>
+
+            <!-- Tarjeta Formación -->
+            <div class="card-expand bg-white rounded-2xl shadow-soft p-6 md:p-8 cursor-pointer flex flex-col justify-between group border-t-4 border-transparent hover:border-brand-accent hover:shadow-lg"
+                onclick="toggleCard(this)">
+                <div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i
+                                class="ph ph-graduation-cap text-3xl"></i></div>
+                        <h3 class="text-xl font-bold text-brand-dark group-hover:text-brand-accent transition-colors">
+                            Formación</h3>
+                    </div>
+                    <p class="text-brand-muted font-medium">Superar la brecha técnica, crítica y ética del profesorado.
+                    </p>
+
+                    <div class="expandable-content">
+                        <p class="text-sm text-gray-600 italic border-l-4 border-brand-accent pl-4">
+                            <strong>Ejemplo aplicado:</strong> Creación de talleres donde los docentes analizan
+                            respuestas sesgadas generadas por IA, desarrollando habilidades para evaluar críticamente el
+                            contenido antes de llevarlo al aula.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-6 flex justify-end items-center text-sm font-semibold text-brand-accent group-[.expanded]:hidden transition-colors">
+                    Clic para expandir <i class="ph ph-caret-down ml-1"></i>
+                </div>
+                <div
+                    class="mt-6 hidden justify-end items-center text-sm font-semibold text-brand-muted group-[.expanded]:flex transition-colors">
+                    Ocultar <i class="ph ph-caret-up ml-1"></i>
+                </div>
+            </div>
+
+            <!-- Tarjeta Acompañamiento -->
+            <div class="card-expand bg-white rounded-2xl shadow-soft p-6 md:p-8 cursor-pointer flex flex-col justify-between group border-t-4 border-transparent hover:border-brand-accent hover:shadow-lg"
+                onclick="toggleCard(this)">
+                <div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i
+                                class="ph ph-users-three text-3xl"></i></div>
+                        <h3 class="text-xl font-bold text-brand-dark group-hover:text-brand-accent transition-colors">
+                            Acompañamiento</h3>
+                    </div>
+                    <p class="text-brand-muted font-medium">Integrar la IA con apoyo humano constante y seguimiento
+                        institucional.</p>
+
+                    <div class="expandable-content">
+                        <p class="text-sm text-gray-600 italic border-l-4 border-brand-accent pl-4">
+                            <strong>Ejemplo aplicado:</strong> Asignación de "mentores de innovación" que observan
+                            clases donde se integra IA, no para evaluar al docente, sino para co-reflexionar sobre qué
+                            funcionó y qué ajustes pedagógicos se requieren.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-6 flex justify-end items-center text-sm font-semibold text-brand-accent group-[.expanded]:hidden transition-colors">
+                    Clic para expandir <i class="ph ph-caret-down ml-1"></i>
+                </div>
+                <div
+                    class="mt-6 hidden justify-end items-center text-sm font-semibold text-brand-muted group-[.expanded]:flex transition-colors">
+                    Ocultar <i class="ph ph-caret-up ml-1"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Mapa de percepciones docentes -->
+    <section class="py-24 bg-brand-dark text-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">Mapa de Percepciones Docentes</h2>
+
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Nodos Interactivos -->
+                <div class="w-full md:w-1/3 flex flex-col gap-4">
+                    <button onclick="showPerception('amenaza')" id="btn-amenaza"
+                        class="perception-btn w-full text-left p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-red-500/20 hover:border-red-500 transition-all focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-fill ph-warning-circle text-2xl text-red-400"></i>
+                            <span class="font-bold text-lg">Como Amenaza</span>
+                        </div>
+                    </button>
+                    <button onclick="showPerception('moda')" id="btn-moda"
+                        class="perception-btn w-full text-left p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-yellow-500/20 hover:border-yellow-500 transition-all focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-fill ph-wind text-2xl text-yellow-400"></i>
+                            <span class="font-bold text-lg">Como Moda Pasajera</span>
+                        </div>
+                    </button>
+                    <button onclick="showPerception('complejidad')" id="btn-complejidad"
+                        class="perception-btn w-full text-left p-4 rounded-xl bg-white/10 border border-white/20 hover:bg-blue-500/20 hover:border-blue-500 transition-all focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-fill ph-puzzle-piece text-2xl text-blue-400"></i>
+                            <span class="font-bold text-lg">Como Complejidad</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Panel de Respuesta de Liderazgo -->
+                <div
+                    class="w-full md:w-2/3 bg-white/5 rounded-2xl p-8 border border-white/10 min-h-[300px] flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i class="ph-fill ph-quotes text-8xl"></i></div>
+
+                    <div id="perception-content" class="relative z-10">
+                        <p class="text-gray-400 text-center text-lg italic">Selecciona una percepción en el panel
+                            izquierdo para explorar la respuesta de liderazgo estratégico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Evolución de la identidad docente -->
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-brand-dark mb-4">Evolución de la Identidad Docente
+        </h2>
+        <p class="text-xl text-center text-brand-accent font-medium mb-16">"Del transmisor de información al arquitecto
+            de experiencias cognitivas"</p>
+
+        <div class="relative border-l-4 border-brand-light md:border-none">
+            <!-- Línea horizontal visible en desktop -->
+            <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-brand-light -translate-y-1/2 z-0"></div>
+
+            <div class="flex flex-col md:flex-row justify-between gap-12 md:gap-6 relative z-10 ml-6 md:ml-0">
+
+                <!-- Rol 1 -->
+                <div
+                    class="flex-1 bg-white rounded-2xl shadow-soft p-6 border border-gray-100 hover:-translate-y-2 transition-transform relative">
+                    <div
+                        class="absolute top-1/2 -left-10 md:-top-6 md:left-1/2 md:-translate-x-1/2 md:-translate-y-0 w-8 h-8 rounded-full bg-brand-accent border-4 border-white shadow">
+                    </div>
+                    <div
+                        class="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-600">
+                        <i class="ph ph-magnifying-glass text-3xl"></i>
+                    </div>
+                    <h3 class="text-center font-bold text-xl mb-2 text-brand-dark">Curador Crítico</h3>
+                    <p class="text-sm text-brand-muted text-center mb-4">Valida calidad, pertinencia, diversidad
+                        cultural y sentido pedagógico de los recursos generados por IA.</p>
+                    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
+                        <strong>Caso:</strong> Filtra y ajusta casos de estudio generados por ChatGPT para asegurar que
+                        se alineen con el contexto sociocultural local.
+                    </div>
+                </div>
+
+                <!-- Rol 2 -->
+                <div
+                    class="flex-1 bg-white rounded-2xl shadow-soft p-6 border border-gray-100 hover:-translate-y-2 transition-transform relative mt-8 md:mt-0">
+                    <div
+                        class="absolute top-1/2 -left-10 md:-top-6 md:left-1/2 md:-translate-x-1/2 md:-translate-y-0 w-8 h-8 rounded-full bg-brand-accent border-4 border-white shadow">
+                    </div>
+                    <div
+                        class="w-16 h-16 mx-auto bg-green-50 rounded-full flex items-center justify-center mb-4 text-green-600">
+                        <i class="ph ph-scales text-3xl"></i>
+                    </div>
+                    <h3 class="text-center font-bold text-xl mb-2 text-brand-dark">Mediador Ético</h3>
+                    <p class="text-sm text-brand-muted text-center mb-4">Guía sobre privacidad, sesgos, discriminación,
+                        agencia humana y uso responsable.</p>
+                    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
+                        <strong>Caso:</strong> Facilita debates en clase sobre por qué un generador de imágenes
+                        representa ciertas profesiones con sesgos de género.
+                    </div>
+                </div>
+
+                <!-- Rol 3 -->
+                <div
+                    class="flex-1 bg-white rounded-2xl shadow-soft p-6 border border-gray-100 hover:-translate-y-2 transition-transform relative mt-8 md:mt-0">
+                    <div
+                        class="absolute top-1/2 -left-10 md:-top-6 md:left-1/2 md:-translate-x-1/2 md:-translate-y-0 w-8 h-8 rounded-full bg-brand-accent border-4 border-white shadow">
+                    </div>
+                    <div
+                        class="w-16 h-16 mx-auto bg-purple-50 rounded-full flex items-center justify-center mb-4 text-purple-600">
+                        <i class="ph ph-compass-tool text-3xl"></i>
+                    </div>
+                    <h3 class="text-center font-bold text-xl mb-2 text-brand-dark">Diseñador de Experiencias</h3>
+                    <p class="text-sm text-brand-muted text-center mb-4">Crea escenarios auténticos para desarrollar
+                        pensamiento crítico, creatividad y empatía.</p>
+                    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-700">
+                        <strong>Caso:</strong> Diseña un proyecto donde los alumnos usan IA para proponer soluciones
+                        ambientales, pero la evaluación se centra en la defensa oral del proyecto.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Experiencia 3D/Realidad Aumentada -->
+    <section class="py-12 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="bg-slate-50 rounded-3xl overflow-hidden shadow-inner border border-slate-200">
+                <div class="p-8 md:flex items-center justify-between border-b border-slate-200 bg-white">
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-2xl md:text-3xl font-bold text-brand-dark flex items-center gap-2">
+                            <i class="ph-fill ph-cube text-brand-accent"></i>
+                            Ecosistema de Adopción
+                        </h2>
+                        <p class="text-brand-muted mt-2">Explora los niveles de adopción interactuando con la pirámide
+                            (Clic o Arrastrar para rotar).</p>
+                    </div>
+                    <!-- El botón AR se inyectará aquí vía JS si el dispositivo lo soporta -->
+                    <div id="ar-button-container" class="hidden md:block">
+                        <span class="text-xs text-gray-400 italic">Visor 3D interactivo activado.</span>
+                    </div>
+                </div>
+
+                <!-- Contenedor del Canvas Three.js -->
+                <div class="relative w-full h-[500px] cursor-grab active:cursor-grabbing" id="scene-container">
+                    <!-- Tooltip que aparece al hacer clic en un nivel 3D -->
+                    <div id="tooltip-3d"
+                        class="glass rounded-xl p-4 shadow-lg w-64 border border-white/50 pointer-events-auto">
+                        <button onclick="close3DTooltip()"
+                            class="absolute top-2 right-2 text-gray-500 hover:text-brand-dark"><i
+                                class="ph ph-x"></i></button>
+                        <h4 id="tooltip-title" class="font-bold text-brand-accent mb-2">Título</h4>
+                        <p id="tooltip-desc" class="text-sm text-brand-dark">Descripción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Estrategias de adopción -->
+    <section class="py-24 px-6 max-w-5xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-brand-dark mb-12">Estrategias Dinámicas de Adopción
+        </h2>
+
+        <div class="space-y-6">
+            <!-- Estrategia 1 -->
+            <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                    class="w-full px-6 py-5 text-left font-bold text-xl text-brand-dark bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors"
+                    onclick="toggleAccordion('strat1')">
+                    <span>1. Co-diseño del proyecto</span>
+                    <i class="ph ph-caret-down transform transition-transform" id="icon-strat1"></i>
+                </button>
+                <div id="content-strat1" class="hidden px-6 py-6 border-t border-gray-200">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                            <h4 class="font-bold text-red-700 mb-2 flex items-center gap-2"><i
+                                    class="ph ph-x-circle"></i> Enfoque Impuesto</h4>
+                            <p class="text-sm text-gray-700">Decisiones técnicas tomadas de arriba hacia abajo sin
+                                participación docente. Genera resistencia y desconexión con la realidad del aula.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                            <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2"><i
+                                    class="ph ph-check-circle"></i> Enfoque de Liderazgo</h4>
+                            <p class="text-sm text-gray-700">Participación docente desde el inicio. Se identifican
+                                necesidades reales primero y luego se valida si la IA es la herramienta adecuada
+                                pedagógicamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estrategia 2 -->
+            <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                    class="w-full px-6 py-5 text-left font-bold text-xl text-brand-dark bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors"
+                    onclick="toggleAccordion('strat2')">
+                    <span>2. Escalamiento progresivo</span>
+                    <i class="ph ph-caret-down transform transition-transform" id="icon-strat2"></i>
+                </button>
+                <div id="content-strat2" class="hidden px-6 py-8 border-t border-gray-200">
+                    <div class="flex flex-col md:flex-row items-center justify-between relative">
+                        <div
+                            class="hidden md:block absolute top-1/2 left-10 right-10 h-1 bg-gray-200 -translate-y-1/2 z-0">
+                        </div>
+
+                        <div
+                            class="relative z-10 bg-white p-4 rounded-xl border-2 border-brand-accent shadow-sm w-full md:w-1/3 mx-2 text-center mb-4 md:mb-0">
+                            <div
+                                class="w-8 h-8 rounded-full bg-brand-accent text-white flex items-center justify-center mx-auto mb-2 font-bold">
+                                1</div>
+                            <h4 class="font-bold text-brand-dark mb-1">Usos Simples</h4>
+                            <p class="text-xs text-gray-600">Apoyo administrativo, ideación de temas, revisión inicial
+                                de materiales. Bajo riesgo.</p>
+                        </div>
+
+                        <div
+                            class="relative z-10 bg-white p-4 rounded-xl border border-gray-300 shadow-sm w-full md:w-1/3 mx-2 text-center mb-4 md:mb-0">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center mx-auto mb-2 font-bold">
+                                2</div>
+                            <h4 class="font-bold text-brand-dark mb-1">Grupos Piloto</h4>
+                            <p class="text-xs text-gray-600">Docentes innovadores prueban herramientas específicas en
+                                contextos reales del aula.</p>
+                        </div>
+
+                        <div
+                            class="relative z-10 bg-white p-4 rounded-xl border border-gray-300 shadow-sm w-full md:w-1/3 mx-2 text-center">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center mx-auto mb-2 font-bold">
+                                3</div>
+                            <h4 class="font-bold text-brand-dark mb-1">Usos Avanzados</h4>
+                            <p class="text-xs text-gray-600">Tutoría inteligente, analítica de aprendizaje y diseño de
+                                escenarios interactivos complejos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estrategia 3 -->
+            <div class="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                <button
+                    class="w-full px-6 py-5 text-left font-bold text-xl text-brand-dark bg-gray-50 hover:bg-gray-100 flex justify-between items-center transition-colors"
+                    onclick="toggleAccordion('strat3')">
+                    <span>3. Comunidades de práctica</span>
+                    <i class="ph ph-caret-down transform transition-transform" id="icon-strat3"></i>
+                </button>
+                <div id="content-strat3" class="hidden px-6 py-6 border-t border-gray-200">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="p-4 bg-brand-light rounded-xl">
+                            <i class="ph ph-shield-check text-3xl text-brand-accent mb-2"></i>
+                            <p class="text-sm font-medium">Seguridad psicológica para errar</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl">
+                            <i class="ph ph-arrows-left-right text-3xl text-brand-accent mb-2"></i>
+                            <p class="text-sm font-medium">Intercambio de buenas prácticas</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl">
+                            <i class="ph ph-book-open text-3xl text-brand-accent mb-2"></i>
+                            <p class="text-sm font-medium">Aprendizaje continuo</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl">
+                            <i class="ph ph-arrows-clockwise text-3xl text-brand-accent mb-2"></i>
+                            <p class="text-sm font-medium">Adaptación dinámica</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Arquitectura del programa de formación -->
+    <section class="py-24 bg-brand-dark text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Arquitectura de Formación Docente</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">Selecciona cada componente para descubrir su
+                aplicación práctica e importancia.</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <!-- Se generan los botones dinámicamente o estáticos -->
+                <button onclick="openModal('alfabetizacion')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-text-aa text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Alfabetización y conceptos básicos</h3>
+                </button>
+                <button onclick="openModal('prompts')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-keyboard text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Diseño de prompts y herramientas</h3>
+                </button>
+                <button onclick="openModal('actividades')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-lightbulb-filament text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Diseño de actividades innovadoras</h3>
+                </button>
+                <button onclick="openModal('integridad')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-certificate text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Integridad académica</h3>
+                </button>
+                <button onclick="openModal('etica')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-gavel text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Ética, privacidad y sesgos</h3>
+                </button>
+                <button onclick="openModal('analitica')"
+                    class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-accent transition-all text-left group">
+                    <i
+                        class="ph ph-chart-line-up text-4xl text-gray-400 group-hover:text-brand-accent mb-4 transition-colors"></i>
+                    <h3 class="font-bold text-lg leading-tight">Analítica de aprendizaje</h3>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Base (Oculto por defecto) -->
+    <div id="training-modal"
+        class="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300"
+            id="modal-content-box">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 id="modal-title" class="text-2xl font-bold text-brand-dark">Título</h3>
+                <button onclick="closeModal()"
+                    class="text-gray-400 hover:text-brand-dark bg-white rounded-full p-2 shadow-sm"><i
+                        class="ph ph-x"></i></button>
+            </div>
+            <div class="p-8 space-y-4">
+                <div>
+                    <h4 class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-1">Explicación</h4>
+                    <p id="modal-desc" class="text-brand-dark font-medium"></p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Ejemplo Aplicado</h4>
+                    <p id="modal-ejemplo" class="text-sm text-blue-900"></p>
+                </div>
+                <div class="bg-brand-light p-4 rounded-xl border border-gray-200">
+                    <h4 class="text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Uso Institucional
+                        Recomendado</h4>
+                    <p id="modal-uso" class="text-sm text-gray-800"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Simulador de decisiones de liderazgo -->
+    <section class="py-24 px-6 max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-4">Simulador de Decisiones</h2>
+            <p class="text-brand-muted">Explora escenarios reales. No hay respuestas "correctas" o puntajes, solo
+                consecuencias para reflexionar sobre tu estilo de liderazgo.</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-soft p-8 border border-gray-100 min-h-[400px] flex flex-col relative overflow-hidden"
+            id="simulator-container">
+            <!-- Indicador de progreso -->
+            <div class="flex gap-2 mb-8 justify-center" id="sim-progress">
+                <div class="h-2 w-8 bg-brand-accent rounded-full"></div>
+                <div class="h-2 w-8 bg-gray-200 rounded-full"></div>
+                <div class="h-2 w-8 bg-gray-200 rounded-full"></div>
+                <div class="h-2 w-8 bg-gray-200 rounded-full"></div>
+            </div>
+
+            <!-- Contenido dinámico del simulador -->
+            <div id="sim-content" class="flex-1 flex flex-col justify-center animate-fade-in">
+                <!-- Se llena con JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Casos reales contextualizados -->
+    <section class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-brand-dark mb-12">Casos Reales Contextualizados
+            </h2>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Pestañas laterales -->
+                <div class="w-full md:w-1/3 flex flex-col gap-2">
+                    <button
+                        class="case-tab active text-left px-6 py-4 rounded-xl font-bold transition-all bg-brand-dark text-white shadow-md"
+                        onclick="switchCase(0, this)">Caso 1: Retroalimentación Asistida</button>
+                    <button
+                        class="case-tab text-left px-6 py-4 rounded-xl font-bold transition-all bg-white text-gray-600 hover:bg-gray-100"
+                        onclick="switchCase(1, this)">Caso 2: Analítica Preventiva</button>
+                    <button
+                        class="case-tab text-left px-6 py-4 rounded-xl font-bold transition-all bg-white text-gray-600 hover:bg-gray-100"
+                        onclick="switchCase(2, this)">Caso 3: Comunidades de Prompts</button>
+                    <button
+                        class="case-tab text-left px-6 py-4 rounded-xl font-bold transition-all bg-white text-gray-600 hover:bg-gray-100"
+                        onclick="switchCase(3, this)">Caso 4: Rediseño contra la Dependencia</button>
+                </div>
+
+                <!-- Visor de Caso -->
+                <div class="w-full md:w-2/3 bg-white rounded-3xl shadow-soft p-8 border border-gray-100">
+                    <h3 id="case-title" class="text-2xl font-bold text-brand-dark mb-6 border-b pb-4">Implementación de
+                        IA para apoyar retroalimentación docente</h3>
+
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <button onclick="showCaseDetail('contexto')"
+                            class="px-4 py-2 text-sm font-semibold rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors focus:ring-2 focus:ring-blue-400 outline-none">Contexto</button>
+                        <button onclick="showCaseDetail('decision')"
+                            class="px-4 py-2 text-sm font-semibold rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors focus:ring-2 focus:ring-purple-400 outline-none">Decisión
+                            de Liderazgo</button>
+                        <button onclick="showCaseDetail('riesgo')"
+                            class="px-4 py-2 text-sm font-semibold rounded-full bg-red-50 text-red-700 hover:bg-red-100 transition-colors focus:ring-2 focus:ring-red-400 outline-none">Riesgo
+                            si se implementa mal</button>
+                        <button onclick="showCaseDetail('practica')"
+                            class="px-4 py-2 text-sm font-semibold rounded-full bg-green-50 text-green-700 hover:bg-green-100 transition-colors focus:ring-2 focus:ring-green-400 outline-none">Buena
+                            Práctica</button>
+                    </div>
+
+                    <div id="case-detail-content"
+                        class="p-6 bg-gray-50 rounded-2xl min-h-[150px] text-gray-800 leading-relaxed border border-gray-100 animate-fade-in">
+                        Selecciona un botón arriba para explorar los detalles del caso.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Cierre reflexivo -->
+    <section class="py-32 bg-brand-dark text-white relative overflow-hidden text-center">
+        <!-- Elementos decorativos -->
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-brand-accent/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto px-6">
+            <i class="ph-fill ph-lightbulb text-6xl text-brand-accent mb-6"></i>
+            <h2 class="text-4xl md:text-6xl font-bold mb-12">Liderar la IA es liderar personas</h2>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16 text-left">
+                <div class="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                    <p class="font-medium text-lg text-brand-light">El liderazgo humano transforma; la tecnología solo
+                        asiste el proceso.</p>
+                </div>
+                <div class="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                    <p class="font-medium text-lg text-brand-light">La adopción exitosa requiere empoderar, escuchar y
+                        acompañar al docente.</p>
+                </div>
+                <div class="bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-white/10">
+                    <p class="font-medium text-lg text-brand-light">La formación debe ser un equilibrio perfecto entre
+                        técnica, ética y pedagogía.</p>
+                </div>
+            </div>
+
+            <button onclick="window.scrollTo(0,0)"
+                class="px-8 py-4 bg-white text-brand-dark hover:bg-gray-100 rounded-full font-bold transition-all shadow-lg transform hover:-translate-y-1 flex items-center gap-2 mx-auto">
+                <i class="ph ph-arrow-up text-xl"></i>
+                Volver a explorar la experiencia
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-brand-dark text-brand-muted py-8 text-center text-sm border-t border-white/10">
+        <p>Experiencia Interactiva. Fines educativos - ©2026 - Luis Torrejón Arias</p>
+    </footer>
+
+    <script>
+        // --- 2. Tarjetas Expandibles ---
+        function toggleCard(element) {
+            // Cierra las demás
+            document.querySelectorAll('.card-expand').forEach(card => {
+                if (card !== element) card.classList.remove('expanded');
+            });
+            element.classList.toggle('expanded');
+        }
+
+        // --- 3. Mapa de Percepciones ---
+        const perceptionsData = {
+            amenaza: {
+                title: "Respuesta a la percepción de Amenaza",
+                text: "El liderazgo pedagógico no descarta el miedo. Se abren espacios para escuchar estas preocupaciones válidas sobre la pérdida de agencia humana. La estrategia es introducir la IA como un 'copiloto' que asiste en tareas operativas, reafirmando que el juicio crítico y la empatía del docente son irremplazables.",
+                color: "text-red-400",
+                bg: "bg-red-500/10",
+                border: "border-red-500/30",
+                icon: "ph-warning-circle"
+            },
+            moda: {
+                title: "Respuesta a la percepción de Moda Pasajera",
+                text: "Frente al escepticismo, el liderazgo debe evidenciar la sostenibilidad. No se imponen herramientas llamativas, sino que se integran soluciones a problemas estructurales (ej. carga administrativa). Se fomenta la experimentación en 'pilotos' para demostrar resultados tangibles a mediano plazo.",
+                color: "text-yellow-400",
+                bg: "bg-yellow-500/10",
+                border: "border-yellow-500/30",
+                icon: "ph-wind"
+            },
+            complejidad: {
+                title: "Respuesta a la percepción de Complejidad",
+                text: "Cuando hay voluntad pero falta habilidad técnica, el liderazgo provee andamiaje. Se diseña una formación gradual (escalamiento progresivo), comenzando con interfaces intuitivas y prompts pre-diseñados. Se establecen comunidades de práctica para que el aprendizaje sea colaborativo y no solitario.",
+                color: "text-blue-400",
+                bg: "bg-blue-500/10",
+                border: "border-blue-500/30",
+                icon: "ph-puzzle-piece"
+            }
+        };
+
+        function showPerception(type) {
+            // Reset buttons
+            document.querySelectorAll('.perception-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-white', 'bg-white/20');
+            });
+            document.getElementById(`btn-${type}`).classList.add('ring-2', 'ring-white', 'bg-white/20');
+
+            const data = perceptionsData[type];
+            const content = document.getElementById('perception-content');
+
+            content.innerHTML = `
+                <div class="animate-fade-in p-6 rounded-2xl ${data.bg} border ${data.border}">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="ph-fill ${data.icon} text-3xl ${data.color}"></i>
+                        <h3 class="text-xl font-bold text-white">${data.title}</h3>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed text-lg">${data.text}</p>
+                    
+                    <div class="mt-6 pt-4 border-t border-white/10 flex gap-4 text-sm text-gray-300 font-medium">
+                        <span class="flex items-center gap-1"><i class="ph ph-check text-brand-accent"></i> Escucha activa</span>
+                        <span class="flex items-center gap-1"><i class="ph ph-check text-brand-accent"></i> Formación gradual</span>
+                        <span class="flex items-center gap-1"><i class="ph ph-check text-brand-accent"></i> Usos concretos</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. Three.js / Experiencia 3D ---
+        let scene, camera, renderer, controls;
+        let objects = []; // Para detectar clics
+        const tooltip3D = document.getElementById('tooltip-3d');
+        const tooltipTitle = document.getElementById('tooltip-title');
+        const tooltipDesc = document.getElementById('tooltip-desc');
+
+        const layersData = [
+            { id: 1, name: "Nivel 1: Co-diseño sin imposición", desc: "Los docentes participan desde el inicio para validar la pertinencia pedagógica de la IA antes de su compra o adopción masiva.", color: 0x1e293b, height: 1.5, y: -1.5, scale: 3 }, // Base (Slate 800)
+            { id: 2, name: "Nivel 2: Progresión escalonada", desc: "Se inicia con usos simples (tareas administrativas), avanzando a pilotos, hasta llegar a rediseño de actividades complejas.", color: 0x334155, height: 1.5, y: 0.1, scale: 2 }, // Medio (Slate 700)
+            { id: 3, name: "Nivel 3: Comunidades de práctica", desc: "El ecosistema madura: los docentes comparten prompts, errores, buenas prácticas y reflexionan éticamente de forma colaborativa.", color: 0xea580c, height: 1.5, y: 1.7, scale: 1 }  // Punta (Accent Orange)
+        ];
+
+        function init3D() {
+            const container = document.getElementById('scene-container');
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8fafc); // Slate 50
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(5, 4, 8);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Luces
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            // Construir Pirámide (usando cilindros con 4 segmentos)
+            layersData.forEach((data) => {
+                // Radio superior, Radio inferior, Altura, Segmentos radiales
+                const geometry = new THREE.CylinderGeometry(
+                    data.scale === 1 ? 0 : data.scale - 0.5, // Punta de la pirámide
+                    data.scale,
+                    data.height,
+                    4 // 4 lados para que parezca una pirámide de base cuadrada
+                );
+
+                // Rotar 45 grados para que la cara mire al frente
+                geometry.rotateY(Math.PI / 4);
+
+                const material = new THREE.MeshStandardMaterial({
+                    color: data.color,
+                    roughness: 0.7,
+                    metalness: 0.1
+                });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.y = data.y;
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                mesh.userData = { id: data.id, name: data.name, desc: data.desc };
+
+                // Añadir bordes para mejor visibilidad
+                const edges = new THREE.EdgesGeometry(geometry);
+                const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 }));
+                mesh.add(line);
+
+                scene.add(mesh);
+                objects.push(mesh);
+            });
+
+            // Base de sombra invisible
+            const planeGeometry = new THREE.PlaneGeometry(15, 15);
+            const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.1 });
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -Math.PI / 2;
+            plane.position.y = -2.25;
+            plane.receiveShadow = true;
+            scene.add(plane);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.1; // No dejar mirar por debajo del suelo
+
+            // Evento Click para Raycaster
+            renderer.domElement.addEventListener('click', onDocumentMouseClick, false);
+
+            // Evento Resize
+            window.addEventListener('resize', onWindowResize, false);
+
+            animate3D();
+        }
+
+        function onDocumentMouseClick(event) {
+            const container = document.getElementById('scene-container');
+            const rect = renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2();
+
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = - ((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObjects(objects);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const data = object.userData;
+
+                tooltipTitle.innerText = data.name;
+                tooltipDesc.innerText = data.desc;
+
+                // Posicionar tooltip cerca del ratón
+                tooltip3D.style.display = 'block';
+                tooltip3D.style.left = (event.clientX - rect.left) + 'px';
+                tooltip3D.style.top = (event.clientY - rect.top) + 'px';
+
+                // Pequeña animación visual en el objeto
+                const originalColor = object.material.color.getHex();
+                object.material.color.setHex(0xffffff);
+                setTimeout(() => {
+                    object.material.color.setHex(originalColor);
+                }, 150);
+            } else {
+                tooltip3D.style.display = 'none';
+            }
+        }
+
+        function close3DTooltip() {
+            tooltip3D.style.display = 'none';
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            const container = document.getElementById('scene-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Inicializar 3D al cargar
+        window.addEventListener('load', init3D);
+
+        // --- 6. Acordeones Estrategias ---
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.classList.add('animate-fade-in');
+                icon.classList.add('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                content.classList.remove('animate-fade-in');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- 7. Modales de Formación ---
+        const trainingData = {
+            alfabetizacion: {
+                title: "Alfabetización y conceptos básicos",
+                desc: "Comprender qué es la IA generativa, cómo funcionan los Modelos de Lenguaje Grande (LLMs) y cuáles son sus limitaciones reales (ej. alucinaciones).",
+                ejemplo: "Taller introductorio donde los docentes interactúan con diferentes IAs y descubren que no son 'buscadores de internet', sino motores probabilísticos de texto.",
+                uso: "Fase inicial de inducción tecnológica para todo el personal, desmitificando la herramienta."
+            },
+            prompts: {
+                title: "Diseño de prompts y herramientas",
+                desc: "Habilidad técnica para dar instrucciones precisas, contextualizadas y efectivas a la IA para obtener el resultado deseado.",
+                ejemplo: "Crear un repositorio institucional de 'Prompts Educativos' (ej. 'Actúa como un estudiante de historia con dudas sobre...').",
+                uso: "Talleres prácticos departamentales enfocados en la productividad docente."
+            },
+            actividades: {
+                title: "Diseño de actividades innovadoras",
+                desc: "Capacidad para rediseñar la evaluación y el aprendizaje asumiendo que la IA existe. Pasar de 'evaluar el producto final' a 'evaluar el proceso'.",
+                ejemplo: "Pedir a los alumnos que generen un ensayo con IA, y su tarea real sea criticar, corregir y mejorar ese ensayo en clase.",
+                uso: "Sesiones de co-diseño con el área de innovación pedagógica."
+            },
+            integridad: {
+                title: "Integridad académica",
+                desc: "Establecer políticas claras sobre qué uso de la IA es aceptable, cómo citarla y cómo fomentar la honestidad intelectual.",
+                ejemplo: "Crear un 'Semáforo de IA' en los sílabos: Rojo (Prohibido), Amarillo (Permitido para idear), Verde (Uso obligatorio para la actividad).",
+                uso: "Actualización de manuales de convivencia y reglamentos estudiantiles."
+            },
+            etica: {
+                title: "Ética, privacidad y sesgos",
+                desc: "Comprender los riesgos de exponer datos de menores, propiedad intelectual de la institución y la propagación de estereotipos.",
+                ejemplo: "Prohibir el ingreso de datos personales de alumnos (notas, perfiles psicológicos) en herramientas de IA públicas no securizadas.",
+                uso: "Capacitación obligatoria dictada en conjunto con el área legal y de TI."
+            },
+            analitica: {
+                title: "Analítica de aprendizaje",
+                desc: "Uso de IA para interpretar datos de plataformas educativas (LMS) e identificar estudiantes en riesgo o áreas de mejora docente.",
+                ejemplo: "Un tablero que avisa al tutor si un alumno ha disminuido su interacción en línea, sugiriendo una intervención temprana preventiva.",
+                uso: "Herramienta para directores de programa, tutores y consejeros estudiantiles."
+            }
+        };
+
+        const modal = document.getElementById('training-modal');
+        const modalContent = document.getElementById('modal-content-box');
+
+        function openModal(id) {
+            const data = trainingData[id];
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-desc').innerText = data.desc;
+            document.getElementById('modal-ejemplo').innerText = data.ejemplo;
+            document.getElementById('modal-uso').innerText = data.uso;
+
+            modal.classList.remove('hidden');
+            // Timeout para permitir que el display block aplique antes de la opacidad
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- 8. Simulador de Liderazgo ---
+        const scenarios = [
+            {
+                text: "Un grupo numeroso de docentes veteranos expresa abiertamente en una reunión que la IA educativa es una falta de respeto a su profesión y temen ser reemplazados. ¿Qué estrategia de liderazgo adoptas?",
+                options: [
+                    { text: "Explicar mediante un informe técnico que la IA no tiene capacidades de reemplazo y ordenar su uso en tareas menores.", feedback: "La respuesta fue demasiado fría y técnica. El miedo es una emoción, y combatirla solo con datos genera mayor resistencia y la sensación de no ser escuchados." },
+                    { text: "Abrir un espacio de diálogo seguro para validar sus temores, y proponer que ellos mismos co-diseñen cómo la IA NO debe usarse en la institución.", feedback: "Liderazgo empático. Al darles el control sobre los 'límites' de la herramienta, reduces la amenaza y los conviertes en actores del proceso, no en víctimas." }
+                ]
+            },
+            {
+                text: "El equipo directivo está presionado por mostrar 'innovación' frente a la competencia y sugiere comprar licencias masivas de una plataforma de IA para mañana, obligando a usarla. ¿Cuál es tu postura?",
+                options: [
+                    { text: "Frenar la compra masiva. Sugerir adquirir solo licencias para un 'grupo piloto' de docentes voluntarios durante un semestre para evaluar impacto real.", feedback: "Estrategia de escalamiento progresivo. Evitas el desperdicio de recursos y el choque cultural de una imposición, obteniendo datos reales antes de masificar." },
+                    { text: "Aceptar la compra, pero organizar una jornada intensiva de capacitación obligatoria el fin de semana para que aprendan a usarla.", feedback: "La capacitación técnica no asegura la adopción pedagógica. Forzar el uso genera uso superficial ('para cumplir') y agotamiento docente." }
+                ]
+            },
+            {
+                text: "Varios docentes entusiastas están usando IA generativa libremente en sus clases, pero notas que ingresan redacciones de los alumnos con sus nombres reales para que la IA los 'califique'.",
+                options: [
+                    { text: "Prohibir inmediatamente el uso de IA en toda la institución hasta elaborar un reglamento exhaustivo.", feedback: "Reacción exagerada. Apagar la innovación por un error ético desmotiva a los pioneros. La regulación debe ser paralela a la experimentación." },
+                    { text: "Convocar urgente a una sesión sobre 'Ética y Privacidad de Datos', usar este caso (sin nombres) como ejemplo y redactar juntos una guía rápida de uso seguro.", feedback: "Intervención formativa oportuna. Abordas el riesgo crítico (privacidad) sin frenar el entusiasmo, convirtiendo el error en una oportunidad de aprendizaje institucional." }
+                ]
+            },
+            {
+                text: "Tras un semestre, algunos docentes logran grandes resultados con IA, pero la mayoría sigue sin usarla. Se está creando una brecha en la institución educativa.",
+                options: [
+                    { text: "Crear 'Comunidades de Práctica' donde los docentes exitosos presenten sus casos de éxito y compartan sus 'prompts' con los demás de forma relajada.", feedback: "Estrategia excelente. El aprendizaje entre pares es más efectivo que la instrucción vertical. Fomenta una cultura colaborativa." },
+                    { text: "Incluir el 'Uso de IA' como un ítem de calificación obligatoria en la evaluación de desempeño docente de fin de año.", feedback: "Usar la evaluación como castigo genera estrés y rechazo. La adopción debe incentivarse por su valor pedagógico, no por coerción administrativa." }
+                ]
+            }
+        ];
+
+        let currentScenario = 0;
+
+        function renderScenario() {
+            const container = document.getElementById('sim-content');
+            const progress = document.getElementById('sim-progress');
+
+            // Actualizar progreso
+            Array.from(progress.children).forEach((dot, index) => {
+                dot.className = index <= currentScenario ? "h-2 w-8 bg-brand-accent rounded-full transition-all" : "h-2 w-8 bg-gray-200 rounded-full transition-all";
+            });
+
+            if (currentScenario >= scenarios.length) {
+                container.innerHTML = `
+                    <div class="text-center animate-fade-in">
+                        <i class="ph-fill ph-check-circle text-6xl text-green-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-4">Simulación Completada</h3>
+                        <p class="text-gray-600 mb-8 max-w-lg mx-auto">Has explorado escenarios clave. Recuerda: el liderazgo pedagógico implica equilibrar la innovación tecnológica con el cuidado, la ética y la formación del equipo humano.</p>
+                        <button onclick="currentScenario = 0; renderScenario();" class="px-6 py-2 bg-brand-dark text-white rounded-full font-bold hover:bg-gray-800 transition-colors">Reiniciar Simulador</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const sc = scenarios[currentScenario];
+
+            let html = `
+                <div class="animate-fade-in w-full max-w-2xl mx-auto">
+                    <span class="text-sm font-bold text-brand-accent uppercase tracking-wider mb-2 block">Escenario ${currentScenario + 1} de ${scenarios.length}</span>
+                    <p class="text-xl font-medium text-brand-dark mb-8 leading-relaxed">${sc.text}</p>
+                    <div class="space-y-4">
+            `;
+
+            sc.options.forEach((opt, index) => {
+                html += `
+                    <button onclick="handleOptionClick(${index})" class="w-full text-left p-4 rounded-xl border-2 border-gray-100 hover:border-brand-accent hover:bg-orange-50 transition-all font-medium text-gray-700 bg-white shadow-sm">
+                        ${opt.text}
+                    </button>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function handleOptionClick(optIndex) {
+            const sc = scenarios[currentScenario];
+            const feedback = sc.options[optIndex].feedback;
+            const container = document.getElementById('sim-content');
+
+            container.innerHTML = `
+                <div class="animate-fade-in w-full max-w-2xl mx-auto text-center">
+                    <h3 class="text-lg font-bold text-brand-dark mb-4">Consecuencia de tu decisión:</h3>
+                    <div class="p-6 bg-brand-light border-l-4 border-brand-accent rounded-r-xl text-left mb-8 shadow-inner">
+                        <p class="text-gray-800 leading-relaxed">${feedback}</p>
+                    </div>
+                    <button onclick="nextScenario()" class="px-8 py-3 bg-brand-dark text-white rounded-full font-bold hover:bg-gray-800 transition-colors shadow-md">
+                        Continuar
+                    </button>
+                </div>
+            `;
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            renderScenario();
+        }
+
+        // Inicializar simulador
+        renderScenario();
+
+        // --- 9. Casos Reales (Pestañas) ---
+        const casesData = [
+            {
+                title: "Implementación de IA para apoyar retroalimentación docente",
+                contexto: "Los docentes invierten demasiadas horas corrigiendo primeros borradores de ensayos, dejando poco tiempo para discusiones profundas en clase.",
+                decision: "Implementar un 'asistente de revisión' con IA. El sistema marca errores gramaticales y sugiere mejoras de estructura en los borradores.",
+                riesgo: "Si el docente confía ciegamente en la IA, podría aprobar textos alucinados o rechazar estilos de redacción divergentes/creativos que la IA no comprende.",
+                practica: "Regla del 'Humano en el Bucle': La IA revisa la forma, pero el docente siempre evalúa el fondo (el argumento crítico). El estudiante debe explicar qué sugerencias de la IA aceptó y por qué."
+            },
+            {
+                title: "Uso de analítica de aprendizaje preventiva",
+                contexto: "Alta tasa de deserción en cursos online de primer año. Los tutores se enteran muy tarde cuando el alumno ya abandonó.",
+                decision: "Integrar IA en el LMS para analizar patrones de clic, tiempo de lectura y participación en foros, generando 'alertas tempranas'.",
+                riesgo: "Sesgo algorítmico y determinismo: tratar a un estudiante marcado 'en riesgo' por la IA como un caso perdido, afectando las expectativas del tutor (Efecto Pigmalión negativo).",
+                practica: "La alerta de IA no se comparte con el alumno. Sirve solo para que el tutor inicie un acercamiento humano y empático ('He notado que no has participado, ¿está todo bien?'), sin mencionar el algoritmo."
+            },
+            {
+                title: "Comunidades de Prompts Departamentales",
+                contexto: "Los docentes de Ciencias usan IA para generar problemas de matemáticas, pero cada uno lo hace por su cuenta, perdiendo tiempo y repitiendo errores.",
+                decision: "El líder pedagógico crea un espacio colaborativo (repositorio) y asigna una hora semanal para el intercambio de experiencias.",
+                riesgo: "Que se convierta en un 'copiar y pegar' de prompts sin entender la lógica detrás, reduciendo la creatividad del docente a largo plazo.",
+                practica: "No solo se comparte el prompt ('Escribe un problema de física sobre...'), sino también el análisis crítico: qué falló en la respuesta inicial de la IA y cómo se mejoró el prompt iterativamente."
+            },
+            {
+                title: "Rediseño de actividades contra la dependencia",
+                contexto: "Los alumnos entregan resúmenes perfectos generados en segundos por ChatGPT sin haber leído los textos fuente.",
+                decision: "En lugar de invertir en software anti-plagio (que a menudo falla), se decide rediseñar la naturaleza de la evaluación.",
+                riesgo: "Volver exclusivamente a exámenes de memoria a papel y lápiz, anulando las competencias digitales necesarias para el siglo XXI.",
+                practica: "Evaluación auténtica: Solicitar tareas que la IA hace mal (reflexión personal conectada con experiencias locales) o incorporar la IA en el proceso: 'Pide a la IA que resuma el texto. Ahora, graba un video de 3 minutos debatiendo por qué la IA omitió el contexto histórico de la lectura'."
+            }
+        ];
+
+        function switchCase(index, element) {
+            // Activar botón
+            document.querySelectorAll('.case-tab').forEach(tab => {
+                tab.classList.remove('bg-brand-dark', 'text-white', 'shadow-md');
+                tab.classList.add('bg-white', 'text-gray-600');
+            });
+            element.classList.remove('bg-white', 'text-gray-600');
+            element.classList.add('bg-brand-dark', 'text-white', 'shadow-md');
+
+            // Guardar índice actual
+            document.getElementById('case-title').dataset.currentIndex = index;
+            document.getElementById('case-title').innerText = casesData[index].title;
+
+            // Resetear detalle
+            document.getElementById('case-detail-content').innerHTML = `Selecciona un botón arriba para explorar los detalles del caso.`;
+        }
+
+        function showCaseDetail(type) {
+            const currentIndex = document.getElementById('case-title').dataset.currentIndex || 0;
+            const data = casesData[currentIndex];
+            const contentDiv = document.getElementById('case-detail-content');
+
+            // Reiniciar animación
+            contentDiv.classList.remove('animate-fade-in');
+            void contentDiv.offsetWidth; // trigger reflow
+            contentDiv.classList.add('animate-fade-in');
+
+            let title, text, bgColor, textColor;
+
+            switch (type) {
+                case 'contexto':
+                    title = "Contexto Inicial"; text = data.contexto; bgColor = "bg-blue-50"; textColor = "text-blue-800";
+                    break;
+                case 'decision':
+                    title = "Decisión de Liderazgo"; text = data.decision; bgColor = "bg-purple-50"; textColor = "text-purple-800";
+                    break;
+                case 'riesgo':
+                    title = "Riesgo de mala implementación"; text = data.riesgo; bgColor = "bg-red-50"; textColor = "text-red-800";
+                    break;
+                case 'practica':
+                    title = "Buena Práctica Recomendada"; text = data.practica; bgColor = "bg-green-50"; textColor = "text-green-800";
+                    break;
+            }
+
+            contentDiv.innerHTML = `
+                <h4 class="font-bold uppercase tracking-wider text-sm mb-2 ${textColor}">${title}</h4>
+                <p class="text-gray-700 text-lg">${text}</p>
+            `;
+            contentDiv.className = `p-6 rounded-2xl min-h-[150px] leading-relaxed border border-gray-200 animate-fade-in ${bgColor}`;
+        }
+    </script>
+</body>
+
+</html>

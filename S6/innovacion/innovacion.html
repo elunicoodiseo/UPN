@@ -15,11 +15,6 @@
     <!-- FontAwesome (CDN para íconos genéricos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Chart.js (CDN para gráficos) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- A-Frame (CDN para Realidad Aumentada / 3D) -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
     <!-- Configuración de Tailwind para Paleta de Colores Solicitada -->
     <script>
@@ -161,11 +156,13 @@
                         <a href="#inicio"
                             class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Inicio</a>
                         <a href="#arquitectura"
-                            class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Arquitectura</a>
+                            class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Ámbitos</a>
                         <a href="#proyecto" class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">El
                             Proyecto</a>
-                        <a href="#ar-experience"
-                            class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Experiencia 3D</a>
+                        <a href="#casos"
+                            class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Casos</a>
+                        <a href="#manos" class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Guía
+                            Práctica</a>
                         <a href="#simulador"
                             class="hover:text-edu-copper px-3 py-2 rounded-md text-sm font-medium">Simulador</a>
                     </div>
@@ -184,11 +181,12 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#inicio" class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Inicio</a>
                 <a href="#arquitectura"
-                    class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Arquitectura</a>
+                    class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Ámbitos</a>
                 <a href="#proyecto" class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">El
                     Proyecto</a>
-                <a href="#ar-experience"
-                    class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Experiencia 3D</a>
+                <a href="#casos" class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Casos</a>
+                <a href="#manos" class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Guía
+                    Práctica</a>
                 <a href="#simulador"
                     class="block hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Simulador</a>
             </div>
@@ -234,24 +232,17 @@
                         class="fa-solid fa-magnifying-glass block text-2xl mb-2 text-edu-blue"></i> 1. El Problema</a>
                 <a href="#arquitectura"
                     class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-cubes block text-2xl mb-2 text-edu-blue"></i> 2. Arquitectura</a>
+                        class="fa-solid fa-cubes block text-2xl mb-2 text-edu-blue"></i> 2. Ámbitos de Aplicación</a>
                 <a href="#proyecto"
                     class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
                         class="fa-solid fa-clipboard-list block text-2xl mb-2 text-edu-blue"></i> 3. El Proyecto</a>
-                <a href="#viabilidad"
-                    class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-scale-balanced block text-2xl mb-2 text-edu-blue"></i> 4. Viabilidad</a>
-                <a href="#etica" class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-shield-halved block text-2xl mb-2 text-edu-blue"></i> 5. Liderazgo y
-                    Formación</a>
-                <a href="#impacto" class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-chart-line block text-2xl mb-2 text-edu-blue"></i> 6. Impacto</a>
-                <a href="#ar-experience"
-                    class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-vr-cardboard block text-2xl mb-2 text-edu-blue"></i> 7. Exp. 3D</a>
+                <a href="#casos" class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
+                        class="fa-solid fa-folder-open block text-2xl mb-2 text-edu-blue"></i> 4. Casos Ejemplo</a>
+                <a href="#manos" class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
+                        class="fa-solid fa-pen-ruler block text-2xl mb-2 text-edu-blue"></i> 5. Manos a la Obra</a>
                 <a href="#simulador"
                     class="bg-edu-white p-4 rounded-xl shadow card-hover border-t-4 border-edu-copper"><i
-                        class="fa-solid fa-laptop-code block text-2xl mb-2 text-edu-blue"></i> 8. Simulador</a>
+                        class="fa-solid fa-laptop-code block text-2xl mb-2 text-edu-blue"></i> 6. Simulador</a>
             </div>
         </div>
     </section>
@@ -297,7 +288,7 @@
 
             <!-- Interacción -->
             <div class="bg-edu-blue text-white p-8 rounded-2xl shadow-lg max-w-3xl mx-auto">
-                <h3 class="text-xl font-bold mb-4 text-center"><i
+                <h3 class="text-xl font-bold mb-4 text-center text-white"><i
                         class="fa-regular fa-circle-question text-edu-copper mr-2"></i>¿Cuál de estos problemas existe
                     en tu Institución educativa?</h3>
                 <div class="space-y-3" id="problema-quiz">
@@ -331,7 +322,7 @@
     <section id="arquitectura" class="py-16 bg-edu-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold">Arquitectura de Aplicaciones de IA</h2>
+                <h2 class="text-3xl font-bold">Ámbitos de Aplicación de la IA</h2>
                 <p class="mt-4">La IA interviene en tres vectores fundamentales de la institución educativa.</p>
             </div>
 
@@ -532,98 +523,198 @@
         </div>
     </section>
 
-    <!-- 11. VIABILIDAD Y COSTO BENEFICIO -->
-    <section id="viabilidad" class="py-16 bg-edu-bg">
+    <!-- 11. CASOS EJEMPLO -->
+    <section id="casos" class="py-16 bg-edu-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12">Análisis de Viabilidad</h2>
-
-            <div class="grid md:grid-cols-3 gap-6 mb-12">
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-gray-400">
-                    <h3 class="font-bold mb-2"><i
-                            class="fa-solid fa-network-wired text-gray-400 mr-2"></i>Infraestructura</h3>
-                    <p class="text-sm">Conectividad, equipos, plataformas, seguridad, acceso y soporte técnico base.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-edu-copper">
-                    <h3 class="font-bold mb-2"><i
-                            class="fa-solid fa-money-bill-transfer text-edu-copper mr-2"></i>Costos Recurrentes</h3>
-                    <p class="text-sm">Licencias, consumo de nube, mantenimiento, actualizaciones y soporte continuo.
-                    </p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-edu-blue">
-                    <h3 class="font-bold mb-2"><i class="fa-solid fa-eye-slash text-edu-blue mr-2"></i>Costos Ocultos
-                    </h3>
-                    <p class="text-sm">Limpieza de datos, adaptación de procesos, resistencia al cambio y tiempo de
-                        capacitación.</p>
-                </div>
+            <div class="text-center mb-12">
+                <span class="text-edu-copper font-bold uppercase text-sm tracking-widest">Del papel a la práctica</span>
+                <h2 class="text-3xl font-bold mt-2">Casos Ejemplo: el diseño paso a paso</h2>
+                <p class="mt-4 max-w-3xl mx-auto">Tres proyectos, uno por cada ámbito de aplicación, recorridos con la
+                    misma estructura de diseño: problema → diagnóstico → justificación → solución. Haz clic en cada
+                    caso para desplegarlo.</p>
             </div>
-
-            <!-- Calculadora Simple -->
-            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-                <h3 class="text-xl font-bold mb-6 text-center"><i
-                        class="fa-solid fa-calculator text-edu-copper mr-2"></i>Calculadora Rápida de Viabilidad</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">Presupuesto Inicial Asegurado ($)</label>
-                        <input type="number" id="calc-presupuesto" class="form-input" placeholder="Ej: 5000">
+            <div class="grid lg:grid-cols-3 gap-6 items-start">
+                <details class="bg-white rounded-2xl shadow border-t-4 border-blue-500 card-hover overflow-hidden">
+                    <summary class="cursor-pointer p-6 list-none">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-comments text-2xl text-blue-500 mr-3"></i>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-400 font-bold">Ámbito:
+                                        Aprendizaje</p>
+                                    <h3 class="text-lg font-bold">Asistente virtual de consultas académicas</h3>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3 text-sm border-t border-gray-100 pt-4">
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">1</span>
+                            <p><strong>Problema documentado:</strong> Los estudiantes generan cientos de consultas
+                                repetitivas (horarios, trámites, fechas) fuera del horario de atención, y las respuestas
+                                tardan días.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">2</span>
+                            <p><strong>Diagnóstico (línea base):</strong> Se contabilizó el número de consultas
+                                semanales que recibe secretaría, las 20 preguntas más frecuentes y el tiempo promedio de
+                                respuesta actual.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">3</span>
+                            <p><strong>Justificación:</strong> Frente a contratar más personal de atención, un asistente
+                                virtual responde de inmediato las preguntas frecuentes las 24 horas. Experiencias
+                                similares reportan una reducción cercana al 40% en consultas repetitivas.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-copper text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">4</span>
+                            <p><strong>Solución y diseño pedagógico:</strong> El asistente se alimenta únicamente de
+                                información institucional verificada y se integra al canal que los estudiantes ya usan
+                                (web o mensajería). Las respuestas se revisan y actualizan periódicamente por el equipo
+                                académico.</p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex">
+                            <i class="fa-solid fa-shield-halved text-edu-blue mr-3 mt-0.5"></i>
+                            <p><strong>Salvaguarda aplicada:</strong> Protocolo de derivación: cuando la consulta es
+                                compleja o sensible, el asistente deriva de inmediato a una persona del equipo. Nunca
+                                responde sobre situaciones personales o disciplinarias.</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">Costo Estimado Proyecto ($)</label>
-                        <input type="number" id="calc-costo" class="form-input" placeholder="Ej: 4500">
+                </details>
+                <details class="bg-white rounded-2xl shadow border-t-4 border-edu-copper card-hover overflow-hidden">
+                    <summary class="cursor-pointer p-6 list-none">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-pen text-2xl text-edu-copper mr-3"></i>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-400 font-bold">Ámbito: Enseñanza
+                                    </p>
+                                    <h3 class="text-lg font-bold">Retroalimentación preliminar de ensayos</h3>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3 text-sm border-t border-gray-100 pt-4">
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">1</span>
+                            <p><strong>Problema documentado:</strong> Una docente recibe 120 ensayos por entrega y solo
+                                alcanza a dar comentarios breves; los estudiantes reciben retroalimentación tardía y
+                                poco detallada.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">2</span>
+                            <p><strong>Diagnóstico (línea base):</strong> Se midieron las horas semanales dedicadas a la
+                                corrección y el tiempo promedio que tarda cada estudiante en recibir sus comentarios.
+                            </p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">3</span>
+                            <p><strong>Justificación:</strong> Frente a reducir el número de entregas (empobreciendo el
+                                curso), una herramienta de apoyo comenta la estructura, la claridad y la coherencia de
+                                cada ensayo en minutos, liberando tiempo docente para la evaluación de fondo.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-copper text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">4</span>
+                            <p><strong>Solución y diseño pedagógico:</strong> La herramienta entrega un primer
+                                comentario formativo sobre estructura y coherencia; la docente lo revisa, lo complementa
+                                y evalúa la creatividad, la argumentación y el pensamiento crítico. El estudiante
+                                siempre sabe qué parte del comentario es automática.</p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex">
+                            <i class="fa-solid fa-shield-halved text-edu-blue mr-3 mt-0.5"></i>
+                            <p><strong>Salvaguarda aplicada:</strong> La calificación final es siempre de la docente. La
+                                herramienta nunca asigna notas ni emite juicios sobre el estudiante.</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">Calidad de Datos Existentes (1-10)</label>
-                        <input type="number" id="calc-datos" class="form-input" min="1" max="10"
-                            placeholder="1 = Muy mala, 10 = Excelente">
+                </details>
+                <details class="bg-white rounded-2xl shadow border-t-4 border-green-500 card-hover overflow-hidden">
+                    <summary class="cursor-pointer p-6 list-none">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-bell text-2xl text-green-500 mr-3"></i>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-400 font-bold">Ámbito: Gestión
+                                    </p>
+                                    <h3 class="text-lg font-bold">Alertas tempranas de riesgo de deserción</h3>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3 text-sm border-t border-gray-100 pt-4">
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">1</span>
+                            <p><strong>Problema documentado:</strong> La institución detecta a los estudiantes en riesgo
+                                de abandonar cuando ya dejaron de asistir, demasiado tarde para intervenir.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">2</span>
+                            <p><strong>Diagnóstico (línea base):</strong> Se estableció como línea base el porcentaje de
+                                deserción del último año y el momento promedio en que se detectaba cada caso.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-blue text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">3</span>
+                            <p><strong>Justificación:</strong> Frente a las revisiones manuales de fin de ciclo, un
+                                sistema que observa asistencia, entregas y calificaciones permite detectar señales de
+                                riesgo semanas antes y actuar a tiempo, protegiendo la permanencia del estudiante.</p>
+                        </div>
+                        <div class="flex"><span
+                                class="bg-edu-copper text-white w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs mr-3 font-bold">4</span>
+                            <p><strong>Solución y diseño pedagógico:</strong> El sistema genera una alerta con las
+                                señales detectadas y la envía al tutor asignado, quien conversa con el estudiante y
+                                define el acompañamiento. El sistema se integra a la rutina de tutoría existente, no la
+                                reemplaza.</p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex">
+                            <i class="fa-solid fa-shield-halved text-edu-blue mr-3 mt-0.5"></i>
+                            <p><strong>Salvaguarda aplicada:</strong> La alerta informa, la persona decide: ninguna
+                                intervención, sanción o etiqueta se aplica automáticamente. Los datos del estudiante
+                                solo son visibles para su tutor y se manejan con confidencialidad.</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">Impacto Educativo Esperado</label>
-                        <select id="calc-impacto" class="form-input">
-                            <option value="bajo">Bajo (Solo administrativo menor)</option>
-                            <option value="medio">Medio (Mejora tiempos, apoyo leve)</option>
-                            <option value="alto">Alto (Mejora directa en aprendizaje/retención)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-6 text-center">
-                    <button onclick="calcularViabilidad()" class="btn-primary px-6 py-2 rounded-lg font-bold">Evaluar
-                        Proyecto</button>
-                </div>
-                <div id="calc-resultado" class="mt-6 p-4 rounded-xl text-center hidden font-bold text-lg">
-                    <!-- Resultado inyectado por JS -->
-                </div>
+                </details>
             </div>
         </div>
     </section>
 
-    <!-- 12, 13. LIDERAZGO Y ÉTICA -->
     <section id="etica" class="py-16 bg-edu-blue text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
 
-                <!-- Liderazgo -->
+                <!-- Salvaguardas -->
                 <div>
-                    <h2 class="text-3xl font-bold mb-6 text-edu-copper">Liderazgo y Formación</h2>
-                    <p class="mb-6 text-gray-300">El éxito no depende solo de la tecnología, sino de docentes
-                        capacitados.</p>
+                    <h2 class="text-3xl font-bold mb-6 text-edu-copper">Salvaguardas del Diseño</h2>
+                    <p class="mb-6 text-gray-300">No son un anexo al final del proyecto: se incorporan desde su
+                        concepción y forman parte de la estructura del diseño.</p>
                     <div class="space-y-4">
                         <div class="bg-white/10 p-4 rounded-xl border border-white/20">
-                            <h4 class="font-bold text-white">1. Alfabetización en IA</h4>
-                            <p class="text-sm text-gray-300">Reduce el miedo y fomenta el uso crítico.</p>
+                            <h4 class="font-bold text-white"><i class="fa-solid fa-lock mr-2 text-edu-copper"></i>1.
+                                Privacidad de los datos del estudiante</h4>
+                            <p class="text-sm text-gray-300">La identidad se protege desde el inicio: la información
+                                personal solo la ve quien la necesita y se resguarda institucionalmente.</p>
                         </div>
                         <div class="bg-white/10 p-4 rounded-xl border border-white/20">
-                            <h4 class="font-bold text-white">2. Espacios de exploración</h4>
-                            <p class="text-sm text-gray-300">Pruebas seguras antes de llegar al aula.</p>
+                            <h4 class="font-bold text-white"><i
+                                    class="fa-solid fa-scale-balanced mr-2 text-edu-copper"></i>2. Equidad sin
+                                discriminación</h4>
+                            <p class="text-sm text-gray-300">El diseño debe revisarse para que la herramienta no
+                                perjudique a ningún grupo de estudiantes ni reproduzca desigualdades existentes.</p>
                         </div>
                         <div class="bg-white/10 p-4 rounded-xl border border-white/20">
-                            <h4 class="font-bold text-white">3. Gestión del cambio</h4>
-                            <p class="text-sm text-gray-300">Transición hacia una cultura colaborativa.</p>
+                            <h4 class="font-bold text-white"><i
+                                    class="fa-solid fa-user-shield mr-2 text-edu-copper"></i>3. Supervisión humana
+                                permanente</h4>
+                            <p class="text-sm text-gray-300">La herramienta recomienda y agiliza; la validación de
+                                calidad y la responsabilidad final son siempre de una persona.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Ética (Escudo) -->
                 <div class="relative flex flex-col items-center justify-center">
-                    <h2 class="text-3xl font-bold mb-8 text-center">Ética y Supervisión</h2>
+                    <h2 class="text-3xl font-bold mb-8 text-center text-white">Ética y Supervisión</h2>
 
                     <!-- Escudo CSS Simulado con divs anidados -->
                     <div
@@ -640,7 +731,7 @@
                                 <div
                                     class="w-28 h-28 bg-white rounded-full flex flex-col items-center justify-center text-edu-blue font-bold shadow-inner z-30 p-2">
                                     <i class="fa-solid fa-user-shield text-2xl mb-1"></i>
-                                    <span class="text-[10px] leading-tight">Human-in-the-loop</span>
+                                    <span class="text-[10px] leading-tight">Supervisión humana</span>
                                 </div>
                             </div>
                         </div>
@@ -656,141 +747,108 @@
         </div>
     </section>
 
-    <!-- 14. EVALUACIÓN DE IMPACTO -->
-    <section id="impacto" class="py-16 bg-edu-white">
+    <!-- 14. MANOS A LA OBRA -->
+    <section id="manos" class="py-16 bg-edu-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12">Evaluación de Impacto</h2>
+            <div class="text-center mb-12">
+                <span class="text-edu-copper font-bold uppercase text-sm tracking-widest">Guía práctica</span>
+                <h2 class="text-3xl font-bold mt-2">Manos a la Obra: diseña tu proyecto</h2>
+                <p class="mt-4 max-w-3xl mx-auto">Aplica la estructura del diseño a tu propia institución. Usa estas
+                    preguntas guía en cada paso y evita los errores más comunes.</p>
+            </div>
 
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Matriz -->
-                <div>
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-gray-400 pl-4">
-                            <h4 class="font-bold text-lg"><i class="fa-regular fa-clock mr-2 text-gray-500"></i>Antes
-                                (Línea Base)</h4>
-                            <p class="text-sm text-gray-600">Documentar el problema real e indicadores iniciales (ej:
-                                40h/semana en correcciones).</p>
-                        </div>
-                        <div class="border-l-4 border-edu-copper pl-4">
-                            <h4 class="font-bold text-lg"><i
-                                    class="fa-solid fa-spinner mr-2 text-edu-copper"></i>Durante (Implementación)</h4>
-                            <p class="text-sm text-gray-600">Seguimiento de uso, retroalimentación de usuarios
-                                docentes/estudiantes y ajustes rápidos.</p>
-                        </div>
-                        <div class="border-l-4 border-edu-blue pl-4">
-                            <h4 class="font-bold text-lg"><i
-                                    class="fa-solid fa-flag-checkered mr-2 text-edu-blue"></i>Después (Evaluación)</h4>
-                            <p class="text-sm text-gray-600">Comparación de resultados, evidencias de impacto. Decisión:
-                                escalar, ajustar o detener.</p>
-                        </div>
+            <!-- Preguntas guía por paso -->
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
+                <div class="bg-edu-bg p-6 rounded-xl border border-gray-200 card-hover">
+                    <h3 class="font-bold text-lg mb-4"><span
+                            class="bg-edu-blue text-white w-8 h-8 rounded-full inline-flex items-center justify-center text-sm mr-2">1</span>
+                        Diagnóstico</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Qué evidencia tengo de que
+                            el problema existe (números, registros, quejas documentadas)?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿A quiénes afecta y con qué
+                            frecuencia?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Cuál es mi indicador de
+                            línea base (el número de hoy, antes de cualquier cambio)?</li>
+                    </ul>
+                </div>
+                <div class="bg-edu-bg p-6 rounded-xl border border-gray-200 card-hover">
+                    <h3 class="font-bold text-lg mb-4"><span
+                            class="bg-edu-blue text-white w-8 h-8 rounded-full inline-flex items-center justify-center text-sm mr-2">2</span>
+                        Justificación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Qué pasaría si no hago
+                            nada? ¿Cuánto le cuesta hoy este problema a la institución?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Por qué esta solución es
+                            mejor que la alternativa tradicional (más personal, más horas, más papel)?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Con qué objetivo
+                            institucional se alinea el proyecto?</li>
+                    </ul>
+                </div>
+                <div class="bg-edu-bg p-6 rounded-xl border border-gray-200 card-hover">
+                    <h3 class="font-bold text-lg mb-4"><span
+                            class="bg-edu-blue text-white w-8 h-8 rounded-full inline-flex items-center justify-center text-sm mr-2">3</span>
+                        Solución y Diseño Pedagógico</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Cómo se integra la
+                            herramienta a la rutina real del aula o de la gestión?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Qué decisiones quedan
+                            siempre en manos humanas y quién supervisa?</li>
+                        <li><i class="fa-solid fa-circle-question text-edu-copper mr-2"></i>¿Cómo se protege la
+                            información de los estudiantes?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Errores comunes -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold text-center mb-8"><i
+                        class="fa-solid fa-triangle-exclamation text-edu-yellow mr-2"></i>Errores comunes a evitar</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-red-50 border border-red-200 p-5 rounded-xl">
+                        <h4 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-fire mr-2"></i>Empezar por la
+                            herramienta de moda</h4>
+                        <p class="text-sm text-gray-600">"Quiero usar IA" no es un proyecto. El punto de partida es
+                            siempre un problema documentado.</p>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-5 rounded-xl">
+                        <h4 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-ruler mr-2"></i>No definir línea
+                            base</h4>
+                        <p class="text-sm text-gray-600">Sin el número de hoy, nunca podrás demostrar que el proyecto
+                            mejoró algo.</p>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-5 rounded-xl">
+                        <h4 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-user-slash mr-2"></i>No involucrar
+                            a los usuarios finales</h4>
+                        <p class="text-sm text-gray-600">Si docentes y estudiantes no participan en el diseño, la
+                            herramienta será rechazada o ignorada.</p>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 p-5 rounded-xl">
+                        <h4 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-robot mr-2"></i>Automatizar
+                            decisiones humanas</h4>
+                        <p class="text-sm text-gray-600">Calificaciones, sanciones o diagnósticos nunca se delegan a la
+                            herramienta: ella informa, la persona decide.</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Gráfico Chart.js -->
-                <div class="bg-edu-bg p-6 rounded-2xl shadow-inner border border-gray-200">
-                    <h4 class="text-center font-bold mb-4 text-sm">Ejemplo: Impacto en Tiempos de Retroalimentación
-                        (Horas)</h4>
-                    <canvas id="impactChart" width="400" height="250"></canvas>
-                </div>
+            <!-- Ficha del proyecto -->
+            <div class="bg-edu-bg rounded-2xl p-8 border border-gray-200 text-center">
+                <i class="fa-solid fa-file-lines text-4xl text-edu-copper mb-4"></i>
+                <h3 class="text-2xl font-bold mb-2">Ficha de Proyecto</h3>
+                <p class="max-w-2xl mx-auto text-sm mb-6">Descarga la plantilla para estructurar tu proyecto con los
+                    campos: problema, evidencias, público, justificación, solución propuesta, integración pedagógica y
+                    salvaguardas. Puedes imprimirla o guardarla como PDF desde el diálogo de impresión.</p>
+                <button onclick="imprimirFicha()"
+                    class="btn-primary inline-flex items-center px-8 py-3 rounded-full font-bold shadow-lg">
+                    <i class="fa-solid fa-print mr-2"></i> Imprimir / Guardar ficha en PDF
+                </button>
             </div>
         </div>
     </section>
 
     <!-- 15. EXPERIENCIA DE REALIDAD AUMENTADA / 3D -->
-    <section id="ar-experience" class="py-16 bg-gray-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-4 text-edu-copper">Explora el Proyecto en 3D/AR</h2>
-            <p class="mb-8 max-w-2xl mx-auto text-gray-300 text-sm">
-                Interactúa con el modelo. Usa el ratón/dedo para rotar. Haz clic en las figuras para ver la información.
-                Si tu dispositivo lo soporta, usa el botón VR/AR en la esquina inferior del visor.
-            </p>
-
-            <div class="aframe-container shadow-2xl border-4 border-gray-700 bg-black mx-auto relative">
-                <!-- Fallback info temporal mientras carga -->
-                <div id="ar-loading" class="absolute inset-0 flex items-center justify-center z-10 bg-black">
-                    <span class="text-edu-copper"><i class="fa-solid fa-circle-notch fa-spin text-3xl"></i> Cargando
-                        Entorno 3D...</span>
-                </div>
-
-                <!-- A-Frame Scene -->
-                <a-scene embedded background="color: #111827" renderer="antialias: true" vr-mode-ui="enabled: true">
-                    <a-assets>
-                        <!-- Mixins para estilos -->
-                        <a-mixin id="interactive" class="clickable"
-                            animation__mouseenter="property: scale; to: 1.2 1.2 1.2; dur: 200; startEvents: mouseenter"
-                            animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"></a-mixin>
-                    </a-assets>
-
-                    <!-- Cámara con Raycaster para clicks -->
-                    <a-entity camera look-controls
-                        orbit-controls="target: 0 1 -3; minDistance: 0.5; maxDistance: 180; initialPosition: 0 1.5 2">
-                        <a-entity cursor="rayOrigin: mouse;" raycaster="objects: .clickable"></a-entity>
-                        <!-- Cursor visual para VR mode -->
-                        <a-entity cursor="fuse: false;" position="0 0 -1"
-                            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                            material="color: white; shader: flat" raycaster="objects: .clickable" visible="false"
-                            id="vr-cursor"></a-entity>
-                    </a-entity>
-
-                    <!-- Luces -->
-                    <a-light type="ambient" color="#888"></a-light>
-                    <a-light type="directional" position="-1 2 1" intensity="0.8"></a-light>
-
-                    <!-- Estaciones 3D -->
-                    <a-entity position="0 1 -3"
-                        animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
-
-                        <!-- 1. Problema (Esfera Roja) -->
-                        <a-entity position="-2 0 0">
-                            <a-sphere mixin="interactive" radius="0.4" color="#EF4444" id="ar-btn-1"></a-sphere>
-                            <a-text value="1. Problema" position="0 -0.6 0" align="center" width="3"
-                                color="#FFF"></a-text>
-                        </a-entity>
-
-                        <!-- 2. Diagnostico (Cilindro Azul) -->
-                        <a-entity position="-1 1 1">
-                            <a-cylinder mixin="interactive" radius="0.3" height="0.8" color="#3B82F6"
-                                id="ar-btn-2"></a-cylinder>
-                            <a-text value="2. Datos" position="0 -0.6 0" align="center" width="3" color="#FFF"></a-text>
-                        </a-entity>
-
-                        <!-- 3. Solucion IA (Cubo Cobre) -->
-                        <a-entity position="0 1.5 0">
-                            <a-box mixin="interactive" depth="0.6" height="0.6" width="0.6" color="#C97B63"
-                                animation="property: rotation; to: 360 360 0; loop: true; dur: 5000"
-                                id="ar-btn-3"></a-box>
-                            <a-text value="3. Solucion IA" position="0 -0.5 0" align="center" width="3"
-                                color="#FFF"></a-text>
-                        </a-entity>
-
-                        <!-- 4. Viabilidad (Torus Verde) -->
-                        <a-entity position="1 1 1">
-                            <a-torus mixin="interactive" radius="0.3" radius-tubular="0.05" color="#10B981"
-                                id="ar-btn-4"></a-torus>
-                            <a-text value="4. Viabilidad" position="0 -0.6 0" align="center" width="3"
-                                color="#FFF"></a-text>
-                        </a-entity>
-
-                        <!-- 5. Impacto (Cono Amarillo) -->
-                        <a-entity position="2 0 0">
-                            <a-cone mixin="interactive" radius-bottom="0.4" radius-top="0" height="0.8" color="#F59E0B"
-                                id="ar-btn-5"></a-cone>
-                            <a-text value="5. Impacto" position="0 -0.6 0" align="center" width="3"
-                                color="#FFF"></a-text>
-                        </a-entity>
-                    </a-entity>
-                </a-scene>
-            </div>
-
-            <!-- Panel de información dinámico para AR -->
-            <div id="ar-info-panel"
-                class="mt-6 bg-gray-800 p-4 rounded-xl border border-gray-600 min-h-[80px] flex items-center justify-center text-lg font-semibold text-edu-copper transition-all">
-                Interactúa con las figuras 3D para descubrir las etapas.
-            </div>
-        </div>
-    </section>
-
-    <!-- 16 y 17. SIMULADOR Y ACTIVIDAD FINAL -->
+    <!-- 16. SIMULADOR Y ACTIVIDAD FINAL -->
     <section id="simulador" class="py-16 bg-edu-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-center mb-12">Simulador: Construye tu Proyecto IA</h2>
@@ -816,7 +874,7 @@
                             <li class="flex items-center text-gray-500 relative z-10" id="step-3-marker">
                                 <span
                                     class="w-6 h-6 rounded-full bg-gray-700 text-gray-400 flex items-center justify-center mr-3 font-bold text-xs">3</span>
-                                Viabilidad
+                                Diseño Pedagógico
                             </li>
                             <li class="flex items-center text-gray-500 relative z-10" id="step-4-marker">
                                 <span
@@ -878,8 +936,8 @@
                                 Académico</label>
                             <label
                                 class="block p-3 border rounded-lg cursor-pointer hover:border-edu-copper bg-gray-50"><input
-                                    type="radio" name="sim_sol" value="Dashboard Predictivo" class="mr-2"> Dashboard
-                                Predictivo</label>
+                                    type="radio" name="sim_sol" value="Panel de Indicadores" class="mr-2"> Panel de
+                                Indicadores</label>
                             <label
                                 class="block p-3 border rounded-lg cursor-pointer hover:border-edu-copper bg-gray-50"><input
                                     type="radio" name="sim_sol" value="Generador de Materiales" class="mr-2"> Generador
@@ -890,8 +948,9 @@
                                 Alertas</label>
                             <label
                                 class="block p-3 border rounded-lg cursor-pointer hover:border-edu-copper bg-gray-50"><input
-                                    type="radio" name="sim_sol" value="Automatización RPA" class="mr-2"> Automatización
-                                RPA</label>
+                                    type="radio" name="sim_sol" value="Automatización de Trámites" class="mr-2">
+                                Automatización
+                                de Trámites</label>
                         </div>
                         <div class="absolute bottom-8 right-8 flex space-x-2">
                             <button onclick="nextSimStep(1)"
@@ -904,31 +963,36 @@
 
                     <!-- Pantalla 3: Viabilidad e Indicadores -->
                     <div id="sim-step-3" class="hidden transition-opacity duration-300">
-                        <h4 class="text-2xl font-bold mb-4">Evalúa y Define</h4>
+                        <h4 class="text-2xl font-bold mb-4">Diseña la integración pedagógica</h4>
 
                         <div class="mb-4">
-                            <p class="text-sm font-bold mb-2">Checklist de Viabilidad Rápida:</p>
+                            <p class="text-sm font-bold mb-2">Checklist de Diseño Pedagógico:</p>
                             <div class="grid grid-cols-2 gap-2 text-sm">
-                                <label><input type="checkbox" id="chk_datos" class="mr-1 text-edu-copper"> ¿Hay datos
-                                    confiables?</label>
-                                <label><input type="checkbox" id="chk_infra" class="mr-1 text-edu-copper"> ¿Existe
-                                    infraestructura?</label>
-                                <label><input type="checkbox" id="chk_presu" class="mr-1 text-edu-copper"> ¿Hay
-                                    presupuesto?</label>
-                                <label><input type="checkbox" id="chk_super" class="mr-1 text-edu-copper"> ¿Supervisión
-                                    humana?</label>
+                                <label><input type="checkbox" id="chk_datos" class="mr-1 text-edu-copper"> ¿Se protege
+                                    la identidad del estudiante?</label>
+                                <label><input type="checkbox" id="chk_infra" class="mr-1 text-edu-copper"> ¿Se adapta a
+                                    la rutina actual del aula o la gestión?</label>
+                                <label><input type="checkbox" id="chk_presu" class="mr-1 text-edu-copper"> ¿El docente
+                                    valida los resultados?</label>
+                                <label><input type="checkbox" id="chk_super" class="mr-1 text-edu-copper"> ¿Las
+                                    decisiones críticas quedan en manos humanas?</label>
                             </div>
                         </div>
 
                         <div>
-                            <p class="text-sm font-bold mb-2">Indicador principal de éxito:</p>
+                            <p class="text-sm font-bold mb-2">Indicador de línea base (diagnóstico):</p>
                             <select id="sim_ind" class="form-input text-sm">
-                                <option value="Mejora en calificaciones">Mejora en calificaciones</option>
-                                <option value="Ahorro de horas docentes">Ahorro de horas docentes</option>
-                                <option value="Reducción de tiempos de espera">Reducción de tiempos de espera</option>
-                                <option value="Disminución de deserción">Disminución de deserción</option>
+                                <option value="Calificaciones actuales del curso">Calificaciones actuales del curso
+                                </option>
+                                <option value="Horas docentes dedicadas a tareas repetitivas">Horas docentes dedicadas a
+                                    tareas repetitivas</option>
+                                <option value="Tiempo de espera actual en trámites">Tiempo de espera actual en trámites
+                                </option>
+                                <option value="Porcentaje de deserción del último periodo">Porcentaje de deserción del
+                                    último periodo</option>
                             </select>
                         </div>
+
 
                         <div class="absolute bottom-8 right-8 flex space-x-2">
                             <button onclick="nextSimStep(2)"
@@ -974,31 +1038,31 @@
                 </div>
                 <div class="bg-white/10 p-4 rounded-lg flex">
                     <span class="text-edu-copper font-bold text-xl mr-3">2.</span>
-                    <p class="text-sm text-gray-200">Requiere diagnóstico riguroso, justificación clara y evaluación
-                        constante.</p>
+                    <p class="text-sm text-gray-200">Requiere un diagnóstico riguroso con evidencias y una justificación
+                        con valor institucional.</p>
                 </div>
                 <div class="bg-white/10 p-4 rounded-lg flex">
                     <span class="text-edu-copper font-bold text-xl mr-3">3.</span>
-                    <p class="text-sm text-gray-200">La tecnología debe integrarse indisolublemente con el diseño
-                        pedagógico.</p>
+                    <p class="text-sm text-gray-200">Las salvaguardas éticas —privacidad, equidad y supervisión humana—
+                        se incorporan desde el diseño, no después.</p>
                 </div>
                 <div class="bg-white/10 p-4 rounded-lg flex">
                     <span class="text-edu-copper font-bold text-xl mr-3">4.</span>
-                    <p class="text-sm text-gray-200">La viabilidad abarca infraestructura, costos visibles y costos
-                        ocultos (tiempo).</p>
+                    <p class="text-sm text-gray-200">Elegir la herramienta es solo una parte: lo esencial es diseñar
+                        cómo se integra a la experiencia educativa.</p>
                 </div>
-                <div class="bg-white/10 p-4 rounded-lg flex sm:col-span-2 justify-center">
-                    <span class="text-edu-copper font-bold text-xl mr-3">5.</span>
-                    <p class="text-sm text-gray-200">El impacto final se demuestra con indicadores claros, no con la
-                        simple adopción de la herramienta.</p>
+                <div class="border border-edu-copper/50 bg-edu-copper/10 p-4 rounded-lg sm:col-span-2 text-center">
+                    <p class="text-sm text-gray-200"><i class="fa-solid fa-forward mr-2 text-edu-copper"></i><strong
+                            class="text-edu-copper">Próximas sesiones:</strong> 6.2 Análisis de Viabilidad y
+                        Costo-Beneficio &middot; 6.3 Liderazgo Pedagógico y Formación Docente &middot; 6.4 Evaluación de
+                        Impacto</p>
                 </div>
             </div>
         </div>
     </section>
 
     <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
-        <p>&copy; 2026. Diseño de Proyectos de Innovación Tecnológica con IA.</p>
-        <p class="mt-2 text-xs">Desarrollado con propósitos educativos. No requiere backend, funciona localmente.</p>
+        <p>Experiencia Interactiva. Fines educativos - ©2026 - Luis Torrejón Arias</p>
     </footer>
 
     <!-- LÓGICA JAVASCRIPT -->
@@ -1008,9 +1072,9 @@
             const feedbackDiv = document.getElementById('problema-feedback');
             feedbackDiv.classList.remove('hidden');
             let text = "";
-            if (option === 1) text = "<strong>Sugerencia IA:</strong> Sistemas de alerta temprana basados en modelos predictivos que analizan asistencia, notas y participación para intervenir a tiempo.";
+            if (option === 1) text = "<strong>Sugerencia IA:</strong> Sistemas de alerta temprana que analizan asistencia, notas y participación para intervenir a tiempo.";
             if (option === 2) text = "<strong>Sugerencia IA:</strong> Herramientas de corrección automatizada o generación de rúbricas asistidas, manteniendo siempre la validación final del docente.";
-            if (option === 3) text = "<strong>Sugerencia IA:</strong> Chatbots conversacionales integrados a la base de datos para resolver el 80% de consultas frecuentes de forma automática 24/7.";
+            if (option === 3) text = "<strong>Sugerencia IA:</strong> Asistentes virtuales conectados a la información institucional para resolver la mayoría de consultas frecuentes de forma automática 24/7.";
             feedbackDiv.innerHTML = text;
         }
 
@@ -1025,112 +1089,8 @@
             if (val === 'dudas') res.innerHTML = "<strong>Acción IA:</strong> Activar tutor virtual (chatbot) en el contexto de la lectura actual para resolver dudas semánticas.";
         }
 
-        // --- 3. Calculadora de Viabilidad ---
-        function calcularViabilidad() {
-            const pres = parseFloat(document.getElementById('calc-presupuesto').value) || 0;
-            const costo = parseFloat(document.getElementById('calc-costo').value) || 0;
-            const datos = parseInt(document.getElementById('calc-datos').value) || 0;
-            const resDiv = document.getElementById('calc-resultado');
 
-            resDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
-
-            if (costo === 0 || pres === 0) {
-                resDiv.innerHTML = "Por favor ingresa montos válidos.";
-                resDiv.classList.add('bg-gray-100', 'text-gray-800');
-                return;
-            }
-
-            let score = 0;
-            if (pres >= costo * 1.2) score += 3; // Hay holgura
-            else if (pres >= costo) score += 1;
-            else score -= 3; // Déficit
-
-            if (datos >= 8) score += 3;
-            else if (datos >= 5) score += 1;
-            else score -= 2; // Malos datos
-
-            let html = "";
-            if (score >= 4) {
-                html = "<i class='fa-solid fa-check-circle mr-2'></i> Viabilidad Alta. <br><span class='text-sm font-normal'>El proyecto tiene bases financieras y de datos sólidas.</span>";
-                resDiv.classList.add('bg-green-100', 'text-green-800');
-            } else if (score >= 0) {
-                html = "<i class='fa-solid fa-triangle-exclamation mr-2'></i> Viabilidad Media (Alerta). <br><span class='text-sm font-normal'>Revisa costos ocultos o mejora la calidad de datos antes de escalar.</span>";
-                resDiv.classList.add('bg-yellow-100', 'text-yellow-800');
-            } else {
-                html = "<i class='fa-solid fa-circle-xmark mr-2'></i> Riesgo Crítico. <br><span class='text-sm font-normal'>El presupuesto es insuficiente o los datos no sirven para entrenar el modelo. No iniciar.</span>";
-                resDiv.classList.add('bg-red-100', 'text-red-800');
-            }
-            resDiv.innerHTML = html;
-        }
-
-        // --- 4. Gráfico de Impacto (Chart.js) ---
-        document.addEventListener("DOMContentLoaded", function () {
-            const ctx = document.getElementById('impactChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4 (Con IA)'],
-                    datasets: [{
-                        label: 'Horas dedicadas a tareas repetitivas',
-                        data: [40, 38, 42, 15],
-                        backgroundColor: [
-                            'rgba(15, 23, 42, 0.6)', // edu-blue
-                            'rgba(15, 23, 42, 0.6)',
-                            'rgba(15, 23, 42, 0.6)',
-                            'rgba(201, 123, 99, 0.8)' // edu-copper
-                        ],
-                        borderColor: [
-                            'rgb(15, 23, 42)',
-                            'rgb(15, 23, 42)',
-                            'rgb(15, 23, 42)',
-                            'rgb(201, 123, 99)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Horas' } }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-
-            // Ocultar loader de A-Frame cuando cargue
-            document.querySelector('a-scene').addEventListener('loaded', function () {
-                document.getElementById('ar-loading').style.display = 'none';
-            });
-
-            // Setup A-Frame Interactions
-            setupARInteractions();
-        });
-
-        // --- 5. Interacciones A-Frame (AR/3D) ---
-        function setupARInteractions() {
-            const panel = document.getElementById('ar-info-panel');
-            const messages = {
-                'ar-btn-1': "<b>1. El Problema:</b> Todo proyecto inicia documentando una necesidad real (deserción, carga operativa).",
-                'ar-btn-2': "<b>2. Diagnóstico y Datos:</b> Define línea base e indicadores. La IA necesita datos limpios.",
-                'ar-btn-3': "<b>3. Solución IA:</b> Elige el modelo y diséñalo centrado en la pedagogía y experiencia del usuario.",
-                'ar-btn-4': "<b>4. Viabilidad:</b> Evalúa infraestructura técnica, costos, y formación docente.",
-                'ar-btn-5': "<b>5. Impacto:</b> Mide el antes y después. La tecnología debe demostrar mejora real."
-            };
-
-            // Añadir event listeners a cada entidad
-            Object.keys(messages).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('click', function () {
-                        panel.innerHTML = messages[id];
-                        panel.classList.add('bg-gray-700', 'scale-105');
-                        setTimeout(() => panel.classList.remove('bg-gray-700', 'scale-105'), 300);
-                    });
-                }
-            });
-        }
+        // --- 4. Inicialización al cargar ---
 
         // --- 6. Lógica del Simulador (Wizard) ---
         function nextSimStep(step) {
@@ -1176,21 +1136,21 @@
             const sol = solEl ? solEl.value : "No definida";
             const ind = document.getElementById('sim_ind').value;
 
-            let viabilidadScore = 0;
-            if (document.getElementById('chk_datos').checked) viabilidadScore++;
-            if (document.getElementById('chk_infra').checked) viabilidadScore++;
-            if (document.getElementById('chk_presu').checked) viabilidadScore++;
-            if (document.getElementById('chk_super').checked) viabilidadScore++;
+            let disenoScore = 0;
+            if (document.getElementById('chk_datos').checked) disenoScore++;
+            if (document.getElementById('chk_infra').checked) disenoScore++;
+            if (document.getElementById('chk_presu').checked) disenoScore++;
+            if (document.getElementById('chk_super').checked) disenoScore++;
 
-            let viabilidadTexto = viabilidadScore === 4 ? "<span class='text-green-600 font-bold'>Alta - Listo para diseño técnico</span>" :
-                viabilidadScore >= 2 ? "<span class='text-yellow-600 font-bold'>Media - Requiere resolver brechas</span>" :
-                    "<span class='text-red-600 font-bold'>Baja - No iniciar implementación</span>";
+            let disenoTexto = disenoScore === 4 ? "<span class='text-green-600 font-bold'>Sólida - La herramienta está integrada a la experiencia educativa</span>" :
+                disenoScore >= 2 ? "<span class='text-yellow-600 font-bold'>Parcial - Afina cómo se incorpora a la rutina y quién supervisa</span>" :
+                    "<span class='text-red-600 font-bold'>Débil - Rediseñar: la herramienta aún no responde a la experiencia educativa</span>";
 
             const html = `
                 <div class="border-b pb-2 mb-2"><strong class="text-gray-600">Problema detectado:</strong><br> <span class="text-lg text-edu-blue font-bold">${prob}</span></div>
                 <div class="border-b pb-2 mb-2"><strong class="text-gray-600">Solución Propuesta:</strong><br> <span class="text-lg text-edu-copper font-bold">${sol}</span></div>
-                <div class="border-b pb-2 mb-2"><strong class="text-gray-600">Indicador Principal:</strong><br> ${ind}</div>
-                <div><strong class="text-gray-600">Nivel de Viabilidad:</strong><br> ${viabilidadTexto} (${viabilidadScore}/4 requisitos básicos cumplidos)</div>
+                <div class="border-b pb-2 mb-2"><strong class="text-gray-600">Indicador de Línea Base:</strong><br> ${ind}</div>
+                <div><strong class="text-gray-600">Integración Pedagógica:</strong><br> ${disenoTexto} (${disenoScore}/4 criterios de diseño cumplidos)</div>
                 <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 text-xs rounded text-yellow-800">
                     <strong>Nota Ética:</strong> Asegurar que la herramienta "${sol}" mantenga privacidad de datos y no reemplace el criterio humano en decisiones críticas.
                 </div>
@@ -1199,6 +1159,36 @@
             document.getElementById('sim_resumen_content').innerHTML = html;
             nextSimStep(4);
         }
+        // --- 7. Ficha de Proyecto imprimible ---
+        function imprimirFicha() {
+            const w = window.open('', '_blank');
+            const campo = (titulo, ayuda, lineas) => `
+                <div style="margin-bottom:18px;">
+                    <div style="font-weight:bold; color:#0F172A; border-bottom:2px solid #C97B63; padding-bottom:4px; margin-bottom:6px;">${titulo}</div>
+                    <div style="font-size:11px; color:#64748b; margin-bottom:8px;">${ayuda}</div>
+                    ${'<div style="border-bottom:1px solid #cbd5e1; height:26px;"></div>'.repeat(lineas)}
+                </div>`;
+            w.document.write(`
+                <html><head><title>Ficha de Proyecto de Innovación Tecnológica con IA</title></head>
+                <body style="font-family: Arial, Helvetica, sans-serif; color:#334155; max-width:720px; margin:24px auto; padding:0 16px;">
+                    <h1 style="color:#0F172A; font-size:22px; margin-bottom:2px;">Ficha de Proyecto de Innovación Tecnológica con IA</h1>
+                    <p style="font-size:12px; color:#64748b; margin-top:0;">Unidad 6.1 &mdash; Diseño de Proyectos de Innovación Tecnológica &middot; Maestría en Dirección de Instituciones Educativas</p>
+                    <div style="display:flex; gap:16px; margin:16px 0;">
+                        <div style="flex:1;"><span style="font-size:12px; font-weight:bold;">Nombre del proyecto:</span><div style="border-bottom:1px solid #cbd5e1; height:26px;"></div></div>
+                        <div style="flex:1;"><span style="font-size:12px; font-weight:bold;">Institución / Autor:</span><div style="border-bottom:1px solid #cbd5e1; height:26px;"></div></div>
+                    </div>
+                    ${campo('1. Problema educativo o administrativo', '¿Qué necesidad real y documentada origina el proyecto? (No la herramienta, el problema).', 3)}
+                    ${campo('2. Evidencias e indicador de línea base', '¿Qué datos demuestran el problema? ¿Cuál es el número de hoy, antes de cualquier cambio?', 3)}
+                    ${campo('3. Público objetivo', '¿A quiénes afecta el problema y quiénes usarán la solución (estudiantes, docentes, administrativos)?', 2)}
+                    ${campo('4. Justificación', '¿Qué pasaría si no se hace nada? ¿Por qué esta solución supera a la alternativa tradicional? ¿Con qué objetivo institucional se alinea?', 3)}
+                    ${campo('5. Solución propuesta', '¿Qué herramienta o sistema responde al problema? Descríbela en lenguaje sencillo.', 3)}
+                    ${campo('6. Integración pedagógica', '¿Cómo se incorpora a la rutina del aula o de la gestión? ¿Qué decisiones quedan siempre en manos humanas y quién supervisa?', 3)}
+                    ${campo('7. Salvaguardas', 'Privacidad de los datos del estudiante, equidad sin discriminación y supervisión humana permanente: ¿cómo se garantizan?', 3)}
+                    <script>window.onload = function(){ window.print(); }<\/script>
+                </body></html>`);
+            w.document.close();
+        }
+
 
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
