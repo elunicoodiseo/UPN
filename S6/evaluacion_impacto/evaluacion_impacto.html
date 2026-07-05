@@ -140,44 +140,53 @@
 
 <body class="antialiased text-gray-800">
 
-    <!-- 1. Pantalla inicial inmersiva -->
-    <header class="relative min-h-screen flex items-center justify-center bg-edu-blue overflow-hidden px-4">
-        <div class="absolute inset-0 opacity-20">
-            <!-- Patrón de fondo sutil -->
-            <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" />
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-        </div>
+    <!-- 1. Pantalla inicial inmersiva Mejorada -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden px-4 bg-gray-900">
+        <!-- Fondo con gradiente dinámico y orbes -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-gray-900"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#c2410c]/30 rounded-full blur-[120px] mix-blend-screen animate-pulse" style="animation-duration: 4s;"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#3b82f6]/20 rounded-full blur-[150px] mix-blend-screen"></div>
 
-        <div
-            class="z-10 text-center max-w-4xl bg-white/10 backdrop-blur-md p-8 md:p-16 rounded-3xl border border-white/20 shadow-2xl">
-            <div
-                class="inline-block px-4 py-1 rounded-full bg-edu-terra text-white text-sm font-semibold mb-6 tracking-wide">
-                Módulo de Maestría
+        <!-- Patrón sutil superpuesto -->
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+        <!-- Contenedor Principal Glassmorphism -->
+        <div class="relative z-10 text-center max-w-5xl bg-white/5 backdrop-blur-2xl p-8 md:p-16 rounded-[2.5rem] border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] transform transition-all duration-700 hover:border-white/20 mt-12 mb-12">
+            
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#c2410c]/20 to-orange-500/10 border border-[#c2410c]/40 text-[#ea580c] shadow-[0_0_15px_rgba(194,65,12,0.3)] mb-8">
+                <span class="w-2 h-2 rounded-full bg-[#ea580c] animate-ping"></span>
+                <span class="text-sm font-bold tracking-widest uppercase">Módulo de Maestría</span>
             </div>
-            <h1 class="text-4xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight">
+
+            <!-- Título Principal -->
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-100 to-gray-400 mb-6 leading-tight">
                 Evaluación de Impacto de la IA <br>
-                <span class="text-edu-beige">en el Aprendizaje y la Gestión</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#f5f5dc] to-orange-200">en el Aprendizaje y la Gestión</span>
             </h1>
-            <p class="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+
+            <!-- Subtítulo -->
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 font-light max-w-3xl mx-auto leading-relaxed">
                 Del dato a la decisión: cómo saber si una solución de IA realmente mejora la experiencia educativa.
             </p>
-            <div class="bg-white/20 p-6 rounded-2xl mb-10 border-l-4 border-edu-terra">
-                <p class="text-xl md:text-2xl text-white font-medium italic">
+
+            <!-- Caja de Cita Rediseñada -->
+            <div class="relative bg-gradient-to-br from-white/10 to-transparent p-8 rounded-3xl mb-12 border border-white/10 shadow-inner max-w-3xl mx-auto group hover:bg-white/20 transition-all duration-500">
+                <i class="fa-solid fa-quote-left absolute top-6 left-6 text-4xl text-[#c2410c]/30 group-hover:text-[#c2410c]/50 transition-colors"></i>
+                <p class="text-2xl md:text-3xl text-white font-medium italic relative z-10 mb-4 font-heading group-hover:scale-[1.02] transition-transform">
                     "La tecnología sirve a la pedagogía, no al revés."
                 </p>
-                <p class="text-white mt-2 text-sm">
+                <div class="w-20 h-1 bg-gradient-to-r from-[#c2410c] to-transparent mx-auto mb-6 rounded-full group-hover:w-32 transition-all duration-500"></div>
+                <p class="text-gray-300 text-base md:text-lg font-light relative z-10">
                     Antes de implementar IA, una Institución educativa debe definir qué significa éxito.
                 </p>
             </div>
+
+            <!-- Botón -->
             <a href="#ancla"
-                class="inline-flex items-center gap-3 bg-edu-terra hover:bg-edu-terra-hover text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105 shadow-lg">
-                Iniciar exploración <i class="fa-solid fa-arrow-down"></i>
+                class="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#c2410c] to-orange-600 hover:from-orange-600 hover:to-[#c2410c] text-white font-bold py-4 px-10 rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(194,65,12,0.8)]">
+                <span class="text-lg">Iniciar exploración</span> 
+                <i class="fa-solid fa-arrow-down animate-bounce text-xl"></i>
             </a>
         </div>
     </header>
