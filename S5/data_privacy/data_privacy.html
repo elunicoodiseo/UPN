@@ -648,8 +648,8 @@
         title: "API Segura LTI v1.3 (Learning Tools Interoperability)",
         uso: "Integración de aplicaciones EdTech externas (ej. Duolingo, Khan Academy) en Moodle.",
         funcion: "Establece un puente criptográfico de intercambio de datos estrictamente limitado. Prohíbe que el proveedor externo 'chupe' la base de datos de correos o teléfonos de alumnos.",
-        requisitos: "Moodle UPN configurado con certificados OAuth2.",
-        beneficio: "Cumplimiento total como 'Controlador de Datos' (UPN) asegurando que el proveedor sea mero 'Procesador'."
+        requisitos: "Moodle configurado con certificados OAuth2.",
+        beneficio: "Cumplimiento total como 'Controlador de Datos'  asegurando que el proveedor sea mero 'Procesador'."
       },
       {
         title: "Dashboard de Auditoría de Sesgo de Datos",
@@ -815,13 +815,13 @@
     function showCustomModal(title, text, confirmMode = false, callback = null) {
       const headerContainer = document.getElementById('modal-title').parentElement;
       const btn = document.querySelector('#custom-modal button');
-      
+
       if (title.includes('Excelente') || title.includes('Seguridad')) {
-         headerContainer.className = 'flex items-center gap-3 text-emerald-500';
-         btn.className = 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm px-4 py-2 rounded-xl transition';
+        headerContainer.className = 'flex items-center gap-3 text-emerald-500';
+        btn.className = 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm px-4 py-2 rounded-xl transition';
       } else {
-         headerContainer.className = 'flex items-center gap-3 text-amber-500';
-         btn.className = 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm px-4 py-2 rounded-xl transition';
+        headerContainer.className = 'flex items-center gap-3 text-amber-500';
+        btn.className = 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm px-4 py-2 rounded-xl transition';
       }
 
       document.getElementById('modal-title').textContent = title;
