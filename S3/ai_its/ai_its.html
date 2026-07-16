@@ -91,21 +91,7 @@
                         pedagógicas.
                     </p>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                    <a href="#experiencia-3d" onclick="activarModoAR(true)"
-                        class="inline-flex justify-center items-center px-6 py-4 border border-transparent text-base font-bold rounded-xl text-white bg-orange-500 hover:bg-orange-600 shadow-md transform hover:-translate-y-0.5 transition duration-150">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        Iniciar experiencia AR
-                    </a>
-                    <a href="#actividad-clase"
-                        class="inline-flex justify-center items-center px-6 py-4 border border-blue-300 text-base font-semibold rounded-xl text-blue-100 hover:bg-blue-800 transition duration-150">
-                        Ir a Actividad de Clase
-                    </a>
-                </div>
+
             </div>
         </div>
     </header>
@@ -128,10 +114,7 @@
                         class="tab-btn py-3 px-2 rounded-xl text-center text-xs font-bold transition duration-200 hover:bg-white text-gray-600 flex flex-col items-center justify-center gap-1">
                         <span class="text-lg">📊</span> Caso
                     </button>
-                    <button onclick="cambiarModulo(3)" id="btn-modulo-3"
-                        class="tab-btn py-3 px-2 rounded-xl text-center text-xs font-bold transition duration-200 hover:bg-white text-gray-600 flex flex-col items-center justify-center gap-1">
-                        <span class="text-lg">🛠️</span> Herramientas
-                    </button>
+
                     <button onclick="cambiarModulo(4)" id="btn-modulo-4"
                         class="tab-btn py-3 px-2 rounded-xl text-center text-xs font-bold transition duration-200 hover:bg-white text-gray-600 flex flex-col items-center justify-center gap-1">
                         <span class="text-lg">🧑‍🏫</span> Rol Docente
@@ -311,130 +294,7 @@
 
                     </div>
 
-                    <!-- MÓDULO 3: HERRAMIENTAS ADAPTATIVAS (ACORDEÓN DINÁMICO) -->
-                    <div id="modulo-3-content" class="fade-in hidden">
-                        <h2 class="text-2xl font-bold text-blue-900 mb-4 flex items-center gap-2">
-                            <span>🛠️</span> Herramientas para la Educación Adaptativa
-                        </h2>
-                        <p class="text-sm text-gray-600 mb-4">
-                            Haga clic en cualquiera de las siguientes herramientas para explorar su funcionamiento,
-                            aplicación didáctica y sincronizar la vista tridimensional interactiva junto con su enlace y
-                            ejemplo didáctico en el panel de la derecha.
-                        </p>
 
-                        <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                            <!-- 1. ALEKS -->
-                            <div id="card-aleks"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('aleks', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">1. ALEKS</h4>
-                                    <span
-                                        class="bg-green-100 text-green-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Fuerte</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Tiene interfaz en español nativa; usado en
-                                        instituciones de LatAm. Acceso vía suscripción internacional.</p>
-                                </div>
-                            </div>
-
-                            <!-- 2. Khan Academy + Khanmigo -->
-                            <div id="card-khan"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('khan', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">2. Khan Academy + Khanmigo</h4>
-                                    <span
-                                        class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-bold">Moderada-fuerte</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Khan Academy en Español es un proyecto activo y
-                                        completo; Khanmigo está expandiéndose a más idiomas.</p>
-                                </div>
-                            </div>
-
-                            <!-- 3. Carnegie Learning MATHia -->
-                            <div id="card-mathia"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('mathia', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">3. Carnegie Learning MATHia</h4>
-                                    <span
-                                        class="bg-indigo-100 text-indigo-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Muy Fuerte</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Producto pensado para currículo K-12 de EE.UU.; sin
-                                        versión en español ni operación comercial en Perú.</p>
-                                </div>
-                            </div>
-
-                            <!-- 4. Smart Sparrow -->
-                            <div id="card-sparrow"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('sparrow', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">4. Smart Sparrow</h4>
-                                    <span
-                                        class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Moderada</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Identificado en literatura jurídico-tecnológica
-                                        peruana. Útil como referencia histórica.</p>
-                                </div>
-                            </div>
-
-                            <!-- 5. Bettermarks -->
-                            <div id="card-bettermarks"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('bettermarks', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">5. Bettermarks</h4>
-                                    <span
-                                        class="bg-yellow-100 text-yellow-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Fuerte</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Tiene versiones multilingües pero su foco comercial
-                                        es Europa; no tiene presencia confirmada en Perú.</p>
-                                </div>
-                            </div>
-
-                            <!-- 6. Sistemas ITS universitarios LatAm -->
-                            <div id="card-universidades"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('universidades', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">6. Knewton Alta</h4>
-                                    <span
-                                        class="bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Moderada</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Plataforma adaptativa líder en educación superior
-                                        que personaliza el material de estudio en tiempo real.</p>
-                                </div>
-                            </div>
-
-                            <!-- 7. Duolingo -->
-                            <div id="card-duolingo"
-                                class="tool-card border border-gray-200 rounded-xl p-4 hover:border-blue-500 transition cursor-pointer"
-                                onclick="seleccionarHerramienta('duolingo', this)">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-bold text-blue-900">7. Duolingo</h4>
-                                    <span
-                                        class="bg-red-100 text-red-800 text-[10px] px-2 py-0.5 rounded font-bold">Evidencia
-                                        Moderada</span>
-                                </div>
-                                <div class="tool-details mt-3 space-y-2 hidden fade-in">
-                                    <p class="text-xs text-gray-600">Completamente disponible en español/Perú.
-                                        Adaptativo con foco gamificado.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- MÓDULO 4: ROL DEL DOCENTE -->
                     <div id="modulo-4-content" class="fade-in hidden">
@@ -545,73 +405,11 @@
             <!-- COLUMNA DERECHA: SIMULADOR 3D / VISUALIZADOR AR -->
             <div class="lg:col-span-5 flex flex-col gap-4">
 
-                <!-- CONTENEDOR PRINCIPAL DEL VISUALIZADOR 3D / AR -->
-                <div id="experiencia-3d"
-                    class="relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-800"
-                    style="height: 500px;">
 
-                    <!-- Fondo para Cámara AR (Oculto por defecto, activable) -->
-                    <video id="webcam-feed"
-                        class="absolute inset-0 w-full h-full object-cover hidden pointer-events-none" autoplay
-                        playsinline></video>
-
-                    <!-- Canvas de Renderizado de Three.js -->
-                    <div id="canvas-3d-container" class="absolute inset-0 w-full h-full"></div>
-
-                    <!-- HUD / Elementos Interactivos Sobrepuestos -->
-                    <div
-                        class="absolute inset-x-0 top-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent pointer-events-none">
-                        <div>
-                            <span id="ar-status-badge"
-                                class="bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                Modo 3D Digital
-                            </span>
-                            <h3 class="text-white font-bold text-sm mt-1 drop-shadow-md">Escena Educativa Interactiva
-                            </h3>
-                        </div>
-                        <div class="flex gap-2 pointer-events-auto">
-                            <button id="btn-toggle-ar" onclick="alternarCamaraAR()"
-                                class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow transition-colors flex items-center gap-1">
-                                📷 Iniciar AR
-                            </button>
-                            <button onclick="reiniciarCamara3D()"
-                                class="bg-gray-800 hover:bg-gray-700 text-white p-1.5 rounded-lg text-xs"
-                                title="Reiniciar Cámara">
-                                🔄
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Panel flotante removido (la información ahora se muestra abajo en Enlace y Funcionamiento) -->
-
-                    <!-- Instrucciones de Cámara AR overlay -->
-                    <div id="instrucciones-ar"
-                        class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center text-white hidden">
-                        <span class="text-4xl mb-3">📍</span>
-                        <h4 class="font-bold text-lg">Paso 1: Permitir Acceso a la Cámara</h4>
-                        <p class="text-xs text-gray-300 mt-2 max-w-xs">
-                            La cámara de tu dispositivo se utilizará como fondo en tiempo real para simular la
-                            proyección tridimensional de Realidad Aumentada (WebAR) sobre tu mesa de estudio.
-                        </p>
-                        <div class="mt-4 flex gap-3">
-                            <button onclick="concederPermisoCamara()"
-                                class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-bold text-xs transition">
-                                Conceder Permiso
-                            </button>
-                            <button onclick="cancelarAR()"
-                                class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold text-xs transition">
-                                Mantener 3D Digital
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
 
                 <!-- DIRECTORIO Y ENLACES DE HERRAMIENTAS (DINÁMICO SEGÚN SELECCIÓN) -->
                 <div class="bg-gray-100 border border-gray-200 rounded-xl p-4 text-xs">
-                    <p class="font-bold text-blue-900 flex items-center gap-1 mb-2">
-                        🔗 Enlace y Funcionamiento Práctico:
-                    </p>
+
                     <div id="directorio-dinamico-content" class="fade-in space-y-3 pb-2">
                         <!-- El script inyectará dinámicamente la información explicativa detallada de la herramienta elegida -->
                     </div>
@@ -621,138 +419,6 @@
 
         </div>
 
-        <!-- SECCIÓN COMPLETA DE ACTIVIDAD PRÁCTICA: MATRIZ DE DISEÑO -->
-        <section id="actividad-clase" class="mt-12 bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
-            <div class="border-b border-gray-200 pb-5 mb-6">
-                <span
-                    class="bg-orange-500 text-white text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider">Módulo
-                    interactivo</span>
-                <h2 class="text-3xl font-extrabold text-blue-950 mt-2">
-                    Matriz de Diseño Pedagógico: Ruta de Tutoría Adaptativa
-                </h2>
-                <p class="text-sm text-gray-600 mt-1">
-                    Complete los campos interactivos de la matriz con su equipo de trabajo. Una vez finalizado el
-                    análisis pedagógico, puede exportar la propuesta como imagen o imprimirla directamente para entregar
-                    al docente.
-                </p>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table id="tabla-matriz" class="min-w-full divide-y divide-gray-200 text-sm font-sans">
-                    <thead class="bg-gray-50 font-bold text-blue-900">
-                        <tr>
-                            <th class="px-4 py-3 text-left rounded-l-lg border-b">Caso del Estudiante</th>
-                            <th class="px-4 py-3 text-left border-b">Herramienta Seleccionada</th>
-                            <th class="px-4 py-3 text-left border-b">Diagnóstico del ITS</th>
-                            <th class="px-4 py-3 text-left border-b">Ruta Recomendada</th>
-                            <th class="px-4 py-3 text-left rounded-r-lg border-b">Acción Docente de Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <!-- Caso 1 -->
-                        <tr class="hover:bg-blue-50/20 transition">
-                            <td class="px-4 py-3 font-semibold text-gray-950">
-                                <input type="text" value="Caso 1"
-                                    class="bg-transparent border-b border-dashed border-gray-300 focus:border-blue-500 outline-none w-full font-bold">
-                            </td>
-                            <td class="px-4 py-3">
-                                <select class="w-full bg-white border border-gray-300 rounded p-1 text-xs">
-                                    <option>ALEKS</option>
-                                    <option>Khan Academy + Khanmigo</option>
-                                    <option>Carnegie Learning MATHia</option>
-                                    <option>Smart Sparrow</option>
-                                    <option>Bettermarks</option>
-                                    <option>Knewton Alta</option>
-                                    <option>Duolingo</option>
-                                </select>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                        </tr>
-                        <!-- Caso 2 -->
-                        <tr class="hover:bg-blue-50/20 transition">
-                            <td class="px-4 py-3 font-semibold text-gray-950">
-                                <input type="text" value="Caso 2"
-                                    class="bg-transparent border-b border-dashed border-gray-300 focus:border-blue-500 outline-none w-full font-bold">
-                            </td>
-                            <td class="px-4 py-3">
-                                <select class="w-full bg-white border border-gray-300 rounded p-1 text-xs">
-                                    <option>ALEKS</option>
-                                    <option>Khan Academy + Khanmigo</option>
-                                    <option>Carnegie Learning MATHia</option>
-                                    <option>Smart Sparrow</option>
-                                    <option>Bettermarks</option>
-                                    <option>Knewton Alta</option>
-                                    <option>Duolingo</option>
-                                </select>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                            <td class="px-4 py-3">
-                                <textarea
-                                    class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                            </td>
-                        </tr>
-                        <!-- Caso 3 -->
-                        <td class="px-4 py-3 font-semibold text-gray-950">
-                            <input type="text" value="Caso 3"
-                                class="bg-transparent border-b border-dashed border-gray-300 focus:border-blue-500 outline-none w-full font-bold">
-                        </td>
-                        <td class="px-4 py-3">
-                            <select class="w-full bg-white border border-gray-300 rounded p-1 text-xs">
-                                <option>ALEKS</option>
-                                <option>Khan Academy + Khanmigo</option>
-                                <option>Carnegie Learning MATHia</option>
-                                <option>Smart Sparrow</option>
-                                <option>Bettermarks</option>
-                                <option>Knewton Alta</option>
-                                <option>Duolingo</option>
-                            </select>
-                        </td>
-                        <td class="px-4 py-3">
-                            <textarea
-                                class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                        </td>
-                        <td class="px-4 py-3">
-                            <textarea
-                                class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                        </td>
-                        <td class="px-4 py-3">
-                            <textarea
-                                class="w-full bg-gray-50 hover:bg-white border border-gray-200 focus:border-blue-500 rounded p-2 text-xs h-20 resize-none"></textarea>
-                        </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Botones de Acción de Matriz -->
-            <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
-                <button onclick="limpiarCamposMatriz()"
-                    class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition">
-                    🧹 Limpiar Campos
-                </button>
-                <button onclick="exportarPropuestaMatriz()"
-                    class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">
-                    💾 Exportar Matriz de Diseño (.PDF / Imprimir)
-                </button>
-            </div>
         </section>
 
         <!-- CONCLUSIONES FINALES DE LA WEB -->
@@ -801,10 +467,7 @@
     <!-- PIE DE PÁGINA -->
     <footer class="bg-gray-950 text-gray-500 text-xs py-8 mt-12 border-t border-gray-900">
         <div class="max-w-7xl mx-auto px-4 text-center sm:px-6 lg:px-8 space-y-2">
-            <p>Sesión 3.1 — Sistemas de Tutoría Inteligente (ITS) | Entorno Interactivo WebAR para Formación de Posgrado
-                en Educación</p>
-            <p>&copy; 2026 Plataforma de Apoyo Pedagógico para Maestría. Todas las interacciones 3D se procesan en
-                tiempo real de forma local.</p>
+            <p>&nbsp;</p>
         </div>
     </footer>
 
